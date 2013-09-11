@@ -90,7 +90,7 @@ public class BlockListener implements Listener {
 				if (!(player.isOp() || player.hasPermission("doody.allowbreak"))) {
 					event.setCancelled(true);
 					if (Configuration.config.getBoolean("Denied Blocks.messages")) {
-						m.player(player, "&cThere's no need to break &e" + blockname + "&cwhile on Duty.");
+						m.player(player, "&cThere's no need to break &e" + blockname + " &cwhile on Duty.");
 					}
 				} else {
 					if (Configuration.config.getBoolean("Debug.enabled")) {

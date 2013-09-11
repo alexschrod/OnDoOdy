@@ -23,7 +23,7 @@ import org.bukkit.entity.Player;
 
 public class MessageSender {
 	private static String codes = "&([0-9a-fA-F])";
-	private static String colour = "ง$1";
+	private static String colour = "ยง$1";
 	
 	public MessageSender() {
 	}
