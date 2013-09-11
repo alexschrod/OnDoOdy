@@ -28,7 +28,7 @@ import com.angelofdev.DoOdy.config.Configuration;
 public class Debug {
 	private static String pre = "[DEBUG]";
 	private static String codes = "&([0-9a-fA-F])";
-	private static String colour = "ง$1";
+	private static String colour = "ยง$1";
 	
 	private Debug() {
 	}
