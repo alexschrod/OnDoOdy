@@ -20,7 +20,6 @@
 package com.angelofdev.DoOdy;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 import org.bukkit.plugin.PluginDescriptionFile;
@@ -40,7 +39,7 @@ public class DoOdy extends JavaPlugin {
 	private EntityListener entityListener;
 	private DoOdyCommandExecutor DoOdyCommandExecutor;
 	private static String version;
-	private static final String PLUGIN_NAME = "DoOdy";	
+	private static final String PLUGIN_NAME = "OnDoOdy";	
 
 	public static DoOdy instance;
 	
@@ -52,7 +51,7 @@ public class DoOdy extends JavaPlugin {
 		} catch (Exception e) {
 			Log.severe(e.getMessage());
 		}
-		Log.info(PLUGIN_NAME + "disabled!");
+		Log.info(PLUGIN_NAME + " disabled!");
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -61,7 +60,7 @@ public class DoOdy extends JavaPlugin {
 		PluginDescriptionFile pdfFile = getDescription();
 		version = pdfFile.getVersion();
 		initialise();
-		initMetrics();
+		//initMetrics();
 
 		Log.info("Loading configs...");
 		
@@ -116,12 +115,12 @@ public class DoOdy extends JavaPlugin {
 		
 	}
 	
-	private void initMetrics() {
+	/*private void initMetrics() {
 		try {
 		    MetricsLite metrics = new MetricsLite(instance);
 		    metrics.start();
 		} catch (IOException e) {
 		    // Failed to submit the stats :-(
 		}
-	}	
+	}*/	
 }
