@@ -39,9 +39,7 @@ public class DoOdy extends JavaPlugin {
 	private EntityListener entityListener;
 	private DoOdyCommandExecutor DoOdyCommandExecutor;
 	private static String version;
-	private static final String PLUGIN_NAME = "OnDoOdy";	
-
-	public static DoOdy instance;
+	private static final String PLUGIN_NAME = "OnDoOdy";
 	
 	@Override
 	public void onDisable() {
@@ -111,8 +109,6 @@ public class DoOdy extends JavaPlugin {
 		playerListener = new PlayerListener();
 		blockListener = new BlockListener();
 		entityListener = new EntityListener();
-		instance = this;
-		
 	}
 	
 	/*private void initMetrics() {

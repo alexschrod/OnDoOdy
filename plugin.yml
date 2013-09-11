@@ -1,10 +1,11 @@
-name: DoOdy
-website: http://dev.bukkit.org/server-mods/doody-duty/
+name: OnDoOdy
+#website: http://dev.bukkit.org/server-mods/doody-duty/
 main: com.angelofdev.DoOdy.DoOdy
-version: 1.0.12
+version: 1.0.0
 description: >
              Separates a player's mod & admin duties so they too can enjoy the game.
 author: angelofdev
+authors: [alexschrod]
 commands:
    doody:
       description: Puts players on Duty mode.
