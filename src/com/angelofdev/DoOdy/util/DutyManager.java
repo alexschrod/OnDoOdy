@@ -94,7 +94,7 @@ public class DutyManager {
 
 			// Put player in creative mode.
 			player.setGameMode(GameMode.CREATIVE);
-			MessageSender.send(player, "&6[DoOdy] &aYou're now on duty.");
+			MessageSender.send(player, "&6[OnDoOdy] &aYou're now on duty.");
 
 			// Give duty tools
 			dutyItems(player);
@@ -103,7 +103,7 @@ public class DutyManager {
 		} catch (Exception e) {
 			plugin.getLog().severe("Failed Storing data on /doody on");
 			plugin.getLogger().throwing("DutyManager", "enableDutyFor", e);
-			MessageSender.send(player, "&6[DoOdy] &cFailed storing your data. Could not place you on duty.");
+			MessageSender.send(player, "&6[OnDoOdy] &cFailed storing your data. Could not place you on duty.");
 			return false;
 		}
 	}
@@ -136,15 +136,15 @@ public class DutyManager {
 			loadDutyCache();
 			dutyCache.remove(playerName);
 
-			MessageSender.send(player, "&6[DoOdy] &aYou're no longer on duty.");
+			MessageSender.send(player, "&6[OnDoOdy] &aYou're no longer on duty.");
 			plugin.getDebug().check("<removeDoody> " + playerName + "'s data restored & saved data deleted.");
 			return true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			plugin.getLog().warning("Failed restoring the inventory of " + playerName + ".");
 			plugin.getLog().warning("Failed restoring the location of " + playerName + ".");
-			MessageSender.send(player, "&6[DoOdy] &cFailed restoring you to pre-duty state. Plugin encountered error.");
-			MessageSender.send(player, "&6[DoOdy] &cPlease try again.");
+			MessageSender.send(player, "&6[OnDoOdy] &cFailed restoring you to pre-duty state. Plugin encountered error.");
+			MessageSender.send(player, "&6[OnDoOdy] &cPlease try again.");
 			return false;
 		}
 	}
@@ -190,7 +190,7 @@ public class DutyManager {
 			locationFile.delete();
 		} catch (IOException e) {
 			plugin.getLog().warning("Could not restore " + playerName + " to their last duty location.");
-			MessageSender.send(player, "&6[DoOdy] &cFailed returning you to last duty location.");
+			MessageSender.send(player, "&6[OnDoOdy] &cFailed returning you to last duty location.");
 		}
 	}
 

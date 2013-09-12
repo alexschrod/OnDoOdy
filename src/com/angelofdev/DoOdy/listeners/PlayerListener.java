@@ -77,7 +77,7 @@ public class PlayerListener implements Listener {
 
 			if (foundCommand) {
 				event.setCancelled(true);
-				MessageSender.send(player, "&6[DoOdy] &cYou're not allowed to use this command on duty!");
+				MessageSender.send(player, "&6[OnDoOdy] &cYou're not allowed to use this command on duty!");
 				plugin.getDebug().check("<onPlayerCommandPreprocess> " + playerName + " tried executing command in disallowed commands.");
 				return;
 			}
@@ -92,7 +92,7 @@ public class PlayerListener implements Listener {
 			final Debug debug = plugin.getDebug();
 			final boolean isPlayerOnDuty = plugin.getDutyManager().isPlayerOnDuty(player);
 			if (isPlayerOnDuty) {
-				MessageSender.send(player, "&6[DoOdy] &cNOTE: As you logged off while on duty, you are still on duty!");
+				MessageSender.send(player, "&6[OnDoOdy] &cNOTE: As you logged off while on duty, you are still on duty!");
 			}
 			if (isPlayerOnDuty || player.hasPermission("doody.failsafe.bypass")) {
 				debug.checkBroadcast("&e" + playerName + " &a<was on duty&e|or|&ahas doody.failsafe.bypass>");
@@ -117,7 +117,7 @@ public class PlayerListener implements Listener {
 
 		if (!hasWorldAccess) {
 			plugin.getDutyManager().disableDutyFor(player);
-			MessageSender.send(player, "&6[DoOdy] &cCannot go to world &e" + worldName + " &cwhile on duty!");
+			MessageSender.send(player, "&6[OnDoOdy] &cCannot go to world &e" + worldName + " &cwhile on duty!");
 		} else {
 			String playerName = player.getName();
 			plugin.getDebug().check("<onPlayerWorldChange> " + playerName + " Player has the permission 'doody.worlds." + worldName + "'");
@@ -168,7 +168,7 @@ public class PlayerListener implements Listener {
 			// event.getItemDrop().remove().
 			event.setCancelled(true);
 
-			MessageSender.send(player, "&6[DoOdy] &cYou may not drop &e" + itemName + "&c while on duty.");
+			MessageSender.send(player, "&6[OnDoOdy] &cYou may not drop &e" + itemName + "&c while on duty.");
 			plugin.getDebug().check("<onPlayerDropItem> " + playerName + " got denied item drop. <Item(" + itemName + ")>");
 		}
 	}
@@ -179,7 +179,7 @@ public class PlayerListener implements Listener {
 		if (whoClicked instanceof Player) {
 			final Player player = (Player) whoClicked;
 			if (plugin.getDutyManager().isPlayerOnDuty(player) && !plugin.getConfigurationManager().isCreativeInventoryAllowed()) {
-				MessageSender.send(player, "&6[DoOdy] &cYou may not do anything with your inventory while on duty.");
+				MessageSender.send(player, "&6[OnDoOdy] &cYou may not do anything with your inventory while on duty.");
 				event.setCancelled(true);
 			}
 		}

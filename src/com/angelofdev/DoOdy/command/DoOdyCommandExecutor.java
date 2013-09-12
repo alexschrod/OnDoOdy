@@ -152,38 +152,38 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		if ((sender instanceof Player)) {
 			Player player = (Player) sender;
 			if (!player.hasPermission("doody.debug")) {
-				MessageSender.send(player, "&6[DoOdy] &cNeed permission node doody.debug");
+				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.debug");
 				return;
 			}
 		}
 
 		if (plugin.getConfigurationManager().isDebugModeEnabled()) {
-			MessageSender.send(sender, "&6[DoOdy] &cDebug mode was already on!");
+			MessageSender.send(sender, "&6[OnDoOdy] &cDebug mode was already on!");
 			return;
 		}
 
 		plugin.getDebug().enable();
-		MessageSender.send(sender, "&6[DoOdy] &aDebug mode enabled!.");
-		MessageSender.send(sender, "&6[DoOdy] &aDebug messages are output to server console/log.");
+		MessageSender.send(sender, "&6[OnDoOdy] &aDebug mode enabled!.");
+		MessageSender.send(sender, "&6[OnDoOdy] &aDebug messages are output to server console/log.");
 	}
 
 	private void onDebugOff(CommandSender sender) {
 		if ((sender instanceof Player)) {
 			Player player = (Player) sender;
 			if (!player.hasPermission("doody.debug")) {
-				MessageSender.send(player, "&6[DoOdy] &cNeed permission node doody.debug");
+				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.debug");
 				return;
 			}
 		}
 
 		if (!plugin.getConfigurationManager().isDebugModeEnabled()) {
-			MessageSender.send(sender, "&6[DoOdy] &cDebug mode was not on!");
+			MessageSender.send(sender, "&6[OnDoOdy] &cDebug mode was not on!");
 			return;
 		}
 
 		plugin.getDebug().disable();
-		MessageSender.send(sender, "&6[DoOdy] &aDebug mode disabled!.");
-		MessageSender.send(sender, "&6[DoOdy] &aI hope debugging shed some light on any issues you have with OnDoOdy.");
+		MessageSender.send(sender, "&6[OnDoOdy] &aDebug mode disabled!.");
+		MessageSender.send(sender, "&6[OnDoOdy] &aI hope debugging shed some light on any issues you have with OnDoOdy.");
 	}
 
 	private void onOnDuty(CommandSender sender) {
@@ -194,7 +194,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 				final DutyManager dutyManager = plugin.getDutyManager();
 				final boolean isPlayerOnDuty = dutyManager.isPlayerOnDuty(player);
 				if (isPlayerOnDuty) {
-					MessageSender.send(player, "&6[DoOdy] &cYou're already on duty!");
+					MessageSender.send(player, "&6[OnDoOdy] &cYou're already on duty!");
 					return;
 				}
 
@@ -207,19 +207,19 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 					plugin.getDebug().check(playerName + " used /doody on");
 					dutyManager.enableDutyFor(player);
 				} else {
-					MessageSender.send(player, "&6[DoOdy] &cCannot go on duty in world &e" + worldName + " &c!");
+					MessageSender.send(player, "&6[OnDoOdy] &cCannot go on duty in world &e" + worldName + " &c!");
 				}
 			} else {
-				MessageSender.send(player, "&6[DoOdy] &cNeed permission node doody.duty");
+				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.duty");
 			}
 		} else {
-			MessageSender.send(sender, "&6[DoOdy] &cOnly players can go on duty!");
+			MessageSender.send(sender, "&6[OnDoOdy] &cOnly players can go on duty!");
 		}
 	}
 
 	private void onOnDuty(CommandSender sender, Player targetPlayer) {
 		if (targetPlayer == null) {
-			MessageSender.send(sender, "&6[DoOdy] &cThere is no player online with that user name!");
+			MessageSender.send(sender, "&6[OnDoOdy] &cThere is no player online with that user name!");
 			return;
 		}
 
@@ -229,20 +229,20 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if (!player.hasPermission("doody.others")) {
-				MessageSender.send(player, "&6[DoOdy] &cNeed permission node doody.others");
+				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.others");
 				return;
 			}
 		}
 
 		if (isAlreadyOnDuty) {
-			MessageSender.send(sender, "&6[DoOdy] &e" + targetPlayerName + " &cis already on Duty!");
+			MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cis already on Duty!");
 			return;
 		}
 
 		if (plugin.getDutyManager().enableDutyFor(targetPlayer)) {
-			MessageSender.send(sender, "&6[DoOdy] &e" + targetPlayerName + " &cis now on duty!");
+			MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cis now on duty!");
 		} else {
-			MessageSender.send(sender, "&6[DoOdy] &cFailed storing the data of &e" + targetPlayerName + " &c. Could not place them on duty.");
+			MessageSender.send(sender, "&6[OnDoOdy] &cFailed storing the data of &e" + targetPlayerName + " &c. Could not place them on duty.");
 		}
 	}
 
@@ -256,14 +256,14 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 				dutyManager.disableDutyFor(player);
 				return;
 			} else {
-				MessageSender.send(player, "&6[DoOdy] &cYou're not on duty!");
+				MessageSender.send(player, "&6[OnDoOdy] &cYou're not on duty!");
 			}
 		}
 	}
 
 	private void onOffDuty(CommandSender sender, Player targetPlayer) {
 		if (targetPlayer == null) {
-			MessageSender.send(sender, "&6[DoOdy] &cThere is no player online with that user name!");
+			MessageSender.send(sender, "&6[OnDoOdy] &cThere is no player online with that user name!");
 			return;
 		}
 
@@ -273,20 +273,20 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if (!player.hasPermission("doody.others")) {
-				MessageSender.send(player, "&6[DoOdy] &cNeed permission node doody.others");
+				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.others");
 				return;
 			}
 		}
 
 		if (!isOnDuty) {
-			MessageSender.send(sender, "&6[DoOdy] &e" + targetPlayerName + " &cis not on duty!");
+			MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cis not on duty!");
 			return;
 		}
 
 		if (plugin.getDutyManager().disableDutyFor(targetPlayer)) {
-			MessageSender.send(sender, "&6[DoOdy] &e" + targetPlayerName + " &cis now off duty!");
+			MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cis now off duty!");
 		} else {
-			MessageSender.send(sender, "&6[DoOdy] &cFailed restoring &e" + targetPlayerName + " &c to pre-duty state. Plugin encountered error.");
+			MessageSender.send(sender, "&6[OnDoOdy] &cFailed restoring &e" + targetPlayerName + " &c to pre-duty state. Plugin encountered error.");
 		}
 	}
 
@@ -320,14 +320,14 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			if (dutyManager.isPlayerOnDuty(player)) {
 				if (dutyManager.hasDutyLocation(player)) {
 					dutyManager.sendToLocation(player);
-					MessageSender.send(player, "&6[DoOdy] &aBack to last known duty location.");
+					MessageSender.send(player, "&6[OnDoOdy] &aBack to last known duty location.");
 					debug.check(playerName + " &ateleported back to last known duty location");
 				} else {
-					MessageSender.send(player, "&6[DoOdy] &eYou have no last known duty location.");
+					MessageSender.send(player, "&6[OnDoOdy] &eYou have no last known duty location.");
 					debug.check("<on /dm back> Last known duty location unknown.");
 				}
 			} else {
-				MessageSender.send(player, "&6[DoOdy] &eYou are not on duty.");
+				MessageSender.send(player, "&6[OnDoOdy] &eYou are not on duty.");
 				debug.check("</dm back> " + playerName + " is not on duty.");
 			}
 		}
@@ -339,9 +339,9 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			player.getName();
 			if (player.hasPermission("doody.reload")) {
 				plugin.getConfigurationManager().reload();
-				MessageSender.send(player, "&6[DoOdy] &aConfig.yml re-loaded.");
+				MessageSender.send(player, "&6[OnDoOdy] &aConfig.yml re-loaded.");
 			} else {
-				MessageSender.send(player, "&6[DoOdy] &cNeed permission node doody.reload");
+				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.reload");
 			}
 		} else {
 			plugin.reloadConfig();
