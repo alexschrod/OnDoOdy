@@ -1,6 +1,7 @@
 /*
- *  DoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
+ *  OnDoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
  *  Copyright (C) 2013  M.Y.Azad
+ *  Copyright © 2013  Alexander Krivács Schrøder
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,36 +21,44 @@
 package com.angelofdev.DoOdy.util;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
-import com.angelofdev.DoOdy.Log;
-import com.angelofdev.DoOdy.config.Configuration;
-
+import com.angelofdev.DoOdy.DoOdy;
 
 public class Debug {
 	private static String pre = "[DEBUG]";
-	private static String codes = "&([0-9a-fA-F])";
-	private static String colour = "§$1";
-	
-	private Debug() {
+
+	private DoOdy plugin;
+
+	public Debug(DoOdy plugin) {
+		this.plugin = plugin;
 	}
-	
-	public static void check(String args) {
-		if (Configuration.config.getBoolean("Debug.enabled")) {
-			Log.info(pre + " " + args);
+
+	public void check(String args) {
+		if (plugin.getConfigurationManager().isDebugModeEnabled()) {
+			plugin.getLog().info(pre + " " + args);
 		}
 	}
-	
-	public static void normal(String args) {
-		Log.info(pre + " " + args);
+
+	public void normal(String args) {
+		plugin.getLog().info(pre + " " + args);
 	}
-	
-	public static void severe(String args) {
-		Log.severe(pre + " " + args);
+
+	public void severe(String args) {
+		plugin.getLog().severe(pre + " " + args);
 	}
-	
-	public static void checkBroadcast(String args) {
-		if (Configuration.config.getBoolean("Debug.enabled")) {
-			Bukkit.getConsoleSender().sendMessage(pre + " " + args.replaceAll(codes, colour));
+
+	public void checkBroadcast(String args) {
+		if (plugin.getConfigurationManager().isDebugModeEnabled()) {
+			Bukkit.getConsoleSender().sendMessage(pre + " " + ChatColor.translateAlternateColorCodes('&', args));
 		}
+	}
+
+	public void enable() {
+		plugin.getConfig().set("debug", true);
+	}
+
+	public void disable() {
+		plugin.getConfig().set("debug", false);
 	}
 }

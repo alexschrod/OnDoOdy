@@ -1,6 +1,7 @@
 /*
- *  DoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
+ *  OnDoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
  *  Copyright (C) 2013  M.Y.Azad
+ *  Copyright © 2013  Alexander Krivács Schrøder
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,103 +21,105 @@
 package com.angelofdev.DoOdy;
 
 import java.io.File;
-import java.util.ArrayList;
 
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.angelofdev.DoOdy.command.DoOdyCommandExecutor;
-import com.angelofdev.DoOdy.config.Configuration;
+import com.angelofdev.DoOdy.config.ConfigurationManager;
 import com.angelofdev.DoOdy.listeners.BlockListener;
 import com.angelofdev.DoOdy.listeners.EntityListener;
 import com.angelofdev.DoOdy.listeners.PlayerListener;
-import com.angelofdev.DoOdy.listeners.PlayerListener.SLAPI;
+import com.angelofdev.DoOdy.util.Debug;
+import com.angelofdev.DoOdy.util.DutyManager;
 
 public class DoOdy extends JavaPlugin {
-	private PlayerListener playerListener;
-	private BlockListener blockListener;
-	private EntityListener entityListener;
-	private DoOdyCommandExecutor DoOdyCommandExecutor;
-	private static String version;
 	private static final String PLUGIN_NAME = "OnDoOdy";
-	
+
+	private Log log;
+	private ConfigurationManager configurationManager;
+	private Debug debug;
+	private DutyManager dutyManager;
+
 	@Override
 	public void onDisable() {
-		try {
-			SLAPI.save(com.angelofdev.DoOdy.command.DoOdyCommandExecutor.dutyList, "plugins/DoOdy/data/dutyList.bin");
-			Log.info("Saved list of players on duty.");
-		} catch (Exception e) {
-			Log.severe(e.getMessage());
-		}
-		Log.info(PLUGIN_NAME + " disabled!");
+		log.info(PLUGIN_NAME + " disabled!");
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public void onEnable() {
-		PluginDescriptionFile pdfFile = getDescription();
-		version = pdfFile.getVersion();
-		initialise();
-		//initMetrics();
+		log = new Log(this);
+		log.info("Loading configs...");
 
-		Log.info("Loading configs...");
-		
-		//Load saved info.
-		try {
-			com.angelofdev.DoOdy.command.DoOdyCommandExecutor.dutyList = (ArrayList<String>)SLAPI.load("plugins/DoOdy/data/dutyList.bin");
-			Log.info("Loaded list of players on duty.");
-		} catch (Exception e) {
-			Log.severe(e.getMessage());
-		}
-		
-		Log.info("Cleaning up files!");
-		
-		File dutyList = new File ("plugins/DoOdy/data/dutyList.bin");
-		try {
-			dutyList.delete();
-		} catch (Exception e) {
-			Log.severe(e.getMessage());
-		}
-		
-		Log.info("Files tidied!");
-		
-		Configuration.start();
-		
-		Log.info("Loaded configs!");
-		
-		PluginManager pm = getServer().getPluginManager();		
-		pm.registerEvents(this.playerListener, this);
-		pm.registerEvents(this.blockListener, this);
-		pm.registerEvents(this.entityListener, this);
+		saveDefaultConfig();
+		configurationManager = new ConfigurationManager(this);
 
-		DoOdyCommandExecutor = new DoOdyCommandExecutor(this);
-		getCommand("doody").setExecutor(DoOdyCommandExecutor);
+		log.info("Loaded configs!");
+
+		dutyManager = new DutyManager(this);
+		debug = new Debug(this);
 		
-		Log.info(PLUGIN_NAME + " v" + version + " enabled");
-	}	
+		PluginManager pm = getServer().getPluginManager();
+		pm.registerEvents(new PlayerListener(this), this);
+		pm.registerEvents(new BlockListener(this), this);
+		pm.registerEvents(new EntityListener(this), this);
+
+		getCommand("doody").setExecutor(new DoOdyCommandExecutor(this));
+
+		log.info(PLUGIN_NAME + " v" + getDescription().getVersion() + " enabled");
+	}
+
+	public Log getLog() {
+		return log;
+	}
+
+	public ConfigurationManager getConfigurationManager() {
+		return configurationManager;
+	}
+
+	public Debug getDebug() {
+		return debug;
+	}
+
+	public DutyManager getDutyManager() {
+		return dutyManager;
+	}
+
+	public String getPluginDataFilePath(String fileName) {
+		File dataFolder = getPluginDataFolder();
+		File file = new File(dataFolder, fileName);
+		String filePath = file.getPath();
+		return filePath;
+	}
+
+	public File getPluginDataFolder() {
+		File pluginDataFolder = getPluginFolder();
+		File dataFolder = new File(pluginDataFolder, "data");
+		if (!dataFolder.exists())
+			dataFolder.mkdirs();
+		return dataFolder;
+	}
+
+	public String getPluginFilePath(String fileName) {
+		File pluginDataFolder = getPluginFolder();
+		File file = new File(pluginDataFolder, fileName);
+		String filePath = file.getPath();
+		return filePath;
+	}
+
+	public File getPluginFolder() {
+		File pluginDataFolder = getDataFolder();
+		if (!pluginDataFolder.exists())
+			pluginDataFolder.mkdirs();
+		return pluginDataFolder;
+	}
 
 	public static String getPluginName() {
 		return PLUGIN_NAME;
 	}
-	
+
 	@Override
 	public String toString() {
 		return getPluginName();
 	}
-	
-	private void initialise() {
-		playerListener = new PlayerListener();
-		blockListener = new BlockListener();
-		entityListener = new EntityListener();
-	}
-	
-	/*private void initMetrics() {
-		try {
-		    MetricsLite metrics = new MetricsLite(instance);
-		    metrics.start();
-		} catch (IOException e) {
-		    // Failed to submit the stats :-(
-		}
-	}*/	
 }

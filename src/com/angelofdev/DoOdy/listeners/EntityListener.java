@@ -1,6 +1,7 @@
 /*
- *  DoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
+ *  OnDoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
  *  Copyright (C) 2013  M.Y.Azad
+ *  Copyright © 2013  Alexander Krivács Schrøder
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
 
 package com.angelofdev.DoOdy.listeners;
 
-
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -28,66 +29,60 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 
-import com.angelofdev.DoOdy.config.Configuration;
-import com.angelofdev.DoOdy.util.Debug;
+import com.angelofdev.DoOdy.DoOdy;
 import com.angelofdev.DoOdy.util.MessageSender;
 
 public class EntityListener implements Listener {
-	private MessageSender m = new MessageSender();
+	private DoOdy plugin;
 
-	public EntityListener() {
+	public EntityListener(DoOdy plugin) {
+		this.plugin = plugin;
 	}
-	
-	@EventHandler(priority=EventPriority.HIGH, ignoreCancelled=true)
+
+	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
 	public void onAttack(EntityDamageByEntityEvent event) {
 		if (event.getDamager() instanceof Player) {
-			if (!(event.getEntity() instanceof Player)) {
-				Debug.checkBroadcast("<onAttack> &aDefender is not a Player, allowing.");
-				return;
-			} else {
-				Player attacker = (Player) event.getDamager();
-				String attackername = attacker.getName();
+			Player attacker = (Player) event.getDamager();
+			Entity receiver = event.getEntity();
 
-				if(Configuration.data.contains(attackername)) {
-					if ((Configuration.config.getBoolean("Duty Deny PVP.enabled")) && (!attacker.hasPermission("doody.pvp"))) {
-						event.setCancelled(true);
-					} else {
-						if (Configuration.config.getBoolean("Debug.enabled")) {
-							if (attacker.isOp()) {
-								Debug.normal("<onAttack> Warning! " + attackername + " is Op -Allowing pvp.");								
-							} else if (attacker.hasPermission("doody.pvp")) {
-								Debug.normal("<onAttack> Warning! " + attackername + " has doody.pvp -Allowing pvp.");
-							} else if (Configuration.config.getBoolean("Duty Deny PVP.enabled") == false) {
-								Debug.normal("<onAttack> Warning! 'Duty Deny PVP.enabled is set to False in config. Allowing " + attackername + " to pvp.");
-							} else {
-								//It should not have reached here
-								Debug.severe("<onAttack> Another plugin may be causing a conflict. DoOdy Debug cannot make sense.");
-							}
-						}
-					}
-				}
-			}
+			if (!plugin.getDutyManager().isPlayerOnDuty(attacker))
+				return;
+
+			boolean allowPvP = plugin.getConfigurationManager().isPvPAllowed() || attacker.hasPermission("doody.pvp");
+			boolean allowMob = plugin.getConfigurationManager().isMobDamageAllowed() || attacker.hasPermission("doody.mob");
+
+			boolean isPlayer = receiver instanceof Player;
+
+			if (!isPlayer && allowMob)
+				return;
+			else if (isPlayer && allowPvP)
+				return;
+			else if (!isPlayer)
+				MessageSender.send(attacker, "&6[DoOdy] &cYou may not attack mobs while on duty.");
+			else if (isPlayer)
+				MessageSender.send(attacker, "&6[DoOdy] &cYou may not attack players while on duty.");
+
+			event.setCancelled(true);
 		}
 	}
-	
-	@EventHandler(ignoreCancelled=true)
+
+	@EventHandler(ignoreCancelled = true)
 	public void onShootEvent(EntityShootBowEvent event) {
 		if (event.getEntity() instanceof Player) {
 			Player player = (Player) event.getEntity();
-			String playerName = player.getName();
-			if (Configuration.data.contains(playerName)) {
-				m.player(player, "&6[DoOdy] &cThere's no need to shoot while on duty.");
+			if (plugin.getDutyManager().isPlayerOnDuty(player)) {
+				MessageSender.send(player, "&6[DoOdy] &cYou may not shoot bows while on duty.");
 				event.setCancelled(true);
 			}
 		}
 	}
-	
-	@EventHandler(ignoreCancelled=true)
+
+	@EventHandler(ignoreCancelled = true)
 	public void onSplashEvent(PotionSplashEvent event) {
 		if (event.getEntity().getShooter() instanceof Player) {
 			Player shooter = (Player) event.getEntity().getShooter();
-			if (Configuration.data.contains(shooter.getName())) {
-				m.player(shooter, "&6[DoOdy] &cThere's no need to throw potions on duty.");
+			if (plugin.getDutyManager().isPlayerOnDuty(shooter)) {
+				MessageSender.send(shooter, "&6[DoOdy] &cYou may not throw potions while on duty.");
 				event.setCancelled(true);
 			}
 		}

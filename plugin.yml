@@ -22,6 +22,7 @@ permissions:
          doody.dropitems: true
          doody.storage: true
          doody.pvp: true
+         doody.mob: true
          doody.others: true
          doody.failsafe.bypass: true
          doody.debug: true
@@ -45,6 +46,9 @@ permissions:
       default: op
    doody.pvp:
       description: Allows pvp while on duty
+      default: op
+   doody.mob:
+      description: Allows attacking mobs while on duty
       default: op
    doody.others:
       description: Allows player to put another player on/off duty

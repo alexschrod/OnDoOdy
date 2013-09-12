@@ -1,6 +1,5 @@
 /*
  *  OnDoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
- *  Copyright (C) 2013  M.Y.Azad
  *  Copyright © 2013  Alexander Krivács Schrøder
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -20,14 +19,39 @@
 
 package com.angelofdev.DoOdy.util;
 
-import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
+import java.io.Serializable;
 
-public class MessageSender {
-	private MessageSender() {
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+
+public class LocationSaveInfo implements Serializable {
+	private static final long serialVersionUID = 1L;
+
+	public String world;
+	public double x;
+	public double y;
+	public double z;
+	public float pitch;
+	public float yaw;
+
+	public LocationSaveInfo() {
 	}
 
-	public static void send(CommandSender sender, String message) {
-		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+	public LocationSaveInfo(Location location) {
+		world = location.getWorld().getName();
+
+		x = location.getX();
+		y = location.getY();
+		z = location.getZ();
+
+		pitch = location.getPitch();
+		yaw = location.getYaw();
+	}
+
+	public Location getLocation() {
+		World world = Bukkit.getServer().getWorld(this.world);
+		Location location = new Location(world, x, y, z, yaw, pitch);
+		return location;
 	}
 }

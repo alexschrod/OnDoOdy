@@ -1,0 +1,102 @@
+# Example configuration file.
+#
+# In order to enable the example configuration settings, simply remove the # symbol
+# in front of the setting.
+#
+# Make sure you read the whole configuration file. Many of the settings at the top
+# of the file can (and by default, are) overridden by settings farther down.
+# 
+# The default configuration is extremely restrictive by default, you may want to
+# give your staff members more freedom.
+
+# Debug mode. Prints a lot of information to the server console when set to true.
+# Can be used to figure out why your setting aren't working like you expect them
+# to. Should be used before reporting any bugs about the software.
+debug: false
+
+# Duty tool list. When players enter duty mode, their inventory will be saved, and
+# they will instead be given this list of items. Setting a slot to AIR or 0 or
+# not specifying anything for a slot means they get no item in that slot.
+# The items listed can be either material name
+# (see http://jd.bukkit.org/rb/apidocs/org/bukkit/Material.html for list) or
+# material item ID number.
+duty-tools:
+#  slot-1: 'WOOD_AXE'
+#  slot-2: 'WOOD_PICKAXE'
+#  slot-3: 'COMPASS'
+#  slot-4: 'STRING'
+#  slot-5: 'BEDROCK'
+#  slot-6: 'AIR'
+#  slot-7: 'AIR'
+#  slot-8: 'AIR'
+#  slot-9: 'AIR'
+
+# This setting switches between exclude mode and include mode. Which mode you should
+# choose depends on your style. When include mode is true, the lists below configure
+# what is allowed. In other words, anything not explicitly allowed below is disallowed.
+# On the other hand, when include mode is false, the opposite is true; anything not
+# explicitly disallowed is allowed.
+#
+# The original DoOdy plug-in only had exclude mode. I lean towards (and wanted) the
+# opposite behavior, so my default will be the opposite of DoOdy's only behavior. In
+# other words, set this to 'false' to have OnDoOdy behave like DoOdy did.
+include-mode: true
+
+# Which world(s) are allowed/disallowed to be on duty in. This can also be set
+# per-player by giving them the permission doody.worlds.<worldname>.
+worlds:
+#  - world
+#  - world_nether
+#  - world_the_end
+#  - other_world
+
+# Which item(s) can/cannot be dropped while on duty. Can be either material name
+# (see http://jd.bukkit.org/rb/apidocs/org/bukkit/Material.html for list) or
+# material item ID number.
+drops:
+#  - 'STONE'
+#  - 'DIRT'
+#  - '12' # a.k.a SAND
+
+blocks:
+  
+  # Which block(s) can/cannot be placed while on duty. Can be either material name
+  # (see http://jd.bukkit.org/rb/apidocs/org/bukkit/Material.html for list) or
+  # material item ID number.
+  place:
+  #  - 'TNT'
+  #  - 'BEDROCK'
+  
+  # Which block(s) can/cannot be broken while on duty. Can be either material name
+  # (see http://jd.bukkit.org/rb/apidocs/org/bukkit/Material.html for list) or
+  # material item ID number.
+  break:
+  #  - 'BEDROCK'
+
+# Allow PvP while on duty?
+allow-pvp: false
+
+# Allow damaging mobs while on duty?
+allow-mob-damage: false
+
+# Allow interacting with inventories while on duty? If this is set to false, any
+# sort of interaction with inventories (chests, furnaces, etc.) will be stopped.
+allow-inventory-interaction: false
+
+# Allow dropping items while on duty? If this is set to false, then the drops list
+# above is ignored, and any dropping of items is stopped.
+allow-item-drops: false
+
+# Allow placing blocks while on duty? If this is set to false, then the place list
+# above is ignored, and any placing of blocks is stopped.
+allow-block-placing: false
+
+# Allow breaking blocks while on duty? If this is set to false, then the break list
+# above is ignored, and any breaking of blocks is stopped.
+allow-block-breaking: false
+
+# If you want to disallow specific commands when your players are on duty, specify
+# them here. Leave out the first character (typically '/').
+disallowed-commands:
+#  - command1
+#  - command2

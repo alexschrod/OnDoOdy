@@ -1,6 +1,7 @@
 /*
- *  DoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
+ *  OnDoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
  *  Copyright (C) 2013  M.Y.Azad
+ *  Copyright © 2013  Alexander Krivács Schrøder
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -20,33 +21,23 @@
 package com.angelofdev.DoOdy;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Log {
-	private static String pre = "[" + DoOdy.getPluginName() + "] ";
-	private static final Logger LOG = Logger.getLogger("Minecraft");
-	
-	private Log(){
-		
-	}
-	
-	public static void info(String message) {
-		LOG.log(Level.INFO, pre + message);
-	}
-	
-	public static void warnings(String message) {
-		LOG.log(Level.WARNING, pre + message);
-	}
-	
-	public static void severe(String message) {
-		LOG.log(Level.SEVERE, pre + message);
+	private DoOdy plugin;
+
+	public Log(DoOdy plugin) {
+		this.plugin = plugin;
 	}
 
-	public static Logger getLogger() {
-		return LOG;
+	public void info(String message) {
+		plugin.getLogger().log(Level.INFO, message);
 	}
-	
-	public static String getPrefix() {
-		return pre;
+
+	public void warning(String message) {
+		plugin.getLogger().log(Level.WARNING, message);
+	}
+
+	public void severe(String message) {
+		plugin.getLogger().log(Level.SEVERE, message);
 	}
 }

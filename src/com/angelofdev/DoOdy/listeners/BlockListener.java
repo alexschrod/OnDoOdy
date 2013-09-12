@@ -1,6 +1,7 @@
 /*
- *  DoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
+ *  OnDoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
  *  Copyright (C) 2013  M.Y.Azad
+ *  Copyright © 2013  Alexander Krivács Schrøder
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,94 +20,58 @@
 
 package com.angelofdev.DoOdy.listeners;
 
-import java.util.List;
-
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import com.angelofdev.DoOdy.config.Configuration;
-import com.angelofdev.DoOdy.util.Debug;
+import com.angelofdev.DoOdy.DoOdy;
 import com.angelofdev.DoOdy.util.MessageSender;
 
 public class BlockListener implements Listener {
-	private MessageSender m = new MessageSender();
+	private DoOdy plugin;
 
-	public BlockListener() {
+	public BlockListener(DoOdy plugin) {
+		this.plugin = plugin;
+
 	}
 
-	List<Integer> configBlocksPlaceDenied = Configuration.config.getIntegerList("Denied Blocks.Place");
-	List<Integer> configBlocksBreakDenied = Configuration.config.getIntegerList("Denied Blocks.Break");
-	
-	@EventHandler(priority=EventPriority.NORMAL, ignoreCancelled=true)
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockPlace(BlockPlaceEvent event) {
 		Player player = event.getPlayer();
-		String playerName = player.getName();
-				
-		if (Configuration.data.contains(playerName)) {
-			Block block = event.getBlock();
-			int blockID = block.getTypeId();
-			String message = block.getType().name();
-			String blockname = message.toLowerCase();
-			if (configBlocksPlaceDenied.contains(blockID)) {
-				if (!(player.isOp() || player.hasPermission("doody.allowplace"))) {
-					event.setCancelled(true);
-					if (Configuration.config.getBoolean("Denied Blocks.messages")) {
-						m.player(player, "&cThere's no need to place &e" + blockname + " &cwhile on Duty.");
-					}
-				} else {
-					if (Configuration.config.getBoolean("Debug.enabled")) {
-						if (player.isOp()) {
-							Debug.normal("<onBlockPlace> Warning! " + playerName + " is OP -Allowing block place, " + blockname);
-						} else if (player.hasPermission("doody.allowplace")) {
-							Debug.normal("<onBlockPlace> Warning! " + playerName + " has doody.allowplace -Allowing block place, " + blockname);
-						} else if (!(configBlocksPlaceDenied.contains(blockID))) {
-							Debug.normal("<onBlockPlace> Warning! " + blockname + " is not in 'Denied Blocks.Place' list -Allowing block place");
-						} else {
-							//It should not have reached here
-							Debug.severe("<onBlockPlace> Another plugin may be causing a conflict. DoOdy Debug cannot make sense. Section onBlockPlace in DoOdyBlockListener");
-						}
-					}
-				}
-			}
-		}		
+		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+			return;
+
+		final Block block = event.getBlock();
+		final Material material = block.getType();
+		final boolean hasPlacePermission = player.hasPermission("doody.allowplace");
+		final boolean isMaterialInMaterialList = plugin.getConfigurationManager().getPlaceBlockList().contains(material);
+		final boolean hasPlaceAccess = hasPlacePermission || plugin.getConfigurationManager().isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList;
+
+		if (!hasPlaceAccess) {
+			event.setCancelled(true);
+			MessageSender.send(player, "&cYou may not place &e" + material.toString() + " &cwhile on duty.");
+		}
 	}
-	
-	@EventHandler(ignoreCancelled=true)
+
+	@EventHandler(ignoreCancelled = true)
 	public void onBlockBreak(BlockBreakEvent event) {
 		Player player = event.getPlayer();
-		String playerName = player.getName();		
-		
-		if (Configuration.data.contains(playerName)) {
-			Block block = event.getBlock();
-			String message = block.getType().name();
-			String blockname = message.toLowerCase();
-			int blockID = block.getTypeId();
-			if (configBlocksBreakDenied.contains(blockID)) {
-				if (!(player.isOp() || player.hasPermission("doody.allowbreak"))) {
-					event.setCancelled(true);
-					if (Configuration.config.getBoolean("Denied Blocks.messages")) {
-						m.player(player, "&cThere's no need to break &e" + blockname + " &cwhile on Duty.");
-					}
-				} else {
-					if (Configuration.config.getBoolean("Debug.enabled")) {
-						if (player.isOp()) {
-							Debug.normal("<onBlockPlace> Warning! " + playerName + " is OP -Allowing block break, " + blockname);
-						} else if (player.hasPermission("doody.allowbreak")) {
-							Debug.normal("<onBlockPlace> Warning! " + playerName + " has doody.allowbreak -Allowing block break, " + blockname);
-						} else if (!(configBlocksBreakDenied.contains(blockID))) {
-							Debug.normal("<onBlockPlace> Warning! " + blockname + " is not in 'Denied Blocks.Break' list -Allowing block break");
-						} else {
-							//It should not have reached here
-							Debug.severe("<onBlockPlace> Another plugin may be causing a conflict. DoOdy Debug cannot make sense. Section onBlockBreak in DoOdyBlockListener");
-						}
-					}
-				}
-			}
+		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+			return;
+
+		final Block block = event.getBlock();
+		final boolean hasBreakPermission = player.hasPermission("doody.allowbreak");
+		final Material material = block.getType();
+		final boolean isMaterialInMaterialList = plugin.getConfigurationManager().getBreakBlockList().contains(material);
+		final boolean hasBreakAccess = hasBreakPermission || plugin.getConfigurationManager().isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList;
+
+		if (!hasBreakAccess) {
+			event.setCancelled(true);
+			MessageSender.send(player, "&cYou may not break &e" + material.toString() + " &cwhile on Duty.");
 		}
-	}	
+	}
 }

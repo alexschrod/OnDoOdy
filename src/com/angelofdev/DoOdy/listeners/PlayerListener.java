@@ -1,6 +1,7 @@
 /*
- *  DoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
+ *  OnDoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
  *  Copyright (C) 2013  M.Y.Azad
+ *  Copyright © 2013  Alexander Krivács Schrøder
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -19,290 +20,154 @@
 
 package com.angelofdev.DoOdy.listeners;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Item;
+import org.bukkit.Material;
+import org.bukkit.command.Command;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.minecart.StorageMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.inventory.ItemStack;
 
-import com.angelofdev.DoOdy.command.DoOdyCommandExecutor;
-import com.angelofdev.DoOdy.config.Configuration;
+import com.angelofdev.DoOdy.DoOdy;
+import com.angelofdev.DoOdy.config.ConfigurationManager;
 import com.angelofdev.DoOdy.util.Debug;
-import com.angelofdev.DoOdy.util.HashMaps;
+import com.angelofdev.DoOdy.util.DutyManager;
 import com.angelofdev.DoOdy.util.MessageSender;
 
 public class PlayerListener implements Listener {
-	private MessageSender m = new MessageSender();
-	
-	public PlayerListener() {
-	}
-	List<String> deniedCommands = Configuration.config.getStringList("Denied.commands");
-	List<Integer> configDropList = Configuration.config.getIntegerList("Duty Deny Drops.whitelist");
-	List<Integer> configStorageDenied = Configuration.config.getIntegerList("Deny Storage.storage");
 
-	@EventHandler(priority=EventPriority.HIGHEST)
+	private DoOdy plugin;
+
+	public PlayerListener(DoOdy plugin) {
+		this.plugin = plugin;
+	}
+
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
 		Player player = event.getPlayer();
-		String playerName = player.getName();
-		String message = event.getMessage().toLowerCase();
-		if (DoOdyCommandExecutor.dutyList.contains(playerName)) {
-			if (deniedCommands.contains(message)) {
-				event.setCancelled(true);
-				m.player(player, "&6[DoOdy] &cYou're not allowed to use this command on duty!");
-				Debug.check("<onPlayerCommandPreprocess> " + playerName + " tried executing command in Denied Commands");
-			}
-		}
-	}
+		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+			return;
 
-	@EventHandler(ignoreCancelled=true)
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
-		if (player.getGameMode() == GameMode.CREATIVE) {
-			String playerName = player.getName();
-			if (player.isOp() || Configuration.data.contains(playerName) || player.hasPermission("doody.failsafe.bypass")){
-				Debug.checkBroadcast("&e" + playerName + "&a<isOP&e|or|&awas on Duty&e|or|&ahas doody.failsafe.bypass>");
+		String playerName = player.getName();
+		String label = event.getMessage().substring(1).split(" ", 1)[0];
+		
+		List<Command> commands = plugin.getConfigurationManager().getDisallowedCommandList();
+		boolean foundCommand = false;
+		for (Command command : commands) {
+			if (command.getLabel().equalsIgnoreCase(label)) {
+				foundCommand = true;
 			} else {
-				player.setGameMode(GameMode.SURVIVAL);
-				player.getInventory().clear();
-				if (DoOdyCommandExecutor.dutyList.contains(playerName)) {
-					DoOdyCommandExecutor.dutyList.removeAll(Arrays.asList(playerName));
-				}
-				Debug.checkBroadcast("&e" + playerName + "&c<was illegally on Creative>");
-			}
-		}
-	}
-	
-	@EventHandler
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		Player player = event.getPlayer();
-		String playerName = player.getName();
-		if (Configuration.data.contains(playerName)) {
-			try {
-				DoOdyCommandExecutor.removeDoody(player);
-			} catch (Exception e) {
-				DoOdyCommandExecutor.dutyList.removeAll(Arrays.asList(playerName));
-				player.setGameMode(GameMode.SURVIVAL);
-				player.getInventory().clear();
-				Debug.check("<PlayerListener|onPlayerQuit|Exception>");
-			}
-		}
-	}
-	
-	@EventHandler
-	public void onPlayerKick(PlayerKickEvent event) {
-		Player player = event.getPlayer();
-		String playerName = player.getName();
-		if (Configuration.data.contains(playerName)) {
-			try {
-				DoOdyCommandExecutor.removeDoody(player);
-			} catch (Exception e) {
-				DoOdyCommandExecutor.dutyList.removeAll(Arrays.asList(playerName));
-				player.setGameMode(GameMode.SURVIVAL);
-				player.getInventory().clear();
-				Debug.check("<PlayerListener|onPlayerKick|Exception>");
-			}
-		}
-	}
-	
-	@EventHandler(ignoreCancelled=true)
-	public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
-		Player player = event.getPlayer();
-		String playerName = player.getName();
-		if (Configuration.data.contains(playerName)) {
-			String worldName = player.getWorld().getName();
-			if (!player.hasPermission("doody.worlds." + worldName)) {
-				try {
-					DoOdyCommandExecutor.removeDoody(player);
-				} catch (Exception e) {
-					DoOdyCommandExecutor.dutyList.removeAll(Arrays.asList(playerName));
-					player.setGameMode(GameMode.SURVIVAL);
-					player.getInventory().clear();
-				}
-				Debug.check("<onPlayerWorldChange> " + playerName + " Does not have the permission 'doody.worlds." + worldName + "'");
-			} else {
-				if (player.isOp()) {
-					Debug.normal("<onPlayerWorldChange> " + playerName + " is OP.");
-				} else {
-					Debug.check("<onPlayerWorldChange> " + playerName + " Player has the permission 'doody.worlds." + worldName + "'");
-				}
-			}
-		}
-	}
-		
-	@EventHandler(ignoreCancelled=true)
-	public void onPlayerDeath(PlayerDeathEvent event) {
-		Player player = event.getEntity();
-		String playerName = player.getName();
-		
-		if(Configuration.data.contains(playerName)) {
-			event.getDrops().clear();
-			event.setDroppedExp(0);
-		}
-	}
-	
-	@EventHandler
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		Player player = event.getPlayer();
-		String playerName = player.getName();
-		
-		if(Configuration.data.contains(playerName) && HashMaps.armour.containsKey(playerName)) {
-			player.getInventory().setArmorContents(HashMaps.armour.get(playerName));
-			if (HashMaps.dutyLoc.containsKey(playerName)) {
-				player.teleport(HashMaps.dutyLoc.get(playerName));
-			}
-			DoOdyCommandExecutor.dutyItems(player);
-		}
-	}
-	
-	@EventHandler(priority=EventPriority.HIGH)
-	public void onPlayerDropItem(PlayerDropItemEvent event) {
-		Player player = event.getPlayer();
-		String playerName = player.getName();
-		
-		if (Configuration.data.contains(playerName) && Configuration.config.getBoolean("Duty Deny Drops.enabled")) {
-			if (!(player.isOp() || player.hasPermission("doody.dropitems"))) {
-				Item item = event.getItemDrop();
-				int itemID = item.getItemStack().getTypeId();
-				if (!(configDropList.contains(itemID))) {
-					String message = item.getItemStack().getType().name();
-					String itemname = message.toLowerCase();
-			
-					event.getItemDrop().remove();
-			
-					if (Configuration.config.getBoolean("Duty Deny Drops.messages")) {
-						player.sendMessage(ChatColor.GOLD + "[DoOdy] " + ChatColor.RED + "There's no need to drop " + ChatColor.YELLOW + itemname + ChatColor.RED + " while on Duty.");
-					}
-					Debug.check("<onPlayerDropItem> " + playerName + " got denied item drop. <Item not in whitelist(" + itemname + ")>");
-				}
-			} else {
-				if (Configuration.config.getBoolean("Debug.enabled")) {
-					Item item = event.getItemDrop();
-					int itemID = item.getItemStack().getTypeId();
-					String message = item.getItemStack().getType().name();
-					String itemname = message.toLowerCase();
-					if (configDropList.contains(itemID)) {
-						Debug.normal("<onPlayerDropItem> Warning! " + itemname + " is whitelisted in config.");
-						Debug.normal("<onPlayerDropItem> Warning! " + "Allowing " + playerName + " to drop " + itemname);
-					} else {
-						if (player.isOp()) {
-							Debug.normal("<onPlayerDropItem> Warning! " + playerName + " is OP -Allowing item drop, " + itemname);
-						} else if (player.hasPermission("doody.dropitems")) {
-							Debug.normal("<onPlayerDropItem> Warning! " + playerName + " has doody.dropitems -Allowing item drop, " + itemname);
-						} else {
-							//It should not have reached here
-							Debug.severe("<onPlayerDropItem> Another plugin may be causing a conflict. DoOdy Debug cannot make sense.");
-						}
+				for (String alias : command.getAliases()) {
+					if (alias.equalsIgnoreCase(label)) {
+						foundCommand = true;
 					}
 				}
+			}
+
+			if (foundCommand) {
+				event.setCancelled(true);
+				MessageSender.send(player, "&6[DoOdy] &cYou're not allowed to use this command on duty!");
+				plugin.getDebug().check("<onPlayerCommandPreprocess> " + playerName + " tried executing command in disallowed commands.");
 				return;
 			}
 		}
 	}
-	
-	@EventHandler(priority=EventPriority.HIGHEST, ignoreCancelled=true)
-	public void onPlayerInteract(PlayerInteractEvent event) {
-		if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-			Player player = event.getPlayer();
+
+	@EventHandler(ignoreCancelled = true)
+	public void onPlayerJoin(PlayerJoinEvent event) {
+		Player player = event.getPlayer();
+		if (player.getGameMode() == GameMode.CREATIVE) {
 			String playerName = player.getName();
-			
-			if (Configuration.data.contains(playerName) && Configuration.config.getBoolean("Deny Storage.enabled")) {
-				Block block = event.getClickedBlock();
-				int blockID = block.getType().getId();
-				
-				Debug.check("<onPlayerInteract>" + playerName + " Right Clicked on " + blockID);
-				if (configStorageDenied.contains(blockID)) {
-					if (!(player.isOp() || player.hasPermission("doody.storage"))) {
-						event.setCancelled(true);
-						if (Configuration.config.getBoolean("Deny Storage.messages")) {
-							player.sendMessage(ChatColor.RED + "There's no need to store things while on duty.");
-						}
-						Debug.check("<onPlayerInteract> " + playerName + " got denied storage interact. <Block :" + blockID + " is in Deny Storage list>");
-					} else {
-						if (Configuration.config.getBoolean("Debug.enabled")) {
-							if (player.isOp()) {
-								Debug.normal("<onPlayerInteract> Warning! " + playerName + " is OP -Allowing storage interact");
-							} else if (player.hasPermission("doody.storage")) {
-								Debug.normal("<onPlayerInteract> Warning! " + playerName + " has doody.storage -Allowing storage interact");
-							} else if (!(configStorageDenied.contains(blockID))) {
-								Debug.normal("<onPlayerInteract> Warning! " + block.getType().name().toLowerCase() + " is not in 'Deny Storage.storage' list -Allowing storage interact");
-							} else {
-								//It should not have reached here
-								Debug.severe("<onPlayerInteract> Another plugin may be causing a conflict. DoOdy Debug cannot make sense.");
-							}
-						}
-					}
-				}
+			final Debug debug = plugin.getDebug();
+			final boolean isPlayerOnDuty = plugin.getDutyManager().isPlayerOnDuty(player);
+			if (isPlayerOnDuty) {
+				MessageSender.send(player, "&6[DoOdy] &cNOTE: As you logged off while on duty, you are still on duty!");
+			}
+			if (isPlayerOnDuty || player.hasPermission("doody.failsafe.bypass")) {
+				debug.checkBroadcast("&e" + playerName + " &a<was on duty&e|or|&ahas doody.failsafe.bypass>");
+			} else {
+				player.setGameMode(GameMode.SURVIVAL);
+				player.getInventory().clear();
+				debug.checkBroadcast("&e" + playerName + " &c<was illegally in creative mode>");
 			}
 		}
 	}
-	
+
+	@EventHandler(ignoreCancelled = true)
+	public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
+		Player player = event.getPlayer();
+		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+			return;
+
+		String worldName = player.getWorld().getName();
+		final boolean hasWorldPermission = player.hasPermission("doody.worlds." + worldName);
+		final boolean isWorldInWorldList = plugin.getConfigurationManager().getWorldList().contains(worldName);
+		final boolean hasWorldAccess = hasWorldPermission || plugin.getConfigurationManager().isIncludeMode() ? isWorldInWorldList : !isWorldInWorldList;
+
+		if (!hasWorldAccess) {
+			plugin.getDutyManager().disableDutyFor(player);
+			MessageSender.send(player, "&6[DoOdy] &cCannot go to world &e" + worldName + " &cwhile on duty!");
+		} else {
+			String playerName = player.getName();
+			plugin.getDebug().check("<onPlayerWorldChange> " + playerName + " Player has the permission 'doody.worlds." + worldName + "'");
+		}
+
+	}
+
+	@EventHandler(ignoreCancelled = true)
+	public void onPlayerDeath(PlayerDeathEvent event) {
+		Player player = event.getEntity();
+		final DutyManager dutyManager = plugin.getDutyManager();
+		if (dutyManager.isPlayerOnDuty(player)) {
+			dutyManager.saveLocation(player);
+			event.getDrops().clear();
+			event.setDroppedExp(0);
+		}
+	}
+
 	@EventHandler
-	public void onEntityInteract(PlayerInteractEntityEvent event) {
-		if (event.getRightClicked() instanceof StorageMinecart) {
-			Player player = event.getPlayer();
-			String playerName = player.getName();
-			
-			if (Configuration.data.contains(playerName) && (Configuration.config.getBoolean("Deny Storage.enabled"))) {
-				if (!(player.isOp() || player.hasPermission("doody.storage"))) {
-					event.setCancelled(true);
-					if (Configuration.config.getBoolean("Deny Storage.messages")) {
-						player.sendMessage(ChatColor.RED + "There's no need to store things while on Duty.");
-					}
-					Debug.check("<onEntityInteract> Success! " + playerName + " got denied storage interact.");
-				} else {
-					if (Configuration.config.getBoolean("Debug.enabled")) {
-						if (player.isOp()) {
-							Debug.normal("<onEntityInteract> Warning! " + playerName + " is OP -Allowing storage interact");
-						} else if (player.hasPermission("doody.storage")) {
-							Debug.normal("<onEntityInteract> Warning! " + playerName + " has doody.storage -Allowing storage interact");
-						} else {
-							//It should not have reached here
-							Debug.severe("<onEntityInteract> Another plugin may be causing a conflict. DoOdy Debug cannot make sense.");
-						}
-					}
-				}
-			}
+	public void onPlayerRespawn(PlayerRespawnEvent event) {
+		Player player = event.getPlayer();
+		final DutyManager dutyManager = plugin.getDutyManager();
+		if (dutyManager.isPlayerOnDuty(player)) {
+			dutyManager.sendToLocation(player);
 		}
 	}
-		
-	/** SLAPI = Saving/Loading API
-	 * API for Saving and Loading Objects.
-	 * @author Tomsik68
-	 */
-	public static class SLAPI {
-		public static void save(Object obj,String path) throws Exception {
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(path));
-			oos.writeObject(obj);
-			oos.flush();
-			oos.close();
-		}
-		public static Object load(String path) throws Exception	{
-			ObjectInputStream ois = new ObjectInputStream(new FileInputStream(path));
-			Object result = ois.readObject();
-			ois.close();
-			return result;
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onPlayerDropItem(PlayerDropItemEvent event) {
+		final Player player = event.getPlayer();
+		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+			return;
+
+		final String playerName = player.getName();
+		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
+
+		final ItemStack itemStack = event.getItemDrop().getItemStack();
+		final Material dropMaterial = itemStack.getType();
+		final boolean hasDropPermission = player.hasPermission("doody.dropitems");
+		final boolean isMaterialInMaterialList = configurationManager.getItemDropList().contains(dropMaterial);
+		final boolean hasDropAccess = hasDropPermission || configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList;
+
+		final String itemName = dropMaterial.toString();
+		if (hasDropAccess) {
+			plugin.getDebug().normal("<onPlayerDropItem> Warning! " + "Allowing " + playerName + " to drop " + itemName);
+		} else {
+			// TODO: Verify that this works, alternatively, use
+			// event.getItemDrop().remove().
+			event.setCancelled(true);
+
+			MessageSender.send(player, "&6[DoOdy] &cYou may not drop &e" + itemName + "&c while on duty.");
+			plugin.getDebug().check("<onPlayerDropItem> " + playerName + " got denied item drop. <Item(" + itemName + ")>");
 		}
 	}
 }
