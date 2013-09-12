@@ -4,8 +4,8 @@ main: com.angelofdev.DoOdy.DoOdy
 version: 1.0.0
 description: >
              Separates a player's mod & admin duties so they too can enjoy the game.
-author: angelofdev
-authors: [alexschrod]
+author: alexschrod
+authors: [angelofdev]
 commands:
    doody:
       description: Puts players on Duty mode.
