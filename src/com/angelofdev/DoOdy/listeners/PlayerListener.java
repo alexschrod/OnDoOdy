@@ -25,11 +25,13 @@ import java.util.List;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -168,6 +170,18 @@ public class PlayerListener implements Listener {
 
 			MessageSender.send(player, "&6[DoOdy] &cYou may not drop &e" + itemName + "&c while on duty.");
 			plugin.getDebug().check("<onPlayerDropItem> " + playerName + " got denied item drop. <Item(" + itemName + ")>");
+		}
+	}
+	
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onCreativeInventory(InventoryCreativeEvent event) {
+		final HumanEntity whoClicked = event.getWhoClicked();
+		if (whoClicked instanceof Player) {
+			final Player player = (Player) whoClicked;
+			if (plugin.getDutyManager().isPlayerOnDuty(player) && !plugin.getConfigurationManager().isCreativeInventoryAllowed()) {
+				MessageSender.send(player, "&6[DoOdy] &cYou may not do anything with your inventory while on duty.");
+				event.setCancelled(true);
+			}
 		}
 	}
 }

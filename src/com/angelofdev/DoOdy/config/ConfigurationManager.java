@@ -53,6 +53,9 @@ public class ConfigurationManager {
 	private static final String DISALLOWED_COMMAND_KEY = "disallowed-commands";
 	
 	private static final String DROP_KEY = "drops";
+	
+	private static final String CREATIVE_INVENTORY_ALLOWED_KEY = "allow-creative-inventory";
+	private static final boolean CREATIVE_INVENTORY_ALLOWED_DEFAULT = false;
 
 	private DoOdy plugin;
 
@@ -145,6 +148,10 @@ public class ConfigurationManager {
 
 	public boolean isMobDamageAllowed() {
 		return getConfig().getBoolean(ALLOW_MOB_DAMAGE_KEY, ALLOW_MOB_DAMAGE_DEFAULT);
+	}
+	
+	public boolean isCreativeInventoryAllowed() {
+		return getConfig().getBoolean(CREATIVE_INVENTORY_ALLOWED_KEY, CREATIVE_INVENTORY_ALLOWED_DEFAULT);
 	}
 
 	private List<Command> disallowedCommandListCache;

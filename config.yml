@@ -79,6 +79,13 @@ allow-pvp: false
 # Allow damaging mobs while on duty?
 allow-mob-damage: false
 
+# Allow interacting with the creative inventory while on duty? If this is set to
+# false, no interaction with the player's inventory is allowed while on duty.
+# This prevents the player from spawning in any creative items, but has the
+# unfortunate side-effect of also preventing them from re-arranging their
+# hotbar items.
+allow-creative-inventory: false
+
 # Allow interacting with inventories while on duty? If this is set to false, any
 # sort of interaction with inventories (chests, furnaces, etc.) will be stopped.
 allow-inventory-interaction: false
