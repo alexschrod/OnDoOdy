@@ -14,6 +14,9 @@
 # to. Should be used before reporting any bugs about the software.
 debug: false
 
+# Hide players on duty.
+hide-on-duty: false
+
 # Duty tool list. When players enter duty mode, their inventory will be saved, and
 # they will instead be given this list of items. Setting a slot to AIR or 0 or
 # not specifying anything for a slot means they get no item in that slot.

@@ -133,7 +133,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		if (player.hasPermission("doody.debug")) {
 			MessageSender.send(player, "&6/ondoody &bdebug on/off &fEnable/Disable debug mode.");
 		}
-		Set<String> dutyList = plugin.getDutyManager().getDutyList();
+		Set<String> dutyList = plugin.getDutyManager().getDutySet();
 		if (!dutyList.isEmpty()) {
 			MessageSender.send(player, "&a____________[ &6Players on duty &a]____________");
 			MessageSender.send(player, "&6" + dutyList);
@@ -293,7 +293,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 	}
 
 	private void onList(CommandSender sender) {
-		Set<String> dutyList = plugin.getDutyManager().getDutyList();
+		Set<String> dutyList = plugin.getDutyManager().getDutySet();
 		if ((sender instanceof Player)) {
 			Player player = (Player) sender;
 			MessageSender.send(player, "&a____________[ &6Players on duty &a]____________");
@@ -321,7 +321,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			final DutyManager dutyManager = plugin.getDutyManager();
 			if (dutyManager.isPlayerOnDuty(player)) {
 				if (dutyManager.hasDutyLocation(player)) {
-					dutyManager.sendToLocation(player);
+					dutyManager.sendToDutyLocation(player);
 					MessageSender.send(player, "&6[OnDoOdy] &aBack to last known duty location.");
 					debug.check(playerName + " &ateleported back to last known duty location");
 				} else {

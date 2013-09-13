@@ -73,6 +73,8 @@ public class ConfigurationManager {
 
 	private static final String ALLOW_BLOCK_BREAKING_KEY = "allow-block-breaking";
 	private static final boolean ALLOW_BLOCK_BREAKING_DEFAULT = false;
+	private static final String HIDE_ON_DUTY_KEY = "hide-on-duty";
+	private static final boolean HIDE_ON_DUTY_DEFAULT = false;
 
 	private DoOdy plugin;
 
@@ -143,7 +145,17 @@ public class ConfigurationManager {
 		breakBlockListCache = null;
 		itemDropListCache = null;
 		itemPickupListCache = null;
+		
+		boolean previousHideSetting = hidePlayerOnDuty();
 		plugin.reloadConfig();
+		
+		if (hidePlayerOnDuty() != previousHideSetting)
+		{
+			if (previousHideSetting)
+				plugin.getDutyManager().showAllDutyPlayers();
+			else
+				plugin.getDutyManager().hideAllDutyPlayers();
+		}
 	}
 
 	private List<Material> breakBlockListCache;
@@ -238,6 +250,10 @@ public class ConfigurationManager {
 	
 	public boolean isBlockBreakingAllowed() {
 		return getConfig().getBoolean(ALLOW_BLOCK_BREAKING_KEY, ALLOW_BLOCK_BREAKING_DEFAULT);
+	}
+	
+	public boolean hidePlayerOnDuty() {
+		return getConfig().getBoolean(HIDE_ON_DUTY_KEY, HIDE_ON_DUTY_DEFAULT);
 	}
 
 }

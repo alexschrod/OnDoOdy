@@ -29,6 +29,7 @@ permissions:
          doody.others: true
          doody.failsafe.bypass: true
          doody.debug: true
+         doody.seehidden: true
    doody.duty:
       description: Allows access to duty on/off commands
       default: op
@@ -70,4 +71,7 @@ permissions:
       default: op
    doody.debug:
       description: Enables access to debug commands
+      default: op
+   doody.seehidden:
+      description: See players who are hidden on duty
       default: op

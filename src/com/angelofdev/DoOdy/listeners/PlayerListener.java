@@ -90,12 +90,15 @@ public class PlayerListener implements Listener {
 	@EventHandler(ignoreCancelled = true)
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		Player player = event.getPlayer();
+		final DutyManager dutyManager = plugin.getDutyManager();
 		if (player.getGameMode() == GameMode.CREATIVE) {
 			String playerName = player.getName();
 			final Debug debug = plugin.getDebug();
-			final boolean isPlayerOnDuty = plugin.getDutyManager().isPlayerOnDuty(player);
+			final boolean isPlayerOnDuty = dutyManager.isPlayerOnDuty(player);
 			if (isPlayerOnDuty) {
 				MessageSender.send(player, "&6[OnDoOdy] &cNOTE: As you logged off while on duty, you are still on duty!");
+
+				dutyManager.hidePlayerOnDuty(player);
 			}
 			if (isPlayerOnDuty || player.hasPermission("doody.failsafe.bypass")) {
 				debug.checkBroadcast("&e" + playerName + " &a<was on duty&e|or|&ahas doody.failsafe.bypass>");
@@ -103,6 +106,14 @@ public class PlayerListener implements Listener {
 				player.setGameMode(GameMode.SURVIVAL);
 				player.getInventory().clear();
 				debug.checkBroadcast("&e" + playerName + " &c<was illegally in creative mode>");
+			}
+		}
+
+		// When a new player joins, hide all the on-duty players from them,
+		// unless they have the doody.seehidden permission
+		if (plugin.getConfigurationManager().hidePlayerOnDuty() && !player.hasPermission("doody.seehidden")) {
+			for (Player dutyPlayer : dutyManager.getDutyPlayerSet()) {
+				player.hidePlayer(dutyPlayer);
 			}
 		}
 	}
@@ -144,7 +155,7 @@ public class PlayerListener implements Listener {
 		Player player = event.getPlayer();
 		final DutyManager dutyManager = plugin.getDutyManager();
 		if (dutyManager.isPlayerOnDuty(player)) {
-			dutyManager.sendToLocation(player);
+			dutyManager.sendToDutyLocation(player);
 		}
 	}
 

@@ -121,6 +121,9 @@ public class DutyManager {
 			// Give duty tools
 			dutyItems(player);
 
+			// Hide player
+			hidePlayerOnDuty(player);
+
 			return true;
 		} catch (Exception e) {
 			plugin.getLog().severe("Failed Storing data on /ondoody on");
@@ -145,6 +148,9 @@ public class DutyManager {
 
 			// Place player back where they were
 			player.teleport(playerSaveInfo.location.getLocation());
+			
+			// Make player visible
+			showPlayer(player);
 
 			// Restore player inventory
 			playerSaveInfo.inventory.restore(player.getInventory());
@@ -195,21 +201,31 @@ public class DutyManager {
 				}
 			});
 
-			HashSet<String> dutyList = new HashSet<String>();
+			HashSet<String> dutySet = new HashSet<String>();
 			for (String onDoody : onDoodies) {
 				onDoody = onDoody.substring(0, onDoody.indexOf(ONDOODY_EXTENSION));
-				dutyList.add(onDoody);
+				dutySet.add(onDoody);
 			}
-			dutyCache = dutyList;
+			dutyCache = dutySet;
 		}
 	}
 
-	public Set<String> getDutyList() {
+	public Set<String> getDutySet() {
 		loadDutyCache();
 		return dutyCache;
 	}
+	
+	public Set<Player> getDutyPlayerSet() {
+		HashSet<Player> dutyPlayerSet = new HashSet<>();
+		for (String dutyPlayerName : getDutySet()) {
+			Player dutyPlayer = plugin.getServer().getPlayerExact(dutyPlayerName);
+			if (dutyPlayer != null)
+				dutyPlayerSet.add(dutyPlayer);
+		}
+		return dutyPlayerSet;
+	}
 
-	public void sendToLocation(Player player) {
+	public void sendToDutyLocation(Player player) {
 		String playerName = player.getName();
 		try {
 			final File locationFile = getLocationFileFor(player);
@@ -228,6 +244,35 @@ public class DutyManager {
 			SLAPI.save(locationSaveInfo, getLocationFileFor(player).getPath());
 		} catch (IOException e) {
 			plugin.getLog().warning("Could not save the location of " + player.getName());
+		}
+	}
+
+	public void hidePlayerOnDuty(Player player) {
+		if (plugin.getConfigurationManager().hidePlayerOnDuty()) {
+			for (Player otherPlayer : plugin.getServer().getOnlinePlayers()) {
+				if (otherPlayer.hasPermission("doody.seehidden"))
+					continue;
+
+				otherPlayer.hidePlayer(player);
+			}
+		}
+	}
+
+	public void showPlayer(Player player) {
+		for (Player otherPlayer : plugin.getServer().getOnlinePlayers()) {
+			otherPlayer.showPlayer(player);
+		}
+	}
+
+	public void showAllDutyPlayers() {
+		for (Player player : getDutyPlayerSet()) {
+			showPlayer(player);
+		}
+	}
+
+	public void hideAllDutyPlayers() {
+		for (Player player : getDutyPlayerSet()) {
+			hidePlayerOnDuty(player);
 		}
 	}
 }
