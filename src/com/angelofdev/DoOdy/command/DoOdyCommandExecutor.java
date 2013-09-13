@@ -117,7 +117,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 
 	private void printCommandsTo(Player player) {
 		MessageSender.send(player, "&a____________[ &6OnDoOdy Commands &a]____________");
-		MessageSender.send(player, "&a____________[ &6Short: /dm, /duty &a]____________");
+		MessageSender.send(player, "&a________[ &6Short: /dm, /duty, /dooty &a]_______");
 
 		if (player.hasPermission("doody.duty")) {
 			MessageSender.send(player, "&6/ondoody &bon &fTurns on duty mode.");

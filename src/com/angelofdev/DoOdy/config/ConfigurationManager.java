@@ -141,6 +141,8 @@ public class ConfigurationManager {
 	public void reload() {
 		placeBlockListCache = null;
 		breakBlockListCache = null;
+		itemDropListCache = null;
+		itemPickupListCache = null;
 		plugin.reloadConfig();
 	}
 

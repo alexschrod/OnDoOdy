@@ -154,6 +154,9 @@ public class DutyManager {
 			player.setExp(playerSaveInfo.exp);
 
 			// Restore potion effects
+			for (PotionEffect effect : player.getActivePotionEffects()) {
+				player.removePotionEffect(effect.getType());
+			}
 			player.addPotionEffects(playerSaveInfo.potionEffects);
 
 			// We've completely restored our player. Delete their on-doody file.
