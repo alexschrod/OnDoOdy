@@ -31,7 +31,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -62,7 +64,7 @@ public class PlayerListener implements Listener {
 
 		String playerName = player.getName();
 		String label = event.getMessage().substring(1).split(" ", 1)[0];
-		
+
 		List<Command> commands = plugin.getConfigurationManager().getDisallowedCommandList();
 		boolean foundCommand = false;
 		for (Command command : commands) {
@@ -200,7 +202,7 @@ public class PlayerListener implements Listener {
 			// plugin.getDebug().check("<onPlayerPickupItem> " + playerName + " got denied item pickup. <Item(" + itemName + ")>");
 		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onCreativeInventory(InventoryCreativeEvent event) {
 		final HumanEntity whoClicked = event.getWhoClicked();
@@ -208,17 +210,45 @@ public class PlayerListener implements Listener {
 			final Player player = (Player) whoClicked;
 			if (!plugin.getDutyManager().isPlayerOnDuty(player))
 				return;
-			
+
 			final String playerName = player.getName();
-			
+
 			final boolean hasCreativeInventoryPermission = player.hasPermission("doody.allowcreativeinventory");
 			final boolean allowCreativeInventory = plugin.getConfigurationManager().isCreativeInventoryAllowed();
 			final boolean hasCreativeInventoryAccess = hasCreativeInventoryPermission || allowCreativeInventory;
-			
+
 			if (hasCreativeInventoryAccess) {
 				plugin.getDebug().normal("<onCreativeInventory> Warning! " + "Allowing " + playerName + " to access creative inventory");
 			} else {
 				MessageSender.send(player, "&6[OnDoOdy] &cYou may not do anything with your inventory while on duty.");
+				event.setCancelled(true);
+			}
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onInventoryClick(InventoryClickEvent event) {
+		final HumanEntity whoClicked = event.getWhoClicked();
+		if (whoClicked instanceof Player) {
+			final Player player = (Player) whoClicked;
+			if (!plugin.getDutyManager().isPlayerOnDuty(player))
+				return;
+
+			// Should be allowed to modify own inventory (will be overridden by
+			// not allowing access to creative inventory, however.)
+			if (event.getView().getType() == InventoryType.PLAYER)
+				return;
+
+			final String playerName = player.getName();
+
+			final boolean hasInventoryPermission = player.hasPermission("doody.inventory") || player.hasPermission("doody.storage");
+			final boolean allowInventoryInteraction = plugin.getConfigurationManager().isInventoryInteractionAllowed();
+			final boolean hasInventoryAccess = hasInventoryPermission || allowInventoryInteraction;
+
+			if (hasInventoryAccess) {
+				plugin.getDebug().normal("<onInventoryClick> Warning! " + "Allowing " + playerName + " to access inventory");
+			} else {
+				MessageSender.send(player, "&6[OnDoOdy] &cYou may not interact with inventories while on duty.");
 				event.setCancelled(true);
 			}
 		}

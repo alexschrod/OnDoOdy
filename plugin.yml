@@ -23,7 +23,7 @@ permissions:
          doody.allowbreak: true
          doody.dropitems: true
          doody.pickupitems: true
-         doody.storage: true
+         doody.inventory: true
          doody.pvp: true
          doody.mob: true
          doody.others: true
@@ -50,8 +50,11 @@ permissions:
    doody.pickupitems:
       description: Allows picking up items when on duty
       default: op
+   doody.inventory:
+      description: Allows interaction with storage when on duty
+      default: op
    doody.storage:
-      description: Allows interaction with storage blocks when on duty
+      description: DEPRECATED alias for doody.inventory
       default: op
    doody.pvp:
       description: Allows PvP while on duty
