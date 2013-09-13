@@ -1,5 +1,5 @@
 name: OnDoOdy
-#website: http://dev.bukkit.org/server-mods/doody-duty/
+website: http://dev.bukkit.org/bukkit-plugins/ondoody/
 main: com.angelofdev.DoOdy.DoOdy
 version: 1.0.0
 description: >
@@ -8,12 +8,13 @@ author: alexschrod
 authors: [angelofdev]
 commands:
    ondoody:
-      description: Puts players on Duty mode.
+      description: Puts players on duty mode.
       aliases: [doody, duty, dm]
-      permission-message: You don't have doody.duty
+      permission: doody.duty
+      permission-message: You don't have the doody.duty permission
 permissions:
    doody.*:
-      description: Gives access to all DoOdy commands.
+      description: Gives access to all OnDoOdy commands.
       children:
          doody.duty: true
          doody.reload: true
@@ -30,13 +31,13 @@ permissions:
       description: Allows access to duty on/off commands
       default: op
    doody.reload:
-      description: Allows ingame reloading of config
+      description: Allows in-game reloading of configuration.yml
       default: op
    doody.allowplace:
-      description: Allows placing of blocks that are blacklisted in config when on duty
+      description: Allows placing of blocks that are disallowed in configuration when on duty
       default: op
    doody.allowbreak:
-      description: Allows breaking of blocks that are blacklisted in config when on duty
+      description: Allows breaking of blocks that are disallowed in configuration when on duty
       default: op
    doody.dropitems:
       description: Allows dropping of items from inventory when on duty
@@ -45,7 +46,7 @@ permissions:
       description: Allows interaction with storage blocks when on duty
       default: op
    doody.pvp:
-      description: Allows pvp while on duty
+      description: Allows PvP while on duty
       default: op
    doody.mob:
       description: Allows attacking mobs while on duty
@@ -54,8 +55,8 @@ permissions:
       description: Allows player to put another player on/off duty
       default: op
    doody.failsafe.bypass:
-      description: Allows player to bypass doody's failsafe
+      description: Allows player to bypass doody's fail-safe
       default: op
    doody.debug:
-      description: Enables access to Debug Commands
+      description: Enables access to debug commands
       default: op
