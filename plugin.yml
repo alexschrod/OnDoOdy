@@ -31,7 +31,7 @@ permissions:
       description: Allows access to duty on/off commands
       default: op
    doody.reload:
-      description: Allows in-game reloading of configuration.yml
+      description: Allows in-game reloading of the configuration
       default: op
    doody.allowplace:
       description: Allows placing of blocks that are disallowed in configuration when on duty
@@ -41,6 +41,9 @@ permissions:
       default: op
    doody.dropitems:
       description: Allows dropping of items from inventory when on duty
+      default: op
+   doody.pickupitems:
+      description: Allows picking up items when on duty
       default: op
    doody.storage:
       description: Allows interaction with storage blocks when on duty

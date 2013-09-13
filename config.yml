@@ -58,6 +58,14 @@ drops:
 #  - 'DIRT'
 #  - '12' # a.k.a SAND
 
+# Which item(s) can/cannot be picked up while on duty. Can be either material name
+# (see http://jd.bukkit.org/rb/apidocs/org/bukkit/Material.html for list) or
+# material item ID number.
+pickups:
+#  - 'STONE'
+#  - 'DIRT'
+#  - '12' # a.k.a SAND
+
 blocks:
   
   # Which block(s) can/cannot be placed while on duty. Can be either material name
@@ -93,6 +101,10 @@ allow-inventory-interaction: false
 # Allow dropping items while on duty? If this is set to false, then the drops list
 # above is ignored, and any dropping of items is stopped.
 allow-item-drops: false
+
+# Allow picking up items while on duty? If this is set to false, then the pickups list
+# above is ignored, and any picking up of items is stopped.
+allow-item-pickups: false
 
 # Allow placing blocks while on duty? If this is set to false, then the place list
 # above is ignored, and any placing of blocks is stopped.

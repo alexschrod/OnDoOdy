@@ -49,13 +49,30 @@ public class ConfigurationManager {
 
 	private static final String ALLOW_MOB_DAMAGE_KEY = "allow-mob-damage";
 	private static final boolean ALLOW_MOB_DAMAGE_DEFAULT = false;
-	
+
 	private static final String DISALLOWED_COMMAND_KEY = "disallowed-commands";
-	
+
 	private static final String DROP_KEY = "drops";
-	
+
 	private static final String CREATIVE_INVENTORY_ALLOWED_KEY = "allow-creative-inventory";
 	private static final boolean CREATIVE_INVENTORY_ALLOWED_DEFAULT = false;
+
+	private static final String PICKUP_KEY = "pickups";
+
+	private static final String ALLOW_INVENTORY_INTERACTION_KEY = "allow-inventory-interaction";
+	private static final boolean ALLOW_INVENTORY_INTERACTION_DEFAULT = false;
+
+	private static final String ALLOW_ITEM_DROPS_KEY = "allow-item-drops";
+	private static final boolean ALLOW_ITEM_DROPS_DEFAULT = false;
+
+	private static final String ALLOW_ITEM_PICKUPS_KEY = "allow-item-pickups";
+	private static final boolean ALLOW_ITEM_PICKUPS_DEFAULT = false;
+
+	private static final String ALLOW_BLOCK_PLACING_KEY = "allow-block-placing";
+	private static final boolean ALLOW_BLOCK_PLACING_DEFAULT = false;
+
+	private static final String ALLOW_BLOCK_BREAKING_KEY = "allow-block-breaking";
+	private static final boolean ALLOW_BLOCK_BREAKING_DEFAULT = false;
 
 	private DoOdy plugin;
 
@@ -150,7 +167,7 @@ public class ConfigurationManager {
 	public boolean isMobDamageAllowed() {
 		return getConfig().getBoolean(ALLOW_MOB_DAMAGE_KEY, ALLOW_MOB_DAMAGE_DEFAULT);
 	}
-	
+
 	public boolean isCreativeInventoryAllowed() {
 		return getConfig().getBoolean(CREATIVE_INVENTORY_ALLOWED_KEY, CREATIVE_INVENTORY_ALLOWED_DEFAULT);
 	}
@@ -183,6 +200,42 @@ public class ConfigurationManager {
 			}
 		}
 		return itemDropListCache;
+	}
+
+	private List<Material> itemPickupListCache;
+
+	public List<Material> getItemPickupList() {
+		if (itemPickupListCache == null) {
+			List<String> dropList = getConfig().getStringList(PICKUP_KEY);
+			itemPickupListCache = new ArrayList<>();
+			for (String item : dropList) {
+				Material material = getMaterial(item);
+				if (material == Material.AIR)
+					continue;
+				itemPickupListCache.add(material);
+			}
+		}
+		return itemPickupListCache;
+	}
+	
+	public boolean isInventoryInteractionAllowed() {
+		return getConfig().getBoolean(ALLOW_INVENTORY_INTERACTION_KEY, ALLOW_INVENTORY_INTERACTION_DEFAULT);
+	}
+	
+	public boolean isItemDroppingAllowed() {
+		return getConfig().getBoolean(ALLOW_ITEM_DROPS_KEY, ALLOW_ITEM_DROPS_DEFAULT);
+	}
+	
+	public boolean isItemPickupAllowed() {
+		return getConfig().getBoolean(ALLOW_ITEM_PICKUPS_KEY, ALLOW_ITEM_PICKUPS_DEFAULT);
+	}
+	
+	public boolean isBlockPlacingAllowed() {
+		return getConfig().getBoolean(ALLOW_BLOCK_PLACING_KEY, ALLOW_BLOCK_PLACING_DEFAULT);
+	}
+	
+	public boolean isBlockBreakingAllowed() {
+		return getConfig().getBoolean(ALLOW_BLOCK_BREAKING_KEY, ALLOW_BLOCK_BREAKING_DEFAULT);
 	}
 
 }

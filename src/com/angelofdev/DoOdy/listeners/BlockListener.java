@@ -29,6 +29,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
 import com.angelofdev.DoOdy.DoOdy;
+import com.angelofdev.DoOdy.config.ConfigurationManager;
 import com.angelofdev.DoOdy.util.MessageSender;
 
 public class BlockListener implements Listener {
@@ -44,12 +45,15 @@ public class BlockListener implements Listener {
 		Player player = event.getPlayer();
 		if (!plugin.getDutyManager().isPlayerOnDuty(player))
 			return;
+		
+		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
 
 		final Block block = event.getBlock();
 		final Material material = block.getType();
 		final boolean hasPlacePermission = player.hasPermission("doody.allowplace");
-		final boolean isMaterialInMaterialList = plugin.getConfigurationManager().getPlaceBlockList().contains(material);
-		final boolean hasPlaceAccess = hasPlacePermission || plugin.getConfigurationManager().isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList;
+		final boolean allowPlace = configurationManager.isBlockPlacingAllowed();
+		final boolean isMaterialInMaterialList = configurationManager.getPlaceBlockList().contains(material);
+		final boolean hasPlaceAccess = hasPlacePermission || (allowPlace && (configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList));
 
 		if (!hasPlaceAccess) {
 			event.setCancelled(true);
@@ -62,12 +66,15 @@ public class BlockListener implements Listener {
 		Player player = event.getPlayer();
 		if (!plugin.getDutyManager().isPlayerOnDuty(player))
 			return;
+		
+		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
 
 		final Block block = event.getBlock();
-		final boolean hasBreakPermission = player.hasPermission("doody.allowbreak");
 		final Material material = block.getType();
-		final boolean isMaterialInMaterialList = plugin.getConfigurationManager().getBreakBlockList().contains(material);
-		final boolean hasBreakAccess = hasBreakPermission || plugin.getConfigurationManager().isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList;
+		final boolean hasBreakPermission = player.hasPermission("doody.allowbreak");
+		final boolean allowBreak = configurationManager.isBlockBreakingAllowed();
+		final boolean isMaterialInMaterialList = configurationManager.getBreakBlockList().contains(material);
+		final boolean hasBreakAccess = hasBreakPermission || (allowBreak && (configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList));
 
 		if (!hasBreakAccess) {
 			event.setCancelled(true);

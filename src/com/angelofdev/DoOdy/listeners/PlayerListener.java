@@ -36,6 +36,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
@@ -157,19 +158,46 @@ public class PlayerListener implements Listener {
 		final ItemStack itemStack = event.getItemDrop().getItemStack();
 		final Material dropMaterial = itemStack.getType();
 		final boolean hasDropPermission = player.hasPermission("doody.dropitems");
+		final boolean allowDrop = configurationManager.isItemDroppingAllowed();
 		final boolean isMaterialInMaterialList = configurationManager.getItemDropList().contains(dropMaterial);
-		final boolean hasDropAccess = hasDropPermission || configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList;
+		final boolean hasDropAccess = hasDropPermission || (allowDrop && (configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList));
 
 		final String itemName = dropMaterial.toString();
 		if (hasDropAccess) {
 			plugin.getDebug().normal("<onPlayerDropItem> Warning! " + "Allowing " + playerName + " to drop " + itemName);
 		} else {
-			// TODO: Verify that this works, alternatively, use
-			// event.getItemDrop().remove().
 			event.setCancelled(true);
 
 			MessageSender.send(player, "&6[OnDoOdy] &cYou may not drop &e" + itemName + "&c while on duty.");
 			plugin.getDebug().check("<onPlayerDropItem> " + playerName + " got denied item drop. <Item(" + itemName + ")>");
+		}
+	}
+
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+		final Player player = event.getPlayer();
+		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+			return;
+
+		final String playerName = player.getName();
+		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
+
+		final ItemStack itemStack = event.getItem().getItemStack();
+		final Material pickupMaterial = itemStack.getType();
+		final boolean hasPickupPermission = player.hasPermission("doody.pickupitems");
+		final boolean allowPickup = configurationManager.isItemPickupAllowed();
+		final boolean isMaterialInMaterialList = configurationManager.getItemPickupList().contains(pickupMaterial);
+		final boolean hasPickupAccess = hasPickupPermission || (allowPickup && (configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList));
+
+		final String itemName = pickupMaterial.toString();
+		if (hasPickupAccess) {
+			plugin.getDebug().normal("<onPlayerPickupItem> Warning! " + "Allowing " + playerName + " to pick up " + itemName);
+		} else {
+			event.setCancelled(true);
+
+			// TODO: Find a way to tell the player this without sending them 20 messages per second...
+			// MessageSender.send(player, "&6[OnDoOdy] &cYou may not pick up &e" + itemName + "&c while on duty.");
+			// plugin.getDebug().check("<onPlayerPickupItem> " + playerName + " got denied item pickup. <Item(" + itemName + ")>");
 		}
 	}
 	
