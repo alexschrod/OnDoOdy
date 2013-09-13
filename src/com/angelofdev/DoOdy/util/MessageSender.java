@@ -21,6 +21,7 @@
 package com.angelofdev.DoOdy.util;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 
 public class MessageSender {
@@ -30,4 +31,9 @@ public class MessageSender {
 	public static void send(CommandSender sender, String message) {
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 	}
+
+	public static String getNiceNameOf(Material material) {
+		return material.toString().toLowerCase().replace('_', ' ');
+	}
 }
+

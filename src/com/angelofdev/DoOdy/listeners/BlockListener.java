@@ -57,7 +57,7 @@ public class BlockListener implements Listener {
 
 		if (!hasPlaceAccess) {
 			event.setCancelled(true);
-			MessageSender.send(player, "&cYou may not place &e" + material.toString() + " &cwhile on duty.");
+			MessageSender.send(player, "&6[OnDoOdy] &cYou may not place &e" + MessageSender.getNiceNameOf(material) + " &cwhile on duty.");
 		}
 	}
 
@@ -78,7 +78,7 @@ public class BlockListener implements Listener {
 
 		if (!hasBreakAccess) {
 			event.setCancelled(true);
-			MessageSender.send(player, "&cYou may not break &e" + material.toString() + " &cwhile on Duty.");
+			MessageSender.send(player, "&6[OnDoOdy] &cYou may not break &e" + MessageSender.getNiceNameOf(material) + " &cwhile on Duty.");
 		}
 	}
 }

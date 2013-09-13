@@ -164,7 +164,7 @@ public class PlayerListener implements Listener {
 		final boolean isMaterialInMaterialList = configurationManager.getItemDropList().contains(dropMaterial);
 		final boolean hasDropAccess = hasDropPermission || (allowDrop && (configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList));
 
-		final String itemName = dropMaterial.toString();
+		final String itemName = MessageSender.getNiceNameOf(dropMaterial);
 		if (hasDropAccess) {
 			plugin.getDebug().normal("<onPlayerDropItem> Warning! " + "Allowing " + playerName + " to drop " + itemName);
 		} else {
@@ -191,7 +191,7 @@ public class PlayerListener implements Listener {
 		final boolean isMaterialInMaterialList = configurationManager.getItemPickupList().contains(pickupMaterial);
 		final boolean hasPickupAccess = hasPickupPermission || (allowPickup && (configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList));
 
-		final String itemName = pickupMaterial.toString();
+		final String itemName = MessageSender.getNiceNameOf(pickupMaterial);
 		if (hasPickupAccess) {
 			plugin.getDebug().normal("<onPlayerPickupItem> Warning! " + "Allowing " + playerName + " to pick up " + itemName);
 		} else {
