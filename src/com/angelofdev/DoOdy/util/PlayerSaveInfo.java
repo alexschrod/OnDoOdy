@@ -20,6 +20,8 @@
 package com.angelofdev.DoOdy.util;
 
 import java.io.Serializable;
+import java.util.Collection;
+import org.bukkit.potion.PotionEffect;
 
 public class PlayerSaveInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -30,4 +32,9 @@ public class PlayerSaveInfo implements Serializable {
 	public InventorySaveInfo inventory = new InventorySaveInfo();
 
 	public LocationSaveInfo location = new LocationSaveInfo();
+
+	public double health;
+	public int foodLevel;
+
+	public Collection<PotionEffect> potionEffects;
 }

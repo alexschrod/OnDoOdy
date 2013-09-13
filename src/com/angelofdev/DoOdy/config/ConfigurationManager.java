@@ -67,6 +67,7 @@ public class ConfigurationManager {
 		return plugin.getConfig();
 	}
 
+	@SuppressWarnings("deprecation")
 	private Material getMaterial(String itemValue) {
 		int intValue;
 		Material material;

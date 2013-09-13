@@ -22,6 +22,7 @@ package com.angelofdev.DoOdy.util;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,11 +30,15 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.potion.PotionEffect;
 
 import com.angelofdev.DoOdy.DoOdy;
 import com.angelofdev.DoOdy.config.ConfigurationManager;
 
 public class DutyManager {
+	private static final String ONDOODY_EXTENSION = ".ondoody";
+	private static final String LOCATION_EXTENSION = ".location";
+
 	private DoOdy plugin;
 
 	private Set<String> dutyCache;
@@ -42,12 +47,12 @@ public class DutyManager {
 		this.plugin = plugin;
 	}
 
-	private File getDoodyFileFor(Player player) {
-		return new File(plugin.getPluginDataFilePath(player.getName() + ".doody"));
+	private File getOnDoodyFileFor(Player player) {
+		return new File(plugin.getPluginDataFilePath(player.getName() + ONDOODY_EXTENSION));
 	}
 
 	private File getLocationFileFor(Player player) {
-		return new File(plugin.getPluginDataFilePath(player.getName() + ".location"));
+		return new File(plugin.getPluginDataFilePath(player.getName() + LOCATION_EXTENSION));
 	}
 
 	public boolean isPlayerOnDuty(Player player) {
@@ -69,6 +74,14 @@ public class DutyManager {
 			playerSaveInfo.level = player.getLevel();
 			playerSaveInfo.exp = player.getExp();
 
+			// Save health/food stats
+			playerSaveInfo.health = player.getHealth();
+			playerSaveInfo.foodLevel = player.getFoodLevel();
+
+			// Save potion effects
+			final Collection<PotionEffect> activePotionEffects = player.getActivePotionEffects();
+			playerSaveInfo.potionEffects = activePotionEffects;
+
 			// Save player's inventory
 			final PlayerInventory inventory = player.getInventory();
 			playerSaveInfo.inventory = new InventorySaveInfo(inventory);
@@ -77,20 +90,29 @@ public class DutyManager {
 			playerSaveInfo.location = new LocationSaveInfo(player.getLocation());
 
 			// Save to file
-			SLAPI.save(playerSaveInfo, getDoodyFileFor(player).getPath());
+			SLAPI.save(playerSaveInfo, getOnDoodyFileFor(player).getPath());
 			loadDutyCache();
 			dutyCache.add(playerName);
-			plugin.getDebug().check("<setDoody> " + playerName + "'s data has been saved.");
+			plugin.getDebug().check("<enableDutyFor> " + playerName + "'s data has been saved.");
 
 			// Now we're certain the player's stuff is safe, we can take them
 			// away from them.
+
+			// Remove experience
 			player.setLevel(0);
 			player.setExp(0);
+
+			// Remove inventory
 			inventory.clear();
 			inventory.setHelmet(null);
 			inventory.setChestplate(null);
 			inventory.setLeggings(null);
 			inventory.setBoots(null);
+
+			// Remove potion effects
+			for (PotionEffect effect : activePotionEffects) {
+				player.removePotionEffect(effect.getType());
+			}
 
 			// Put player in creative mode.
 			player.setGameMode(GameMode.CREATIVE);
@@ -98,10 +120,10 @@ public class DutyManager {
 
 			// Give duty tools
 			dutyItems(player);
-			
+
 			return true;
 		} catch (Exception e) {
-			plugin.getLog().severe("Failed Storing data on /doody on");
+			plugin.getLog().severe("Failed Storing data on /ondoody on");
 			plugin.getLogger().throwing("DutyManager", "enableDutyFor", e);
 			MessageSender.send(player, "&6[OnDoOdy] &cFailed storing your data. Could not place you on duty.");
 			return false;
@@ -112,8 +134,8 @@ public class DutyManager {
 	public boolean disableDutyFor(Player player) {
 		String playerName = player.getName();
 		try {
-			final File doodyFile = getDoodyFileFor(player);
-			PlayerSaveInfo playerSaveInfo = (PlayerSaveInfo) SLAPI.load(doodyFile.getPath());
+			final File onDoodyFile = getOnDoodyFileFor(player);
+			PlayerSaveInfo playerSaveInfo = (PlayerSaveInfo) SLAPI.load(onDoodyFile.getPath());
 
 			// Restore player's game mode
 			player.setGameMode(GameMode.SURVIVAL);
@@ -131,8 +153,11 @@ public class DutyManager {
 			player.setLevel(playerSaveInfo.level);
 			player.setExp(playerSaveInfo.exp);
 
-			// We've completely restored our friend. Delete their doody file.
-			doodyFile.delete();
+			// Restore potion effects
+			player.addPotionEffects(playerSaveInfo.potionEffects);
+
+			// We've completely restored our player. Delete their on-doody file.
+			onDoodyFile.delete();
 			loadDutyCache();
 			dutyCache.remove(playerName);
 
@@ -161,16 +186,16 @@ public class DutyManager {
 	private void loadDutyCache() {
 		if (dutyCache == null) {
 			File dataFolder = plugin.getPluginDataFolder();
-			String[] doodies = dataFolder.list(new FilenameFilter() {
+			String[] onDoodies = dataFolder.list(new FilenameFilter() {
 				public boolean accept(File folder, String fileName) {
-					return fileName.endsWith(".doody");
+					return fileName.endsWith(ONDOODY_EXTENSION);
 				}
 			});
 
 			HashSet<String> dutyList = new HashSet<String>();
-			for (String doody : doodies) {
-				doody = doody.substring(0, doody.indexOf(".doody"));
-				dutyList.add(doody);
+			for (String onDoody : onDoodies) {
+				onDoody = onDoody.substring(0, onDoody.indexOf(ONDOODY_EXTENSION));
+				dutyList.add(onDoody);
 			}
 			dutyCache = dutyList;
 		}

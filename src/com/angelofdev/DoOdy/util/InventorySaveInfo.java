@@ -20,59 +20,29 @@
 package com.angelofdev.DoOdy.util;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import org.bukkit.Material;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 public class InventorySaveInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	public List<Map<String, Object>> inventory;
-	public List<Map<String, Object>> armor;
+	public ItemStack[] inventory;
+	public ItemStack[] armor;
 
 	public InventorySaveInfo() {
 	}
 
-	@SuppressWarnings("deprecation")
 	public InventorySaveInfo(PlayerInventory inventory) {
 		// save inventory
-		final ConfigurationSerializable[] inventoryContents = (ConfigurationSerializable[]) inventory.getContents();
-		for (int i = 0; i < inventoryContents.length; i++) {
-			if (inventoryContents[i] == null) {
-				inventoryContents[i] = new ItemStack(Material.AIR);
-			}
-		}
-		List<ConfigurationSerializable> inventoryList = Arrays.asList(inventoryContents);
-		this.inventory = SerializationUtil.serializeItemList(inventoryList);
+		this.inventory = inventory.getContents();
 
 		// save armor
-		final ConfigurationSerializable[] armorContents = (ConfigurationSerializable[]) inventory.getArmorContents();
-		for (int i = 0; i < armorContents.length; i++) {
-			if (armorContents[i] == null) {
-				armorContents[i] = new ItemStack(Material.AIR);
-			}
-		}
-		List<ConfigurationSerializable> armorList = Arrays.asList(armorContents);
-		this.armor = SerializationUtil.serializeItemList(armorList);
+		this.armor = inventory.getArmorContents();
 	}
 
-	@SuppressWarnings("deprecation")
 	public void restore(PlayerInventory inventory) {
-		List<ConfigurationSerializable> itemContents = SerializationUtil.deserializeItemList(this.inventory);
-		ItemStack[] items = new ItemStack[itemContents.size()];
-		for (int i = 0; i < itemContents.size(); i++) {
-			items[i] = (ItemStack) itemContents.get(i);
-		}
-		inventory.setContents(items);
-		List<ConfigurationSerializable> armorContents = SerializationUtil.deserializeItemList(this.armor);
-		items = new ItemStack[armorContents.size()];
-		for (int i = 0; i < armorContents.size(); i++) {
-			items[i] = (ItemStack) armorContents.get(i);
-		}
-		inventory.setArmorContents(items);
+		inventory.setContents(this.inventory);
+		
+		inventory.setArmorContents(this.armor);
 	}
 }

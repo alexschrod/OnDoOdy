@@ -42,7 +42,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-		if (cmd.getName().equalsIgnoreCase("doody")) {
+		if (cmd.getName().equalsIgnoreCase("ondoody")) {
 			if (args.length == 0) {
 				if ((sender instanceof Player)) {
 					Player player = (Player) sender;
@@ -84,8 +84,6 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 				}
 			} else if (args.length == 2) {
 
-				Player targetPlayer = plugin.getServer().getPlayer(args[0]);
-
 				// dm debug <on/off>
 				if (args[0].equalsIgnoreCase("debug")) {
 					if (args[1].equalsIgnoreCase("on")) {
@@ -94,11 +92,15 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 					} else if (args[1].equalsIgnoreCase("off")) {
 						onDebugOff(sender);
 						return true;
+					} else {
+						return false;
 					}
 				}
 
+				Player targetPlayer = plugin.getServer().getPlayer(args[0]);
+
 				// /dm <player> on
-				else if (args[1].equalsIgnoreCase("on")) {
+				if (args[1].equalsIgnoreCase("on")) {
 					onOnDuty(sender, targetPlayer);
 					return true;
 				}
@@ -118,18 +120,18 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		MessageSender.send(player, "&a____________[ &6Short: /dm, /duty &a]____________");
 
 		if (player.hasPermission("doody.duty")) {
-			MessageSender.send(player, "&6/doody &bon &fTurns on duty mode.");
-			MessageSender.send(player, "&6/doody &boff &fTurns off duty mode.");
+			MessageSender.send(player, "&6/ondoody &bon &fTurns on duty mode.");
+			MessageSender.send(player, "&6/ondoody &boff &fTurns off duty mode.");
 		}
 		if (player.hasPermission("doody.others")) {
-			MessageSender.send(player, "&6/doody &b<player> <on/off> &fPut <player> <on/off> duty mode.");
+			MessageSender.send(player, "&6/ondoody &b<player> <on/off> &fPut <player> <on/off> duty mode.");
 		}
-		MessageSender.send(player, "&6/doody &blist &fShows players on duty.");
+		MessageSender.send(player, "&6/ondoody &blist &fShows players on duty.");
 		if (player.hasPermission("doody.reload")) {
-			MessageSender.send(player, "&6/doody &breload &fReload config.yml.");
+			MessageSender.send(player, "&6/ondoody &breload &fReload config.yml.");
 		}
 		if (player.hasPermission("doody.debug")) {
-			MessageSender.send(player, "&6/doody &bdebug on/off &fEnable/Disable debug mode.");
+			MessageSender.send(player, "&6/ondoody &bdebug on/off &fEnable/Disable debug mode.");
 		}
 		Set<String> dutyList = plugin.getDutyManager().getDutyList();
 		if (!dutyList.isEmpty()) {
@@ -142,10 +144,10 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		final Log log = plugin.getLog();
 		log.info("____________[ OnDoOdy Commands ]____________");
 		log.info("____________[ Short: /dm, /duty ]____________");
-		log.info("/doody <player> <on/off> [Put <player> <on/off> duty mode.]");
-		log.info("/doody list [Shows players on duty.]");
-		log.info("/doody reload [Reload config.yml.]");
-		log.info("/doody debug <on/off> [Enable/disable debug mode]");
+		log.info("/ondoody <player> <on/off> [Put <player> <on/off> duty mode.]");
+		log.info("/ondoody list [Shows players on duty.]");
+		log.info("/ondoody reload [Reload config.yml.]");
+		log.info("/ondoody debug <on/off> [Enable/disable debug mode]");
 	}
 
 	private void onDebugOn(CommandSender sender) {
@@ -204,7 +206,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 				final boolean hasWorldAccess = hasWorldPermission || plugin.getConfigurationManager().isIncludeMode() ? isWorldInWorldList : !isWorldInWorldList;
 
 				if (hasWorldAccess) {
-					plugin.getDebug().check(playerName + " used /doody on");
+					plugin.getDebug().check(playerName + " used /ondoody on");
 					dutyManager.enableDutyFor(player);
 				} else {
 					MessageSender.send(player, "&6[OnDoOdy] &cCannot go on duty in world &e" + worldName + " &c!");
@@ -252,7 +254,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			String playerName = player.getName();
 			final DutyManager dutyManager = plugin.getDutyManager();
 			if (dutyManager.isPlayerOnDuty(player)) {
-				plugin.getDebug().check(playerName + " used /doody off");
+				plugin.getDebug().check(playerName + " used /ondoody off");
 				dutyManager.disableDutyFor(player);
 				return;
 			} else {

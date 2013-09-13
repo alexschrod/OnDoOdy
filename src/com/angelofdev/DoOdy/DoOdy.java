@@ -64,7 +64,7 @@ public class DoOdy extends JavaPlugin {
 		pm.registerEvents(new BlockListener(this), this);
 		pm.registerEvents(new EntityListener(this), this);
 
-		getCommand("doody").setExecutor(new DoOdyCommandExecutor(this));
+		getCommand("ondoody").setExecutor(new DoOdyCommandExecutor(this));
 
 		log.info(PLUGIN_NAME + " v" + getDescription().getVersion() + " enabled");
 	}

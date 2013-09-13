@@ -7,9 +7,9 @@ description: >
 author: alexschrod
 authors: [angelofdev]
 commands:
-   doody:
+   ondoody:
       description: Puts players on Duty mode.
-      aliases: [duty, dm]
+      aliases: [doody, duty, dm]
       permission-message: You don't have doody.duty
 permissions:
    doody.*:
