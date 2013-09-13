@@ -206,7 +206,18 @@ public class PlayerListener implements Listener {
 		final HumanEntity whoClicked = event.getWhoClicked();
 		if (whoClicked instanceof Player) {
 			final Player player = (Player) whoClicked;
-			if (plugin.getDutyManager().isPlayerOnDuty(player) && !plugin.getConfigurationManager().isCreativeInventoryAllowed()) {
+			if (!plugin.getDutyManager().isPlayerOnDuty(player))
+				return;
+			
+			final String playerName = player.getName();
+			
+			final boolean hasCreativeInventoryPermission = player.hasPermission("doody.allowcreativeinventory");
+			final boolean allowCreativeInventory = plugin.getConfigurationManager().isCreativeInventoryAllowed();
+			final boolean hasCreativeInventoryAccess = hasCreativeInventoryPermission || allowCreativeInventory;
+			
+			if (hasCreativeInventoryAccess) {
+				plugin.getDebug().normal("<onCreativeInventory> Warning! " + "Allowing " + playerName + " to access creative inventory");
+			} else {
 				MessageSender.send(player, "&6[OnDoOdy] &cYou may not do anything with your inventory while on duty.");
 				event.setCancelled(true);
 			}

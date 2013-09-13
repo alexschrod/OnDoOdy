@@ -18,9 +18,11 @@ permissions:
       children:
          doody.duty: true
          doody.reload: true
+         doody.allowcreativeinventory: true
          doody.allowplace: true
          doody.allowbreak: true
          doody.dropitems: true
+         doody.pickupitems: true
          doody.storage: true
          doody.pvp: true
          doody.mob: true
@@ -32,6 +34,9 @@ permissions:
       default: op
    doody.reload:
       description: Allows in-game reloading of the configuration
+      default: op
+   doody.allowcreativeinventory:
+      description: Allows modifying creative inventory when on duty
       default: op
    doody.allowplace:
       description: Allows placing of blocks that are disallowed in configuration when on duty
