@@ -21,12 +21,14 @@
 package com.angelofdev.DoOdy.listeners;
 
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 
 import com.angelofdev.DoOdy.DoOdy;
@@ -68,8 +70,9 @@ public class EntityListener implements Listener {
 
 	@EventHandler(ignoreCancelled = true)
 	public void onShootEvent(EntityShootBowEvent event) {
-		if (event.getEntity() instanceof Player) {
-			Player player = (Player) event.getEntity();
+		final LivingEntity entity = event.getEntity();
+		if (entity instanceof Player) {
+			Player player = (Player) entity;
 			if (plugin.getDutyManager().isPlayerOnDuty(player)) {
 				MessageSender.send(player, "&6[OnDoOdy] &cYou may not shoot bows while on duty.");
 				event.setCancelled(true);
@@ -85,6 +88,21 @@ public class EntityListener implements Listener {
 				MessageSender.send(shooter, "&6[OnDoOdy] &cYou may not throw potions while on duty.");
 				event.setCancelled(true);
 			}
+		}
+	}
+
+	@EventHandler
+	public void onEntityTarget(EntityTargetEvent event) {
+		final Entity entity = event.getTarget();
+		if (entity == null)
+			return;
+
+		if (entity instanceof Player) {
+			final Player target = (Player) entity;
+			if (!plugin.getDutyManager().isPlayerOnDuty(target))
+				return;
+			
+			event.setCancelled(true);
 		}
 	}
 }

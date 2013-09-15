@@ -5,7 +5,9 @@ Prefix legend:
 	- Removed feature
 
 Version 1.1.0:
-	= Restore food level on going off duty
+	+ Mobs now won't attack players who are on duty. Previously, when trying to punch pigmen for instance, they would start behaving like usual and start targeting the player.
+	+ On-duty players cannot put out fires, unless the material 'FIRE' is in the list of blocks that it is allowed to break, or the player has block breaking permission.
+	= Restore food level when going off duty. Previously, it was stored when going on duty, but not restored when going off duty.
 	! Save and restore more player variables when going on and off duty: exhaustion, saturation, fall distance, fire ticks, remaining air, velocity.
 
 Version 1.0.0:

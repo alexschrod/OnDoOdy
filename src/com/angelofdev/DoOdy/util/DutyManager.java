@@ -24,9 +24,17 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import net.minecraft.server.v1_6_R2.EntityCreature;
+import net.minecraft.server.v1_6_R2.EntityLiving;
+import net.minecraft.server.v1_6_R2.EntityPlayer;
+
 import org.bukkit.GameMode;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftCreature;
+import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
@@ -76,18 +84,18 @@ public class DutyManager {
 
 			// Save health
 			playerSaveInfo.health = player.getHealth();
-			
+
 			// Save food stats
 			playerSaveInfo.foodLevel = player.getFoodLevel();
 			playerSaveInfo.saturation = player.getSaturation();
 			playerSaveInfo.exhaustion = player.getExhaustion();
-			
+
 			// Save other stat variables
 			playerSaveInfo.fallDistance = player.getFallDistance();
 			playerSaveInfo.fireTicks = player.getFireTicks();
 			playerSaveInfo.remainingAir = player.getRemainingAir();
 			playerSaveInfo.velocity = player.getVelocity().clone();
-			
+
 			// Save potion effects
 			final Collection<PotionEffect> activePotionEffects = player.getActivePotionEffects();
 			playerSaveInfo.potionEffects = activePotionEffects;
@@ -128,6 +136,10 @@ public class DutyManager {
 			player.setGameMode(GameMode.CREATIVE);
 			MessageSender.send(player, "&6[OnDoOdy] &aYou're now on duty.");
 
+			// Stop all mobs that are currently targeting the player
+			// from targeting them.
+			stopMobsTargeting(player);
+
 			// Give duty tools
 			dutyItems(player);
 
@@ -140,6 +152,27 @@ public class DutyManager {
 			plugin.getLogger().throwing("DutyManager", "enableDutyFor", e);
 			MessageSender.send(player, "&6[OnDoOdy] &cFailed storing your data. Could not place you on duty.");
 			return false;
+		}
+	}
+
+	public void stopMobsTargeting(Player player) {
+		// These numbers can probably be reduced... I couldn't find at what
+		// range mobs can't or won't ever target a player...
+		List<Entity> nearbyEntities = player.getNearbyEntities(128, 128, 128);
+		for (Entity entity : nearbyEntities) {
+			if (entity instanceof CraftCreature) {
+				CraftPlayer craftPlayer = (CraftPlayer) player;
+				CraftCreature creature = (CraftCreature) entity;
+
+				EntityCreature entityCreature = creature.getHandle();
+				EntityPlayer entityPlayer = craftPlayer.getHandle();
+
+				final EntityLiving goalTarget = entityCreature.getGoalTarget();
+				if (goalTarget != null && goalTarget.equals(entityPlayer)) {
+					player.sendMessage("Target: " + goalTarget);
+					entityCreature.setGoalTarget(null);
+				}
+			}
 		}
 	}
 
@@ -158,7 +191,7 @@ public class DutyManager {
 
 			// Place player back where they were
 			player.teleport(playerSaveInfo.location.getLocation());
-			
+
 			// Make player visible
 			showPlayer(player);
 
@@ -171,12 +204,12 @@ public class DutyManager {
 
 			// Restore health
 			player.setHealth(playerSaveInfo.health);
-			
+
 			// Restore food stats
 			player.setFoodLevel(playerSaveInfo.foodLevel);
 			player.setSaturation(playerSaveInfo.saturation);
 			player.setExhaustion(playerSaveInfo.exhaustion);
-			
+
 			// Restore other stat variables
 			player.setFallDistance(playerSaveInfo.fallDistance);
 			player.setFireTicks(playerSaveInfo.fireTicks);
@@ -238,7 +271,7 @@ public class DutyManager {
 		loadDutyCache();
 		return dutyCache;
 	}
-	
+
 	public Set<Player> getDutyPlayerSet() {
 		HashSet<Player> dutyPlayerSet = new HashSet<Player>();
 		for (String dutyPlayerName : getDutySet()) {

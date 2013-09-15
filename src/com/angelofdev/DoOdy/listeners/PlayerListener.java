@@ -24,6 +24,8 @@ import java.util.List;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.Command;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -37,6 +39,7 @@ import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
@@ -261,6 +264,36 @@ public class PlayerListener implements Listener {
 			} else {
 				MessageSender.send(player, "&6[OnDoOdy] &cYou may not interact with inventories while on duty.");
 				event.setCancelled(true);
+			}
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	@EventHandler(priority = EventPriority.HIGH)
+	public void onPlayerInteract(PlayerInteractEvent event) {
+		final Player player = event.getPlayer();
+		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+			return;
+		
+		final Block block = event.getClickedBlock();
+		if (block == null)
+			return;
+		
+		final BlockFace blockFace = event.getBlockFace();
+		final Block relativeBlock = block.getRelative(blockFace);
+		final Material fireMaterial = Material.FIRE;
+		if (relativeBlock.getType() == fireMaterial) {
+			final ConfigurationManager configurationManager = plugin.getConfigurationManager();
+
+			final boolean hasBreakPermission = player.hasPermission("doody.allowbreak");
+			final boolean allowBreak = configurationManager.isBlockBreakingAllowed();
+			final boolean isMaterialInMaterialList = configurationManager.getBreakBlockList().contains(fireMaterial);
+			final boolean hasBreakAccess = hasBreakPermission || (allowBreak && (configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList));
+
+			if (!hasBreakAccess) {
+				event.setCancelled(true);
+				player.sendBlockChange(relativeBlock.getLocation(), fireMaterial, (byte)0);
+				MessageSender.send(player, "&6[OnDoOdy] &cYou may not put out &e" + MessageSender.getNiceNameOf(fireMaterial) + " &cwhile on Duty.");
 			}
 		}
 	}
