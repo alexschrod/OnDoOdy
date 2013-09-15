@@ -240,7 +240,7 @@ public class DutyManager {
 	}
 	
 	public Set<Player> getDutyPlayerSet() {
-		HashSet<Player> dutyPlayerSet = new HashSet<>();
+		HashSet<Player> dutyPlayerSet = new HashSet<Player>();
 		for (String dutyPlayerName : getDutySet()) {
 			Player dutyPlayer = plugin.getServer().getPlayerExact(dutyPlayerName);
 			if (dutyPlayer != null)

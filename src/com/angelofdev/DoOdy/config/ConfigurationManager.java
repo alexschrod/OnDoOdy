@@ -129,7 +129,7 @@ public class ConfigurationManager {
 	public List<Material> getPlaceBlockList() {
 		if (placeBlockListCache == null) {
 			List<String> placeBlockList = getConfig().getStringList(PLACE_BLOCK_KEY);
-			placeBlockListCache = new ArrayList<>();
+			placeBlockListCache = new ArrayList<Material>();
 			for (String block : placeBlockList) {
 				Material material = getMaterial(block);
 				if (material == Material.AIR)
@@ -163,7 +163,7 @@ public class ConfigurationManager {
 	public List<Material> getBreakBlockList() {
 		if (breakBlockListCache == null) {
 			List<String> placeBlockList = getConfig().getStringList(BREAK_BLOCK_KEY);
-			breakBlockListCache = new ArrayList<>();
+			breakBlockListCache = new ArrayList<Material>();
 			for (String block : placeBlockList) {
 				Material material = getMaterial(block);
 				if (material == Material.AIR)
@@ -191,7 +191,7 @@ public class ConfigurationManager {
 	public List<Command> getDisallowedCommandList() {
 		if (disallowedCommandListCache == null) {
 			List<String> disallowedCommandList = getConfig().getStringList(DISALLOWED_COMMAND_KEY);
-			disallowedCommandListCache = new ArrayList<>();
+			disallowedCommandListCache = new ArrayList<Command>();
 			for (String commandName : disallowedCommandList) {
 				Command command = plugin.getServer().getPluginCommand(commandName);
 				disallowedCommandListCache.add(command);
@@ -205,7 +205,7 @@ public class ConfigurationManager {
 	public List<Material> getItemDropList() {
 		if (itemDropListCache == null) {
 			List<String> dropList = getConfig().getStringList(DROP_KEY);
-			itemDropListCache = new ArrayList<>();
+			itemDropListCache = new ArrayList<Material>();
 			for (String item : dropList) {
 				Material material = getMaterial(item);
 				if (material == Material.AIR)
@@ -221,7 +221,7 @@ public class ConfigurationManager {
 	public List<Material> getItemPickupList() {
 		if (itemPickupListCache == null) {
 			List<String> dropList = getConfig().getStringList(PICKUP_KEY);
-			itemPickupListCache = new ArrayList<>();
+			itemPickupListCache = new ArrayList<Material>();
 			for (String item : dropList) {
 				Material material = getMaterial(item);
 				if (material == Material.AIR)
