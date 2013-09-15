@@ -1,0 +1,12 @@
+Prefix legend:
+	+ Added feature
+	= Fixed bug
+	! Changed/updated feature
+	- Removed feature
+
+Version 1.1.0:
+	= Restore food level on going off duty
+	! Save and restore more player variables when going on and off duty: exhaustion, saturation, fall distance, fire ticks, remaining air, velocity.
+
+Version 1.0.0:
+	+ First release

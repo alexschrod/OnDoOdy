@@ -22,9 +22,10 @@ package com.angelofdev.DoOdy.util;
 import java.io.Serializable;
 import java.util.Collection;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 public class PlayerSaveInfo implements Serializable {
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	public int level;
 	public float exp;
@@ -35,6 +36,15 @@ public class PlayerSaveInfo implements Serializable {
 
 	public double health;
 	public int foodLevel;
+	public float exhaustion;
+	public float saturation;
+	
+	public float fallDistance;
+	public int fireTicks;
+	public int remainingAir;
 
 	public Collection<PotionEffect> potionEffects;
+
+	public Vector velocity;
+
 }

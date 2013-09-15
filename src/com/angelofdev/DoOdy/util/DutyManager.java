@@ -74,10 +74,20 @@ public class DutyManager {
 			playerSaveInfo.level = player.getLevel();
 			playerSaveInfo.exp = player.getExp();
 
-			// Save health/food stats
+			// Save health
 			playerSaveInfo.health = player.getHealth();
+			
+			// Save food stats
 			playerSaveInfo.foodLevel = player.getFoodLevel();
-
+			playerSaveInfo.saturation = player.getSaturation();
+			playerSaveInfo.exhaustion = player.getExhaustion();
+			
+			// Save other stat variables
+			playerSaveInfo.fallDistance = player.getFallDistance();
+			playerSaveInfo.fireTicks = player.getFireTicks();
+			playerSaveInfo.remainingAir = player.getRemainingAir();
+			playerSaveInfo.velocity = player.getVelocity().clone();
+			
 			// Save potion effects
 			final Collection<PotionEffect> activePotionEffects = player.getActivePotionEffects();
 			playerSaveInfo.potionEffects = activePotionEffects;
@@ -158,6 +168,20 @@ public class DutyManager {
 			// Restore experience
 			player.setLevel(playerSaveInfo.level);
 			player.setExp(playerSaveInfo.exp);
+
+			// Restore health
+			player.setHealth(playerSaveInfo.health);
+			
+			// Restore food stats
+			player.setFoodLevel(playerSaveInfo.foodLevel);
+			player.setSaturation(playerSaveInfo.saturation);
+			player.setExhaustion(playerSaveInfo.exhaustion);
+			
+			// Restore other stat variables
+			player.setFallDistance(playerSaveInfo.fallDistance);
+			player.setFireTicks(playerSaveInfo.fireTicks);
+			player.setRemainingAir(playerSaveInfo.remainingAir);
+			player.setVelocity(playerSaveInfo.velocity);
 
 			// Restore potion effects
 			for (PotionEffect effect : player.getActivePotionEffects()) {
