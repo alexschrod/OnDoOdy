@@ -262,7 +262,6 @@ public class DutyManager {
 
 				final EntityLiving goalTarget = entityCreature.getGoalTarget();
 				if (goalTarget != null && goalTarget.equals(entityPlayer)) {
-					player.sendMessage("Target: " + goalTarget);
 					entityCreature.setGoalTarget(null);
 				}
 			}
