@@ -38,10 +38,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffect;
 
 import com.angelofdev.DoOdy.DoOdy;
 import com.angelofdev.DoOdy.config.ConfigurationManager;
+import com.angelofdev.DoOdy.events.PlayerGoingOffDutyEvent;
+import com.angelofdev.DoOdy.events.PlayerGoingOnDutyEvent;
+import com.angelofdev.DoOdy.events.PlayerGoneOffDutyEvent;
+import com.angelofdev.DoOdy.events.PlayerGoneOnDutyEvent;
+import com.angelofdev.DoOdy.exceptions.DutyException;
 
 public class DutyManager {
 	private static final String ONDOODY_EXTENSION = ".ondoody";
@@ -73,86 +79,173 @@ public class DutyManager {
 	}
 
 	// Enable Duty Mode
-	public boolean enableDutyFor(Player player) {
+	public boolean enableDutyFor(Player player) throws DutyException {
+		final PluginManager pluginManager = plugin.getServer().getPluginManager();
+		
+		// Call the going-on-duty event and see if anyone wants to cancel us.
+		PlayerGoingOnDutyEvent playerGoingOnDutyEvent = new PlayerGoingOnDutyEvent(player);
+		pluginManager.callEvent(playerGoingOnDutyEvent);
+		if (playerGoingOnDutyEvent.isCancelled())
+			return false;
+
 		String playerName = player.getName();
+
+		PlayerSaveInfo playerSaveInfo = new PlayerSaveInfo();
+
+		// Save EXP
+		playerSaveInfo.level = player.getLevel();
+		playerSaveInfo.exp = player.getExp();
+
+		// Save health
+		playerSaveInfo.health = player.getHealth();
+
+		// Save food stats
+		playerSaveInfo.foodLevel = player.getFoodLevel();
+		playerSaveInfo.saturation = player.getSaturation();
+		playerSaveInfo.exhaustion = player.getExhaustion();
+
+		// Save other stat variables
+		playerSaveInfo.fallDistance = player.getFallDistance();
+		playerSaveInfo.fireTicks = player.getFireTicks();
+		playerSaveInfo.remainingAir = player.getRemainingAir();
+		playerSaveInfo.velocity = player.getVelocity().clone();
+
+		// Save potion effects
+		final Collection<PotionEffect> activePotionEffects = player.getActivePotionEffects();
+		playerSaveInfo.potionEffects = activePotionEffects;
+
+		// Save player's inventory
+		final PlayerInventory inventory = player.getInventory();
+		playerSaveInfo.inventory = new InventorySaveInfo(inventory);
+
+		// Save player location to file.
+		playerSaveInfo.location = new LocationSaveInfo(player.getLocation());
+
 		try {
-			PlayerSaveInfo playerSaveInfo = new PlayerSaveInfo();
-
-			// Save EXP
-			playerSaveInfo.level = player.getLevel();
-			playerSaveInfo.exp = player.getExp();
-
-			// Save health
-			playerSaveInfo.health = player.getHealth();
-
-			// Save food stats
-			playerSaveInfo.foodLevel = player.getFoodLevel();
-			playerSaveInfo.saturation = player.getSaturation();
-			playerSaveInfo.exhaustion = player.getExhaustion();
-
-			// Save other stat variables
-			playerSaveInfo.fallDistance = player.getFallDistance();
-			playerSaveInfo.fireTicks = player.getFireTicks();
-			playerSaveInfo.remainingAir = player.getRemainingAir();
-			playerSaveInfo.velocity = player.getVelocity().clone();
-
-			// Save potion effects
-			final Collection<PotionEffect> activePotionEffects = player.getActivePotionEffects();
-			playerSaveInfo.potionEffects = activePotionEffects;
-
-			// Save player's inventory
-			final PlayerInventory inventory = player.getInventory();
-			playerSaveInfo.inventory = new InventorySaveInfo(inventory);
-
-			// Save player location to file.
-			playerSaveInfo.location = new LocationSaveInfo(player.getLocation());
-
 			// Save to file
 			SLAPI.save(playerSaveInfo, getOnDoodyFileFor(player).getPath());
-			loadDutyCache();
-			dutyCache.add(playerName);
-			plugin.getDebug().check("<enableDutyFor> " + playerName + "'s data has been saved.");
-
-			// Now we're certain the player's stuff is safe, we can take them
-			// away from them.
-
-			// Remove experience
-			player.setLevel(0);
-			player.setExp(0);
-
-			// Remove inventory
-			inventory.clear();
-			inventory.setHelmet(null);
-			inventory.setChestplate(null);
-			inventory.setLeggings(null);
-			inventory.setBoots(null);
-
-			// Remove potion effects
-			for (PotionEffect effect : activePotionEffects) {
-				player.removePotionEffect(effect.getType());
-			}
-
-			// Put player in creative mode.
-			player.setGameMode(GameMode.CREATIVE);
-			MessageSender.send(player, "&6[OnDoOdy] &aYou're now on duty.");
-
-			// Stop all mobs that are currently targeting the player
-			// from targeting them.
-			stopMobsTargeting(player);
-
-			// Give duty tools
-			dutyItems(player);
-
-			// Hide player
-			hidePlayerOnDuty(player);
-
-			return true;
 		} catch (Exception e) {
-			plugin.getLog().severe("Failed Storing data on /ondoody on");
-			plugin.getLogger().throwing("DutyManager", "enableDutyFor", e);
-			MessageSender.send(player, "&6[OnDoOdy] &cFailed storing your data. Could not place you on duty.");
-			return false;
+			plugin.getLog().severe("Failed storing data on /ondoody on");
+			final DutyException dutyException = new DutyException("Failed saving player's data to disk.", e);
+			plugin.getLogger().throwing("DutyManager", "enableDutyFor", dutyException);
+			throw dutyException;
 		}
+
+		loadDutyCache();
+		dutyCache.add(playerName);
+		plugin.getDebug().check("<enableDutyFor> " + playerName + "'s data has been saved.");
+
+		// Now we're certain the player's data is safely stored on disk, we can
+		// take it all away from them.
+
+		// Remove experience
+		player.setLevel(0);
+		player.setExp(0);
+
+		// Remove inventory
+		inventory.clear();
+		inventory.setHelmet(null);
+		inventory.setChestplate(null);
+		inventory.setLeggings(null);
+		inventory.setBoots(null);
+
+		// Remove potion effects
+		for (PotionEffect effect : activePotionEffects) {
+			player.removePotionEffect(effect.getType());
+		}
+
+		// Put player in creative mode.
+		player.setGameMode(GameMode.CREATIVE);
+
+		// Stop all mobs that are currently targeting the player
+		// from targeting them.
+		stopMobsTargeting(player);
+
+		// Give duty tools
+		dutyItems(player);
+
+		// Hide player
+		hidePlayerOnDuty(player);
+
+		// Call the gone-on-duty event
+		pluginManager.callEvent(new PlayerGoneOnDutyEvent(player));
+
+		// Report success
+		return true;
+	}
+
+	// Remove Duty Mode
+	public boolean disableDutyFor(Player player) throws DutyException {
+		final PluginManager pluginManager = plugin.getServer().getPluginManager();
+		
+		// Call the going-off-duty event and see if anyone wants to cancel us.
+		PlayerGoingOffDutyEvent playerGoingOffDutyEvent = new PlayerGoingOffDutyEvent(player);
+		pluginManager.callEvent(playerGoingOffDutyEvent);
+		if (playerGoingOffDutyEvent.isCancelled())
+			return false;
+
+		String playerName = player.getName();
+		final File onDoodyFile = getOnDoodyFileFor(player);
+		PlayerSaveInfo playerSaveInfo;
+		try {
+			playerSaveInfo = (PlayerSaveInfo) SLAPI.load(onDoodyFile.getPath());
+		} catch (Exception e) {
+			plugin.getLog().severe("Failed restoring data on /ondoody off");
+			final DutyException dutyException = new DutyException("Failed restoring player's data from disk.", e);
+			plugin.getLogger().throwing("DutyManager", "disableDutyFor", dutyException);
+			throw dutyException;
+		}
+
+		// Restore player's game mode
+		player.setGameMode(GameMode.SURVIVAL);
+
+		// Save current duty location for use with /dm back
+		saveLocation(player);
+
+		// Place player back where they were
+		player.teleport(playerSaveInfo.location.getLocation());
+
+		// Make player visible
+		showPlayer(player);
+
+		// Restore player inventory
+		playerSaveInfo.inventory.restore(player.getInventory());
+
+		// Restore experience
+		player.setLevel(playerSaveInfo.level);
+		player.setExp(playerSaveInfo.exp);
+
+		// Restore health
+		player.setHealth(playerSaveInfo.health);
+
+		// Restore food stats
+		player.setFoodLevel(playerSaveInfo.foodLevel);
+		player.setSaturation(playerSaveInfo.saturation);
+		player.setExhaustion(playerSaveInfo.exhaustion);
+
+		// Restore other stat variables
+		player.setFallDistance(playerSaveInfo.fallDistance);
+		player.setFireTicks(playerSaveInfo.fireTicks);
+		player.setRemainingAir(playerSaveInfo.remainingAir);
+		player.setVelocity(playerSaveInfo.velocity);
+
+		// Restore potion effects
+		for (PotionEffect effect : player.getActivePotionEffects()) {
+			player.removePotionEffect(effect.getType());
+		}
+		player.addPotionEffects(playerSaveInfo.potionEffects);
+
+		// We've completely restored our player. Delete their on-doody file.
+		onDoodyFile.delete();
+		loadDutyCache();
+		dutyCache.remove(playerName);
+		plugin.getDebug().check("<disableDutyFor> " + playerName + "'s data restored & saved data deleted.");
+
+		// Call the gone-off-duty event
+		pluginManager.callEvent(new PlayerGoneOffDutyEvent(player));
+
+		// Report success
+		return true;
 	}
 
 	public void stopMobsTargeting(Player player) {
@@ -176,72 +269,8 @@ public class DutyManager {
 		}
 	}
 
-	// Remove Duty Mode
-	public boolean disableDutyFor(Player player) {
-		String playerName = player.getName();
-		try {
-			final File onDoodyFile = getOnDoodyFileFor(player);
-			PlayerSaveInfo playerSaveInfo = (PlayerSaveInfo) SLAPI.load(onDoodyFile.getPath());
-
-			// Restore player's game mode
-			player.setGameMode(GameMode.SURVIVAL);
-
-			// Save current duty location for use with /dm back
-			saveLocation(player);
-
-			// Place player back where they were
-			player.teleport(playerSaveInfo.location.getLocation());
-
-			// Make player visible
-			showPlayer(player);
-
-			// Restore player inventory
-			playerSaveInfo.inventory.restore(player.getInventory());
-
-			// Restore experience
-			player.setLevel(playerSaveInfo.level);
-			player.setExp(playerSaveInfo.exp);
-
-			// Restore health
-			player.setHealth(playerSaveInfo.health);
-
-			// Restore food stats
-			player.setFoodLevel(playerSaveInfo.foodLevel);
-			player.setSaturation(playerSaveInfo.saturation);
-			player.setExhaustion(playerSaveInfo.exhaustion);
-
-			// Restore other stat variables
-			player.setFallDistance(playerSaveInfo.fallDistance);
-			player.setFireTicks(playerSaveInfo.fireTicks);
-			player.setRemainingAir(playerSaveInfo.remainingAir);
-			player.setVelocity(playerSaveInfo.velocity);
-
-			// Restore potion effects
-			for (PotionEffect effect : player.getActivePotionEffects()) {
-				player.removePotionEffect(effect.getType());
-			}
-			player.addPotionEffects(playerSaveInfo.potionEffects);
-
-			// We've completely restored our player. Delete their on-doody file.
-			onDoodyFile.delete();
-			loadDutyCache();
-			dutyCache.remove(playerName);
-
-			MessageSender.send(player, "&6[OnDoOdy] &aYou're no longer on duty.");
-			plugin.getDebug().check("<removeDoody> " + playerName + "'s data restored & saved data deleted.");
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			plugin.getLog().warning("Failed restoring the inventory of " + playerName + ".");
-			plugin.getLog().warning("Failed restoring the location of " + playerName + ".");
-			MessageSender.send(player, "&6[OnDoOdy] &cFailed restoring you to pre-duty state. Plugin encountered error.");
-			MessageSender.send(player, "&6[OnDoOdy] &cPlease try again.");
-			return false;
-		}
-	}
-
 	// Duty Items as per Config
-	public void dutyItems(Player player) {
+	private void dutyItems(Player player) {
 		Inventory playerInv = player.getInventory();
 		ConfigurationManager configurationManager = plugin.getConfigurationManager();
 		for (int i = 0; i < 9; i++) {

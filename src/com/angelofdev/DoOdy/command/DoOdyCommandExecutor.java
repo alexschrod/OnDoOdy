@@ -28,6 +28,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import com.angelofdev.DoOdy.DoOdy;
 import com.angelofdev.DoOdy.Log;
+import com.angelofdev.DoOdy.exceptions.DutyException;
 import com.angelofdev.DoOdy.util.Debug;
 import com.angelofdev.DoOdy.util.DutyManager;
 import com.angelofdev.DoOdy.util.MessageSender;
@@ -207,7 +208,15 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 
 				if (hasWorldAccess) {
 					plugin.getDebug().check(playerName + " used /ondoody on");
-					dutyManager.enableDutyFor(player);
+					try {
+						if (dutyManager.enableDutyFor(player)) {
+							MessageSender.send(player, "&6[OnDoOdy] &aYou're now on duty.");
+						} else {
+							MessageSender.send(player, "&6[OnDoOdy] &cYou were prevented from going on duty!");
+						}
+					} catch (DutyException e) {
+						MessageSender.send(player, "&6[OnDoOdy] &cFailed storing your data. Could not place you on duty.");
+					}
 				} else {
 					MessageSender.send(player, "&6[OnDoOdy] &cCannot go on duty in world &e" + worldName + " &c!");
 				}
@@ -241,9 +250,14 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			return;
 		}
 
-		if (plugin.getDutyManager().enableDutyFor(targetPlayer)) {
-			MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cis now on duty!");
-		} else {
+		try {
+			if (plugin.getDutyManager().enableDutyFor(targetPlayer)) {
+				MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cis now on duty!");
+				MessageSender.send(targetPlayer, "&6[OnDoOdy] &aYou're now on duty.");
+			} else {
+				MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cwas prevented from going on duty!");
+			}
+		} catch (DutyException e) {
 			MessageSender.send(sender, "&6[OnDoOdy] &cFailed storing the data of &e" + targetPlayerName + " &c. Could not place them on duty.");
 		}
 	}
@@ -255,7 +269,16 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			final DutyManager dutyManager = plugin.getDutyManager();
 			if (dutyManager.isPlayerOnDuty(player)) {
 				plugin.getDebug().check(playerName + " used /ondoody off");
-				dutyManager.disableDutyFor(player);
+				try {
+					if (dutyManager.disableDutyFor(player)) {
+						MessageSender.send(player, "&6[OnDoOdy] &aYou're no longer on duty.");
+					} else {
+						MessageSender.send(player, "&6[OnDoOdy] &cYou were prevented from going off duty!");
+					}
+				} catch (DutyException e) {
+					MessageSender.send(player, "&6[OnDoOdy] &cFailed restoring you to pre-duty state. Plugin encountered error.");
+					MessageSender.send(player, "&6[OnDoOdy] &cPlease try again.");
+				}
 				return;
 			} else {
 				MessageSender.send(player, "&6[OnDoOdy] &cYou're not on duty!");
@@ -285,9 +308,14 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			return;
 		}
 
-		if (plugin.getDutyManager().disableDutyFor(targetPlayer)) {
-			MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cis now off duty!");
-		} else {
+		try {
+			if (plugin.getDutyManager().disableDutyFor(targetPlayer)) {
+				MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cis now off duty!");
+				MessageSender.send(targetPlayer, "&6[OnDoOdy] &aYou're no longer on duty.");
+			} else {
+				MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cwas prevented from going off duty!");
+			}
+		} catch (DutyException e) {
 			MessageSender.send(sender, "&6[OnDoOdy] &cFailed restoring &e" + targetPlayerName + " &c to pre-duty state. Plugin encountered error.");
 		}
 	}

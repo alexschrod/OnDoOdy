@@ -47,6 +47,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.angelofdev.DoOdy.DoOdy;
 import com.angelofdev.DoOdy.config.ConfigurationManager;
+import com.angelofdev.DoOdy.exceptions.DutyException;
 import com.angelofdev.DoOdy.util.Debug;
 import com.angelofdev.DoOdy.util.DutyManager;
 import com.angelofdev.DoOdy.util.MessageSender;
@@ -133,7 +134,12 @@ public class PlayerListener implements Listener {
 		final boolean hasWorldAccess = hasWorldPermission || plugin.getConfigurationManager().isIncludeMode() ? isWorldInWorldList : !isWorldInWorldList;
 
 		if (!hasWorldAccess) {
-			plugin.getDutyManager().disableDutyFor(player);
+			try {
+				plugin.getDutyManager().disableDutyFor(player);
+			} catch (DutyException e) {
+				plugin.getLog().severe("Could not stop " + player.getName() + " from going to world " + worldName + " while on duty!");
+				return;
+			}
 			MessageSender.send(player, "&6[OnDoOdy] &cCannot go to world &e" + worldName + " &cwhile on duty!");
 		} else {
 			String playerName = player.getName();
@@ -267,18 +273,18 @@ public class PlayerListener implements Listener {
 			}
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
 		if (!plugin.getDutyManager().isPlayerOnDuty(player))
 			return;
-		
+
 		final Block block = event.getClickedBlock();
 		if (block == null)
 			return;
-		
+
 		final BlockFace blockFace = event.getBlockFace();
 		final Block relativeBlock = block.getRelative(blockFace);
 		final Material fireMaterial = Material.FIRE;
@@ -292,7 +298,7 @@ public class PlayerListener implements Listener {
 
 			if (!hasBreakAccess) {
 				event.setCancelled(true);
-				player.sendBlockChange(relativeBlock.getLocation(), fireMaterial, (byte)0);
+				player.sendBlockChange(relativeBlock.getLocation(), fireMaterial, (byte) 0);
 				MessageSender.send(player, "&6[OnDoOdy] &cYou may not put out &e" + MessageSender.getNiceNameOf(fireMaterial) + " &cwhile on Duty.");
 			}
 		}
