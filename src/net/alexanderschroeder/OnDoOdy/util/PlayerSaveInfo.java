@@ -21,6 +21,7 @@ package net.alexanderschroeder.OnDoOdy.util;
 
 import java.io.Serializable;
 import java.util.Collection;
+
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.util.Vector;
 
@@ -38,7 +39,7 @@ public class PlayerSaveInfo implements Serializable {
 	public int foodLevel;
 	public float exhaustion;
 	public float saturation;
-	
+
 	public float fallDistance;
 	public int fireTicks;
 	public int remainingAir;

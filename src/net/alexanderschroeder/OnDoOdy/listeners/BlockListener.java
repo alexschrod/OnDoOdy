@@ -20,6 +20,10 @@
 
 package net.alexanderschroeder.OnDoOdy.listeners;
 
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
+import net.alexanderschroeder.OnDoOdy.util.MessageSender;
+
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -28,24 +32,21 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 
-import net.alexanderschroeder.OnDoOdy.OnDoOdy;
-import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
-import net.alexanderschroeder.OnDoOdy.util.MessageSender;
-
 public class BlockListener implements Listener {
-	private OnDoOdy plugin;
+	private final OnDoOdy plugin;
 
-	public BlockListener(OnDoOdy plugin) {
+	public BlockListener(final OnDoOdy plugin) {
 		this.plugin = plugin;
 
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onBlockPlace(BlockPlaceEvent event) {
-		Player player = event.getPlayer();
-		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+	public void onBlockPlace(final BlockPlaceEvent event) {
+		final Player player = event.getPlayer();
+		if (!plugin.getDutyManager().isPlayerOnDuty(player)) {
 			return;
-		
+		}
+
 		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
 
 		final Block block = event.getBlock();
@@ -62,11 +63,12 @@ public class BlockListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onBlockBreak(BlockBreakEvent event) {
-		Player player = event.getPlayer();
-		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+	public void onBlockBreak(final BlockBreakEvent event) {
+		final Player player = event.getPlayer();
+		if (!plugin.getDutyManager().isPlayerOnDuty(player)) {
 			return;
-		
+		}
+
 		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
 
 		final Block block = event.getBlock();

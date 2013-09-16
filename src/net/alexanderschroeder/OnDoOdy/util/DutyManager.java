@@ -27,6 +27,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
+import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOffDutyEvent;
+import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOnDutyEvent;
+import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOffDutyEvent;
+import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOnDutyEvent;
+import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
 import net.minecraft.server.v1_6_R2.EntityCreature;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
@@ -41,56 +48,49 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffect;
 
-import net.alexanderschroeder.OnDoOdy.OnDoOdy;
-import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
-import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOffDutyEvent;
-import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOnDutyEvent;
-import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOffDutyEvent;
-import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOnDutyEvent;
-import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
-
 public class DutyManager {
 	private static final String ONDOODY_EXTENSION = ".ondoody";
 	private static final String LOCATION_EXTENSION = ".location";
 
-	private OnDoOdy plugin;
+	private final OnDoOdy plugin;
 
 	private Set<String> dutyCache;
 
-	public DutyManager(OnDoOdy plugin) {
+	public DutyManager(final OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 
-	private File getOnDoodyFileFor(Player player) {
+	private File getOnDoodyFileFor(final Player player) {
 		return new File(plugin.getPluginDataFilePath(player.getName() + ONDOODY_EXTENSION));
 	}
 
-	private File getLocationFileFor(Player player) {
+	private File getLocationFileFor(final Player player) {
 		return new File(plugin.getPluginDataFilePath(player.getName() + LOCATION_EXTENSION));
 	}
 
-	public boolean isPlayerOnDuty(Player player) {
+	public boolean isPlayerOnDuty(final Player player) {
 		loadDutyCache();
 		return dutyCache.contains(player.getName());
 	}
 
-	public boolean hasDutyLocation(Player player) {
+	public boolean hasDutyLocation(final Player player) {
 		return getLocationFileFor(player).exists();
 	}
 
 	// Enable Duty Mode
-	public boolean enableDutyFor(Player player) throws DutyException {
+	public boolean enableDutyFor(final Player player) throws DutyException {
 		final PluginManager pluginManager = plugin.getServer().getPluginManager();
-		
+
 		// Call the going-on-duty event and see if anyone wants to cancel us.
-		PlayerGoingOnDutyEvent playerGoingOnDutyEvent = new PlayerGoingOnDutyEvent(player);
+		final PlayerGoingOnDutyEvent playerGoingOnDutyEvent = new PlayerGoingOnDutyEvent(player);
 		pluginManager.callEvent(playerGoingOnDutyEvent);
-		if (playerGoingOnDutyEvent.isCancelled())
+		if (playerGoingOnDutyEvent.isCancelled()) {
 			return false;
+		}
 
-		String playerName = player.getName();
+		final String playerName = player.getName();
 
-		PlayerSaveInfo playerSaveInfo = new PlayerSaveInfo();
+		final PlayerSaveInfo playerSaveInfo = new PlayerSaveInfo();
 
 		// Save EXP
 		playerSaveInfo.level = player.getLevel();
@@ -124,7 +124,7 @@ public class DutyManager {
 		try {
 			// Save to file
 			SLAPI.save(playerSaveInfo, getOnDoodyFileFor(player).getPath());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			plugin.getLog().severe("Failed storing data on /ondoody on");
 			final DutyException dutyException = new DutyException("Failed saving player's data to disk.", e);
 			plugin.getLogger().throwing("DutyManager", "enableDutyFor", dutyException);
@@ -150,7 +150,7 @@ public class DutyManager {
 		inventory.setBoots(null);
 
 		// Remove potion effects
-		for (PotionEffect effect : activePotionEffects) {
+		for (final PotionEffect effect : activePotionEffects) {
 			player.removePotionEffect(effect.getType());
 		}
 
@@ -175,21 +175,22 @@ public class DutyManager {
 	}
 
 	// Remove Duty Mode
-	public boolean disableDutyFor(Player player) throws DutyException {
+	public boolean disableDutyFor(final Player player) throws DutyException {
 		final PluginManager pluginManager = plugin.getServer().getPluginManager();
-		
-		// Call the going-off-duty event and see if anyone wants to cancel us.
-		PlayerGoingOffDutyEvent playerGoingOffDutyEvent = new PlayerGoingOffDutyEvent(player);
-		pluginManager.callEvent(playerGoingOffDutyEvent);
-		if (playerGoingOffDutyEvent.isCancelled())
-			return false;
 
-		String playerName = player.getName();
+		// Call the going-off-duty event and see if anyone wants to cancel us.
+		final PlayerGoingOffDutyEvent playerGoingOffDutyEvent = new PlayerGoingOffDutyEvent(player);
+		pluginManager.callEvent(playerGoingOffDutyEvent);
+		if (playerGoingOffDutyEvent.isCancelled()) {
+			return false;
+		}
+
+		final String playerName = player.getName();
 		final File onDoodyFile = getOnDoodyFileFor(player);
 		PlayerSaveInfo playerSaveInfo;
 		try {
 			playerSaveInfo = (PlayerSaveInfo) SLAPI.load(onDoodyFile.getPath());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			plugin.getLog().severe("Failed restoring data on /ondoody off");
 			final DutyException dutyException = new DutyException("Failed restoring player's data from disk.", e);
 			plugin.getLogger().throwing("DutyManager", "disableDutyFor", dutyException);
@@ -230,7 +231,7 @@ public class DutyManager {
 		player.setVelocity(playerSaveInfo.velocity);
 
 		// Restore potion effects
-		for (PotionEffect effect : player.getActivePotionEffects()) {
+		for (final PotionEffect effect : player.getActivePotionEffects()) {
 			player.removePotionEffect(effect.getType());
 		}
 		player.addPotionEffects(playerSaveInfo.potionEffects);
@@ -248,17 +249,17 @@ public class DutyManager {
 		return true;
 	}
 
-	public void stopMobsTargeting(Player player) {
+	public void stopMobsTargeting(final Player player) {
 		// These numbers can probably be reduced... I couldn't find at what
 		// range mobs can't or won't ever target a player...
-		List<Entity> nearbyEntities = player.getNearbyEntities(128, 128, 128);
-		for (Entity entity : nearbyEntities) {
+		final List<Entity> nearbyEntities = player.getNearbyEntities(128, 128, 128);
+		for (final Entity entity : nearbyEntities) {
 			if (entity instanceof CraftCreature) {
-				CraftPlayer craftPlayer = (CraftPlayer) player;
-				CraftCreature creature = (CraftCreature) entity;
+				final CraftPlayer craftPlayer = (CraftPlayer) player;
+				final CraftCreature creature = (CraftCreature) entity;
 
-				EntityCreature entityCreature = creature.getHandle();
-				EntityPlayer entityPlayer = craftPlayer.getHandle();
+				final EntityCreature entityCreature = creature.getHandle();
+				final EntityPlayer entityPlayer = craftPlayer.getHandle();
 
 				final EntityLiving goalTarget = entityCreature.getGoalTarget();
 				if (goalTarget != null && goalTarget.equals(entityPlayer)) {
@@ -269,9 +270,9 @@ public class DutyManager {
 	}
 
 	// Duty Items as per Config
-	private void dutyItems(Player player) {
-		Inventory playerInv = player.getInventory();
-		ConfigurationManager configurationManager = plugin.getConfigurationManager();
+	private void dutyItems(final Player player) {
+		final Inventory playerInv = player.getInventory();
+		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
 		for (int i = 0; i < 9; i++) {
 			playerInv.setItem(i, configurationManager.getDutyItem(i + 1));
 		}
@@ -279,14 +280,15 @@ public class DutyManager {
 
 	private void loadDutyCache() {
 		if (dutyCache == null) {
-			File dataFolder = plugin.getPluginDataFolder();
-			String[] onDoodies = dataFolder.list(new FilenameFilter() {
-				public boolean accept(File folder, String fileName) {
+			final File dataFolder = plugin.getPluginDataFolder();
+			final String[] onDoodies = dataFolder.list(new FilenameFilter() {
+				@Override
+				public boolean accept(final File folder, final String fileName) {
 					return fileName.endsWith(ONDOODY_EXTENSION);
 				}
 			});
 
-			HashSet<String> dutySet = new HashSet<String>();
+			final HashSet<String> dutySet = new HashSet<String>();
 			for (String onDoody : onDoodies) {
 				onDoody = onDoody.substring(0, onDoody.indexOf(ONDOODY_EXTENSION));
 				dutySet.add(onDoody);
@@ -301,62 +303,64 @@ public class DutyManager {
 	}
 
 	public Set<Player> getDutyPlayerSet() {
-		HashSet<Player> dutyPlayerSet = new HashSet<Player>();
-		for (String dutyPlayerName : getDutySet()) {
-			Player dutyPlayer = plugin.getServer().getPlayerExact(dutyPlayerName);
-			if (dutyPlayer != null)
+		final HashSet<Player> dutyPlayerSet = new HashSet<Player>();
+		for (final String dutyPlayerName : getDutySet()) {
+			final Player dutyPlayer = plugin.getServer().getPlayerExact(dutyPlayerName);
+			if (dutyPlayer != null) {
 				dutyPlayerSet.add(dutyPlayer);
+			}
 		}
 		return dutyPlayerSet;
 	}
 
-	public void sendToDutyLocation(Player player) {
-		String playerName = player.getName();
+	public void sendToDutyLocation(final Player player) {
+		final String playerName = player.getName();
 		try {
 			final File locationFile = getLocationFileFor(player);
-			LocationSaveInfo locationSaveInfo = (LocationSaveInfo) SLAPI.load(locationFile.getPath());
+			final LocationSaveInfo locationSaveInfo = (LocationSaveInfo) SLAPI.load(locationFile.getPath());
 			player.teleport(locationSaveInfo.getLocation());
 			locationFile.delete();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			plugin.getLog().warning("Could not restore " + playerName + " to their last duty location.");
 			MessageSender.send(player, "&6[OnDoOdy] &cFailed returning you to last duty location.");
 		}
 	}
 
-	public void saveLocation(Player player) {
-		LocationSaveInfo locationSaveInfo = new LocationSaveInfo(player.getLocation());
+	public void saveLocation(final Player player) {
+		final LocationSaveInfo locationSaveInfo = new LocationSaveInfo(player.getLocation());
 		try {
 			SLAPI.save(locationSaveInfo, getLocationFileFor(player).getPath());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			plugin.getLog().warning("Could not save the location of " + player.getName());
 		}
 	}
 
-	public void hidePlayerOnDuty(Player player) {
+	public void hidePlayerOnDuty(final Player player) {
 		if (plugin.getConfigurationManager().hidePlayerOnDuty()) {
-			for (Player otherPlayer : plugin.getServer().getOnlinePlayers()) {
-				if (otherPlayer.hasPermission("doody.seehidden"))
+			for (final Player otherPlayer : plugin.getServer().getOnlinePlayers()) {
+				if (otherPlayer.hasPermission("doody.seehidden")) {
 					continue;
+				}
 
 				otherPlayer.hidePlayer(player);
 			}
 		}
 	}
 
-	public void showPlayer(Player player) {
-		for (Player otherPlayer : plugin.getServer().getOnlinePlayers()) {
+	public void showPlayer(final Player player) {
+		for (final Player otherPlayer : plugin.getServer().getOnlinePlayers()) {
 			otherPlayer.showPlayer(player);
 		}
 	}
 
 	public void showAllDutyPlayers() {
-		for (Player player : getDutyPlayerSet()) {
+		for (final Player player : getDutyPlayerSet()) {
 			showPlayer(player);
 		}
 	}
 
 	public void hideAllDutyPlayers() {
-		for (Player player : getDutyPlayerSet()) {
+		for (final Player player : getDutyPlayerSet()) {
 			hidePlayerOnDuty(player);
 		}
 	}

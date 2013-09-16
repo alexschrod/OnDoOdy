@@ -20,6 +20,9 @@
 
 package net.alexanderschroeder.OnDoOdy.listeners;
 
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+import net.alexanderschroeder.OnDoOdy.util.MessageSender;
+
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -31,48 +34,47 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 
-import net.alexanderschroeder.OnDoOdy.OnDoOdy;
-import net.alexanderschroeder.OnDoOdy.util.MessageSender;
-
 public class EntityListener implements Listener {
-	private OnDoOdy plugin;
+	private final OnDoOdy plugin;
 
-	public EntityListener(OnDoOdy plugin) {
+	public EntityListener(final OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 
 	@EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-	public void onAttack(EntityDamageByEntityEvent event) {
+	public void onAttack(final EntityDamageByEntityEvent event) {
 		if (event.getDamager() instanceof Player) {
-			Player attacker = (Player) event.getDamager();
-			Entity receiver = event.getEntity();
+			final Player attacker = (Player) event.getDamager();
+			final Entity receiver = event.getEntity();
 
-			if (!plugin.getDutyManager().isPlayerOnDuty(attacker))
+			if (!plugin.getDutyManager().isPlayerOnDuty(attacker)) {
 				return;
+			}
 
-			boolean allowPvP = plugin.getConfigurationManager().isPvPAllowed() || attacker.hasPermission("doody.pvp");
-			boolean allowMob = plugin.getConfigurationManager().isMobDamageAllowed() || attacker.hasPermission("doody.mob");
+			final boolean allowPvP = plugin.getConfigurationManager().isPvPAllowed() || attacker.hasPermission("doody.pvp");
+			final boolean allowMob = plugin.getConfigurationManager().isMobDamageAllowed() || attacker.hasPermission("doody.mob");
 
-			boolean isPlayer = receiver instanceof Player;
+			final boolean isPlayer = receiver instanceof Player;
 
-			if (!isPlayer && allowMob)
+			if (!isPlayer && allowMob) {
 				return;
-			else if (isPlayer && allowPvP)
+			} else if (isPlayer && allowPvP) {
 				return;
-			else if (!isPlayer)
+			} else if (!isPlayer) {
 				MessageSender.send(attacker, "&6[OnDoOdy] &cYou may not attack mobs while on duty.");
-			else if (isPlayer)
+			} else if (isPlayer) {
 				MessageSender.send(attacker, "&6[OnDoOdy] &cYou may not attack players while on duty.");
+			}
 
 			event.setCancelled(true);
 		}
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onShootEvent(EntityShootBowEvent event) {
+	public void onShootEvent(final EntityShootBowEvent event) {
 		final LivingEntity entity = event.getEntity();
 		if (entity instanceof Player) {
-			Player player = (Player) entity;
+			final Player player = (Player) entity;
 			if (plugin.getDutyManager().isPlayerOnDuty(player)) {
 				MessageSender.send(player, "&6[OnDoOdy] &cYou may not shoot bows while on duty.");
 				event.setCancelled(true);
@@ -81,9 +83,9 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onSplashEvent(PotionSplashEvent event) {
+	public void onSplashEvent(final PotionSplashEvent event) {
 		if (event.getEntity().getShooter() instanceof Player) {
-			Player shooter = (Player) event.getEntity().getShooter();
+			final Player shooter = (Player) event.getEntity().getShooter();
 			if (plugin.getDutyManager().isPlayerOnDuty(shooter)) {
 				MessageSender.send(shooter, "&6[OnDoOdy] &cYou may not throw potions while on duty.");
 				event.setCancelled(true);
@@ -92,16 +94,18 @@ public class EntityListener implements Listener {
 	}
 
 	@EventHandler
-	public void onEntityTarget(EntityTargetEvent event) {
+	public void onEntityTarget(final EntityTargetEvent event) {
 		final Entity entity = event.getTarget();
-		if (entity == null)
+		if (entity == null) {
 			return;
+		}
 
 		if (entity instanceof Player) {
 			final Player target = (Player) entity;
-			if (!plugin.getDutyManager().isPlayerOnDuty(target))
+			if (!plugin.getDutyManager().isPlayerOnDuty(target)) {
 				return;
-			
+			}
+
 			event.setCancelled(true);
 		}
 	}

@@ -22,9 +22,6 @@ package net.alexanderschroeder.OnDoOdy;
 
 import java.io.File;
 
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
-
 import net.alexanderschroeder.OnDoOdy.command.DoOdyCommandExecutor;
 import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
 import net.alexanderschroeder.OnDoOdy.listeners.BlockListener;
@@ -32,6 +29,9 @@ import net.alexanderschroeder.OnDoOdy.listeners.EntityListener;
 import net.alexanderschroeder.OnDoOdy.listeners.PlayerListener;
 import net.alexanderschroeder.OnDoOdy.util.Debug;
 import net.alexanderschroeder.OnDoOdy.util.DutyManager;
+
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public class OnDoOdy extends JavaPlugin {
 	private static final String PLUGIN_NAME = "OnDoOdy";
@@ -58,8 +58,8 @@ public class OnDoOdy extends JavaPlugin {
 
 		dutyManager = new DutyManager(this);
 		debug = new Debug(this);
-		
-		PluginManager pm = getServer().getPluginManager();
+
+		final PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new PlayerListener(this), this);
 		pm.registerEvents(new BlockListener(this), this);
 		pm.registerEvents(new EntityListener(this), this);
@@ -85,32 +85,34 @@ public class OnDoOdy extends JavaPlugin {
 		return dutyManager;
 	}
 
-	public String getPluginDataFilePath(String fileName) {
-		File dataFolder = getPluginDataFolder();
-		File file = new File(dataFolder, fileName);
-		String filePath = file.getPath();
+	public String getPluginDataFilePath(final String fileName) {
+		final File dataFolder = getPluginDataFolder();
+		final File file = new File(dataFolder, fileName);
+		final String filePath = file.getPath();
 		return filePath;
 	}
 
 	public File getPluginDataFolder() {
-		File pluginDataFolder = getPluginFolder();
-		File dataFolder = new File(pluginDataFolder, "data");
-		if (!dataFolder.exists())
+		final File pluginDataFolder = getPluginFolder();
+		final File dataFolder = new File(pluginDataFolder, "data");
+		if (!dataFolder.exists()) {
 			dataFolder.mkdirs();
+		}
 		return dataFolder;
 	}
 
-	public String getPluginFilePath(String fileName) {
-		File pluginDataFolder = getPluginFolder();
-		File file = new File(pluginDataFolder, fileName);
-		String filePath = file.getPath();
+	public String getPluginFilePath(final String fileName) {
+		final File pluginDataFolder = getPluginFolder();
+		final File file = new File(pluginDataFolder, fileName);
+		final String filePath = file.getPath();
 		return filePath;
 	}
 
 	public File getPluginFolder() {
-		File pluginDataFolder = getDataFolder();
-		if (!pluginDataFolder.exists())
+		final File pluginDataFolder = getDataFolder();
+		if (!pluginDataFolder.exists()) {
 			pluginDataFolder.mkdirs();
+		}
 		return pluginDataFolder;
 	}
 

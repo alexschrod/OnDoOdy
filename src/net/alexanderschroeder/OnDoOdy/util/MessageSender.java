@@ -28,12 +28,11 @@ public class MessageSender {
 	private MessageSender() {
 	}
 
-	public static void send(CommandSender sender, String message) {
+	public static void send(final CommandSender sender, final String message) {
 		sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
 	}
 
-	public static String getNiceNameOf(Material material) {
+	public static String getNiceNameOf(final Material material) {
 		return material.toString().toLowerCase().replace('_', ' ');
 	}
 }
-

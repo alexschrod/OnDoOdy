@@ -27,15 +27,15 @@ public class DutyException extends Exception {
 		super();
 	}
 
-	public DutyException(String message) {
+	public DutyException(final String message) {
 		super(message);
 	}
 
-	public DutyException(String message, Throwable cause) {
+	public DutyException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 
-	public DutyException(Throwable cause) {
+	public DutyException(final Throwable cause) {
 		super(cause);
 	}
 }

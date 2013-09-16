@@ -22,31 +22,32 @@ package net.alexanderschroeder.OnDoOdy.command;
 
 import java.util.Set;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 import net.alexanderschroeder.OnDoOdy.Log;
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
 import net.alexanderschroeder.OnDoOdy.util.Debug;
 import net.alexanderschroeder.OnDoOdy.util.DutyManager;
 import net.alexanderschroeder.OnDoOdy.util.MessageSender;
 
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
 public class DoOdyCommandExecutor implements CommandExecutor {
 
-	private OnDoOdy plugin;
+	private final OnDoOdy plugin;
 
-	public DoOdyCommandExecutor(OnDoOdy plugin) {
+	public DoOdyCommandExecutor(final OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+	public boolean onCommand(final CommandSender sender, final Command cmd, final String label, final String[] args) {
 		if (cmd.getName().equalsIgnoreCase("ondoody")) {
 			if (args.length == 0) {
-				if ((sender instanceof Player)) {
-					Player player = (Player) sender;
+				if (sender instanceof Player) {
+					final Player player = (Player) sender;
 					printCommandsTo(player);
 					return true;
 				} else {
@@ -98,7 +99,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 					}
 				}
 
-				Player targetPlayer = plugin.getServer().getPlayer(args[0]);
+				final Player targetPlayer = plugin.getServer().getPlayer(args[0]);
 
 				// /dm <player> on
 				if (args[1].equalsIgnoreCase("on")) {
@@ -116,7 +117,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		return false;
 	}
 
-	private void printCommandsTo(Player player) {
+	private void printCommandsTo(final Player player) {
 		MessageSender.send(player, "&a____________[ &6OnDoOdy Commands &a]____________");
 		MessageSender.send(player, "&a________[ &6Short: /dm, /duty, /dooty &a]_______");
 
@@ -134,7 +135,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		if (player.hasPermission("doody.debug")) {
 			MessageSender.send(player, "&6/ondoody &bdebug on/off &fEnable/Disable debug mode.");
 		}
-		Set<String> dutyList = plugin.getDutyManager().getDutySet();
+		final Set<String> dutyList = plugin.getDutyManager().getDutySet();
 		if (!dutyList.isEmpty()) {
 			MessageSender.send(player, "&a____________[ &6Players on duty &a]____________");
 			MessageSender.send(player, "&6" + dutyList);
@@ -151,9 +152,9 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		log.info("/ondoody debug <on/off> [Enable/disable debug mode]");
 	}
 
-	private void onDebugOn(CommandSender sender) {
-		if ((sender instanceof Player)) {
-			Player player = (Player) sender;
+	private void onDebugOn(final CommandSender sender) {
+		if (sender instanceof Player) {
+			final Player player = (Player) sender;
 			if (!player.hasPermission("doody.debug")) {
 				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.debug");
 				return;
@@ -170,9 +171,9 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		MessageSender.send(sender, "&6[OnDoOdy] &aDebug messages are output to server console/log.");
 	}
 
-	private void onDebugOff(CommandSender sender) {
-		if ((sender instanceof Player)) {
-			Player player = (Player) sender;
+	private void onDebugOff(final CommandSender sender) {
+		if (sender instanceof Player) {
+			final Player player = (Player) sender;
 			if (!player.hasPermission("doody.debug")) {
 				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.debug");
 				return;
@@ -189,10 +190,10 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		MessageSender.send(sender, "&6[OnDoOdy] &aI hope debugging shed some light on any issues you have with OnDoOdy.");
 	}
 
-	private void onOnDuty(CommandSender sender) {
-		if ((sender instanceof Player)) {
-			Player player = (Player) sender;
-			String playerName = player.getName();
+	private void onOnDuty(final CommandSender sender) {
+		if (sender instanceof Player) {
+			final Player player = (Player) sender;
+			final String playerName = player.getName();
 			if (player.hasPermission("doody.duty")) {
 				final DutyManager dutyManager = plugin.getDutyManager();
 				final boolean isPlayerOnDuty = dutyManager.isPlayerOnDuty(player);
@@ -201,7 +202,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 					return;
 				}
 
-				String worldName = player.getWorld().getName();
+				final String worldName = player.getWorld().getName();
 				final boolean hasWorldPermission = player.hasPermission("doody.worlds." + worldName);
 				final boolean isWorldInWorldList = plugin.getConfigurationManager().getWorldList().contains(worldName);
 				final boolean hasWorldAccess = hasWorldPermission || plugin.getConfigurationManager().isIncludeMode() ? isWorldInWorldList : !isWorldInWorldList;
@@ -214,7 +215,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 						} else {
 							MessageSender.send(player, "&6[OnDoOdy] &cYou were prevented from going on duty!");
 						}
-					} catch (DutyException e) {
+					} catch (final DutyException e) {
 						MessageSender.send(player, "&6[OnDoOdy] &cFailed storing your data. Could not place you on duty.");
 					}
 				} else {
@@ -228,17 +229,17 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		}
 	}
 
-	private void onOnDuty(CommandSender sender, Player targetPlayer) {
+	private void onOnDuty(final CommandSender sender, final Player targetPlayer) {
 		if (targetPlayer == null) {
 			MessageSender.send(sender, "&6[OnDoOdy] &cThere is no player online with that user name!");
 			return;
 		}
 
-		String targetPlayerName = targetPlayer.getName();
-		boolean isAlreadyOnDuty = plugin.getDutyManager().isPlayerOnDuty(targetPlayer);
+		final String targetPlayerName = targetPlayer.getName();
+		final boolean isAlreadyOnDuty = plugin.getDutyManager().isPlayerOnDuty(targetPlayer);
 
 		if (sender instanceof Player) {
-			Player player = (Player) sender;
+			final Player player = (Player) sender;
 			if (!player.hasPermission("doody.others")) {
 				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.others");
 				return;
@@ -257,15 +258,15 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			} else {
 				MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cwas prevented from going on duty!");
 			}
-		} catch (DutyException e) {
+		} catch (final DutyException e) {
 			MessageSender.send(sender, "&6[OnDoOdy] &cFailed storing the data of &e" + targetPlayerName + " &c. Could not place them on duty.");
 		}
 	}
 
-	private void onOffDuty(CommandSender sender) {
-		if ((sender instanceof Player)) {
-			Player player = (Player) sender;
-			String playerName = player.getName();
+	private void onOffDuty(final CommandSender sender) {
+		if (sender instanceof Player) {
+			final Player player = (Player) sender;
+			final String playerName = player.getName();
 			final DutyManager dutyManager = plugin.getDutyManager();
 			if (dutyManager.isPlayerOnDuty(player)) {
 				plugin.getDebug().check(playerName + " used /ondoody off");
@@ -275,7 +276,7 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 					} else {
 						MessageSender.send(player, "&6[OnDoOdy] &cYou were prevented from going off duty!");
 					}
-				} catch (DutyException e) {
+				} catch (final DutyException e) {
 					MessageSender.send(player, "&6[OnDoOdy] &cFailed restoring you to pre-duty state. Plugin encountered error.");
 					MessageSender.send(player, "&6[OnDoOdy] &cPlease try again.");
 				}
@@ -286,17 +287,17 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		}
 	}
 
-	private void onOffDuty(CommandSender sender, Player targetPlayer) {
+	private void onOffDuty(final CommandSender sender, final Player targetPlayer) {
 		if (targetPlayer == null) {
 			MessageSender.send(sender, "&6[OnDoOdy] &cThere is no player online with that user name!");
 			return;
 		}
 
-		String targetPlayerName = targetPlayer.getName();
-		boolean isOnDuty = plugin.getDutyManager().isPlayerOnDuty(targetPlayer);
+		final String targetPlayerName = targetPlayer.getName();
+		final boolean isOnDuty = plugin.getDutyManager().isPlayerOnDuty(targetPlayer);
 
 		if (sender instanceof Player) {
-			Player player = (Player) sender;
+			final Player player = (Player) sender;
 			if (!player.hasPermission("doody.others")) {
 				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.others");
 				return;
@@ -315,15 +316,15 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			} else {
 				MessageSender.send(sender, "&6[OnDoOdy] &e" + targetPlayerName + " &cwas prevented from going off duty!");
 			}
-		} catch (DutyException e) {
+		} catch (final DutyException e) {
 			MessageSender.send(sender, "&6[OnDoOdy] &cFailed restoring &e" + targetPlayerName + " &c to pre-duty state. Plugin encountered error.");
 		}
 	}
 
-	private void onList(CommandSender sender) {
-		Set<String> dutyList = plugin.getDutyManager().getDutySet();
-		if ((sender instanceof Player)) {
-			Player player = (Player) sender;
+	private void onList(final CommandSender sender) {
+		final Set<String> dutyList = plugin.getDutyManager().getDutySet();
+		if (sender instanceof Player) {
+			final Player player = (Player) sender;
 			MessageSender.send(player, "&a____________[ &6Players on duty &a]____________");
 			if (!dutyList.isEmpty()) {
 				MessageSender.send(player, "&6" + dutyList);
@@ -341,10 +342,10 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		}
 	}
 
-	private void onBack(CommandSender sender) {
-		if ((sender instanceof Player)) {
-			Player player = (Player) sender;
-			String playerName = player.getName();
+	private void onBack(final CommandSender sender) {
+		if (sender instanceof Player) {
+			final Player player = (Player) sender;
+			final String playerName = player.getName();
 			final Debug debug = plugin.getDebug();
 			final DutyManager dutyManager = plugin.getDutyManager();
 			if (dutyManager.isPlayerOnDuty(player)) {
@@ -363,9 +364,9 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		}
 	}
 
-	private void onReload(CommandSender sender) {
-		if ((sender instanceof Player)) {
-			Player player = (Player) sender;
+	private void onReload(final CommandSender sender) {
+		if (sender instanceof Player) {
+			final Player player = (Player) sender;
 			player.getName();
 			if (player.hasPermission("doody.reload")) {
 				plugin.getConfigurationManager().reload();

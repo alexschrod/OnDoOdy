@@ -38,7 +38,7 @@ public class LocationSaveInfo implements Serializable {
 	public LocationSaveInfo() {
 	}
 
-	public LocationSaveInfo(Location location) {
+	public LocationSaveInfo(final Location location) {
 		world = location.getWorld().getName();
 
 		x = location.getX();
@@ -50,8 +50,8 @@ public class LocationSaveInfo implements Serializable {
 	}
 
 	public Location getLocation() {
-		World world = Bukkit.getServer().getWorld(this.world);
-		Location location = new Location(world, x, y, z, yaw, pitch);
+		final World world = Bukkit.getServer().getWorld(this.world);
+		final Location location = new Location(world, x, y, z, yaw, pitch);
 		return location;
 	}
 }

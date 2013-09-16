@@ -20,35 +20,35 @@
 
 package net.alexanderschroeder.OnDoOdy.util;
 
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-
-import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 
 public class Debug {
 	private static String pre = "[DEBUG]";
 
-	private OnDoOdy plugin;
+	private final OnDoOdy plugin;
 
-	public Debug(OnDoOdy plugin) {
+	public Debug(final OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 
-	public void check(String args) {
+	public void check(final String args) {
 		if (plugin.getConfigurationManager().isDebugModeEnabled()) {
 			plugin.getLog().info(pre + " " + args);
 		}
 	}
 
-	public void normal(String args) {
+	public void normal(final String args) {
 		plugin.getLog().info(pre + " " + args);
 	}
 
-	public void severe(String args) {
+	public void severe(final String args) {
 		plugin.getLog().severe(pre + " " + args);
 	}
 
-	public void checkBroadcast(String args) {
+	public void checkBroadcast(final String args) {
 		if (plugin.getConfigurationManager().isDebugModeEnabled()) {
 			Bukkit.getConsoleSender().sendMessage(pre + " " + ChatColor.translateAlternateColorCodes('&', args));
 		}

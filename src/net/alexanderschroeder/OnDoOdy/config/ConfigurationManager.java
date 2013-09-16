@@ -22,12 +22,12 @@ package net.alexanderschroeder.OnDoOdy.config;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
-
-import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 
 public class ConfigurationManager {
 
@@ -76,9 +76,9 @@ public class ConfigurationManager {
 	private static final String HIDE_ON_DUTY_KEY = "hide-on-duty";
 	private static final boolean HIDE_ON_DUTY_DEFAULT = false;
 
-	private OnDoOdy plugin;
+	private final OnDoOdy plugin;
 
-	public ConfigurationManager(OnDoOdy plugin) {
+	public ConfigurationManager(final OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 
@@ -87,21 +87,22 @@ public class ConfigurationManager {
 	}
 
 	@SuppressWarnings("deprecation")
-	private Material getMaterial(String itemValue) {
+	private Material getMaterial(final String itemValue) {
 		int intValue;
 		Material material;
 		try {
 			intValue = Integer.parseInt(itemValue);
 			material = Material.getMaterial(intValue);
-		} catch (NumberFormatException e) {
+		} catch (final NumberFormatException e) {
 			material = Material.getMaterial(itemValue);
-			if (material == null)
+			if (material == null) {
 				material = Material.AIR;
+			}
 		}
 		return material;
 	}
 
-	private ItemStack getItem(String itemValue) {
+	private ItemStack getItem(final String itemValue) {
 		return new ItemStack(getMaterial(itemValue), 1, (short) 0);
 	}
 
@@ -117,9 +118,9 @@ public class ConfigurationManager {
 		return getConfig().getStringList(WORLD_LIST_KEY);
 	}
 
-	public ItemStack getDutyItem(int number) {
-		String configKey = String.format("%s-%d", DUTY_ITEM_KEY, number);
-		String configValue = getConfig().getString(configKey, "0");
+	public ItemStack getDutyItem(final int number) {
+		final String configKey = String.format("%s-%d", DUTY_ITEM_KEY, number);
+		final String configValue = getConfig().getString(configKey, "0");
 
 		return getItem(configValue);
 	}
@@ -128,12 +129,13 @@ public class ConfigurationManager {
 
 	public List<Material> getPlaceBlockList() {
 		if (placeBlockListCache == null) {
-			List<String> placeBlockList = getConfig().getStringList(PLACE_BLOCK_KEY);
+			final List<String> placeBlockList = getConfig().getStringList(PLACE_BLOCK_KEY);
 			placeBlockListCache = new ArrayList<Material>();
-			for (String block : placeBlockList) {
-				Material material = getMaterial(block);
-				if (material == Material.AIR)
+			for (final String block : placeBlockList) {
+				final Material material = getMaterial(block);
+				if (material == Material.AIR) {
 					continue;
+				}
 				placeBlockListCache.add(material);
 			}
 		}
@@ -145,16 +147,16 @@ public class ConfigurationManager {
 		breakBlockListCache = null;
 		itemDropListCache = null;
 		itemPickupListCache = null;
-		
-		boolean previousHideSetting = hidePlayerOnDuty();
+
+		final boolean previousHideSetting = hidePlayerOnDuty();
 		plugin.reloadConfig();
-		
-		if (hidePlayerOnDuty() != previousHideSetting)
-		{
-			if (previousHideSetting)
+
+		if (hidePlayerOnDuty() != previousHideSetting) {
+			if (previousHideSetting) {
 				plugin.getDutyManager().showAllDutyPlayers();
-			else
+			} else {
 				plugin.getDutyManager().hideAllDutyPlayers();
+			}
 		}
 	}
 
@@ -162,12 +164,13 @@ public class ConfigurationManager {
 
 	public List<Material> getBreakBlockList() {
 		if (breakBlockListCache == null) {
-			List<String> placeBlockList = getConfig().getStringList(BREAK_BLOCK_KEY);
+			final List<String> placeBlockList = getConfig().getStringList(BREAK_BLOCK_KEY);
 			breakBlockListCache = new ArrayList<Material>();
-			for (String block : placeBlockList) {
-				Material material = getMaterial(block);
-				if (material == Material.AIR)
+			for (final String block : placeBlockList) {
+				final Material material = getMaterial(block);
+				if (material == Material.AIR) {
 					continue;
+				}
 				breakBlockListCache.add(material);
 			}
 		}
@@ -190,10 +193,10 @@ public class ConfigurationManager {
 
 	public List<Command> getDisallowedCommandList() {
 		if (disallowedCommandListCache == null) {
-			List<String> disallowedCommandList = getConfig().getStringList(DISALLOWED_COMMAND_KEY);
+			final List<String> disallowedCommandList = getConfig().getStringList(DISALLOWED_COMMAND_KEY);
 			disallowedCommandListCache = new ArrayList<Command>();
-			for (String commandName : disallowedCommandList) {
-				Command command = plugin.getServer().getPluginCommand(commandName);
+			for (final String commandName : disallowedCommandList) {
+				final Command command = plugin.getServer().getPluginCommand(commandName);
 				disallowedCommandListCache.add(command);
 			}
 		}
@@ -204,12 +207,13 @@ public class ConfigurationManager {
 
 	public List<Material> getItemDropList() {
 		if (itemDropListCache == null) {
-			List<String> dropList = getConfig().getStringList(DROP_KEY);
+			final List<String> dropList = getConfig().getStringList(DROP_KEY);
 			itemDropListCache = new ArrayList<Material>();
-			for (String item : dropList) {
-				Material material = getMaterial(item);
-				if (material == Material.AIR)
+			for (final String item : dropList) {
+				final Material material = getMaterial(item);
+				if (material == Material.AIR) {
 					continue;
+				}
 				itemDropListCache.add(material);
 			}
 		}
@@ -220,38 +224,39 @@ public class ConfigurationManager {
 
 	public List<Material> getItemPickupList() {
 		if (itemPickupListCache == null) {
-			List<String> dropList = getConfig().getStringList(PICKUP_KEY);
+			final List<String> dropList = getConfig().getStringList(PICKUP_KEY);
 			itemPickupListCache = new ArrayList<Material>();
-			for (String item : dropList) {
-				Material material = getMaterial(item);
-				if (material == Material.AIR)
+			for (final String item : dropList) {
+				final Material material = getMaterial(item);
+				if (material == Material.AIR) {
 					continue;
+				}
 				itemPickupListCache.add(material);
 			}
 		}
 		return itemPickupListCache;
 	}
-	
+
 	public boolean isInventoryInteractionAllowed() {
 		return getConfig().getBoolean(ALLOW_INVENTORY_INTERACTION_KEY, ALLOW_INVENTORY_INTERACTION_DEFAULT);
 	}
-	
+
 	public boolean isItemDroppingAllowed() {
 		return getConfig().getBoolean(ALLOW_ITEM_DROPS_KEY, ALLOW_ITEM_DROPS_DEFAULT);
 	}
-	
+
 	public boolean isItemPickupAllowed() {
 		return getConfig().getBoolean(ALLOW_ITEM_PICKUPS_KEY, ALLOW_ITEM_PICKUPS_DEFAULT);
 	}
-	
+
 	public boolean isBlockPlacingAllowed() {
 		return getConfig().getBoolean(ALLOW_BLOCK_PLACING_KEY, ALLOW_BLOCK_PLACING_DEFAULT);
 	}
-	
+
 	public boolean isBlockBreakingAllowed() {
 		return getConfig().getBoolean(ALLOW_BLOCK_BREAKING_KEY, ALLOW_BLOCK_BREAKING_DEFAULT);
 	}
-	
+
 	public boolean hidePlayerOnDuty() {
 		return getConfig().getBoolean(HIDE_ON_DUTY_KEY, HIDE_ON_DUTY_DEFAULT);
 	}

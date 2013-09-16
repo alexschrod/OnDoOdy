@@ -20,6 +20,7 @@
 package net.alexanderschroeder.OnDoOdy.util;
 
 import java.io.Serializable;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -32,17 +33,17 @@ public class InventorySaveInfo implements Serializable {
 	public InventorySaveInfo() {
 	}
 
-	public InventorySaveInfo(PlayerInventory inventory) {
+	public InventorySaveInfo(final PlayerInventory inventory) {
 		// save inventory
 		this.inventory = inventory.getContents();
 
 		// save armor
-		this.armor = inventory.getArmorContents();
+		armor = inventory.getArmorContents();
 	}
 
-	public void restore(PlayerInventory inventory) {
+	public void restore(final PlayerInventory inventory) {
 		inventory.setContents(this.inventory);
-		
-		inventory.setArmorContents(this.armor);
+
+		inventory.setArmorContents(armor);
 	}
 }

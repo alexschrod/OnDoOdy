@@ -32,6 +32,7 @@ public class PlayerGoingOnDutyEvent extends PlayerEvent implements Cancellable {
 		return handlers;
 	}
 
+	@Override
 	public HandlerList getHandlers() {
 		return handlers;
 	}
@@ -48,7 +49,7 @@ public class PlayerGoingOnDutyEvent extends PlayerEvent implements Cancellable {
 	}
 
 	@Override
-	public void setCancelled(boolean cancel) {
+	public void setCancelled(final boolean cancel) {
 		this.cancel = cancel;
 	}
 

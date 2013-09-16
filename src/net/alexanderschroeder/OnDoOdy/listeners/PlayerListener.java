@@ -22,6 +22,13 @@ package net.alexanderschroeder.OnDoOdy.listeners;
 
 import java.util.List;
 
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
+import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
+import net.alexanderschroeder.OnDoOdy.util.Debug;
+import net.alexanderschroeder.OnDoOdy.util.DutyManager;
+import net.alexanderschroeder.OnDoOdy.util.MessageSender;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -45,37 +52,31 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-import net.alexanderschroeder.OnDoOdy.OnDoOdy;
-import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
-import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
-import net.alexanderschroeder.OnDoOdy.util.Debug;
-import net.alexanderschroeder.OnDoOdy.util.DutyManager;
-import net.alexanderschroeder.OnDoOdy.util.MessageSender;
-
 public class PlayerListener implements Listener {
 
-	private OnDoOdy plugin;
+	private final OnDoOdy plugin;
 
-	public PlayerListener(OnDoOdy plugin) {
+	public PlayerListener(final OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 
 	@EventHandler(priority = EventPriority.HIGHEST)
-	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
-		Player player = event.getPlayer();
-		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+	public void onPlayerCommandPreprocess(final PlayerCommandPreprocessEvent event) {
+		final Player player = event.getPlayer();
+		if (!plugin.getDutyManager().isPlayerOnDuty(player)) {
 			return;
+		}
 
-		String playerName = player.getName();
-		String label = event.getMessage().substring(1).split(" ", 1)[0];
+		final String playerName = player.getName();
+		final String label = event.getMessage().substring(1).split(" ", 1)[0];
 
-		List<Command> commands = plugin.getConfigurationManager().getDisallowedCommandList();
+		final List<Command> commands = plugin.getConfigurationManager().getDisallowedCommandList();
 		boolean foundCommand = false;
-		for (Command command : commands) {
+		for (final Command command : commands) {
 			if (command.getLabel().equalsIgnoreCase(label)) {
 				foundCommand = true;
 			} else {
-				for (String alias : command.getAliases()) {
+				for (final String alias : command.getAliases()) {
 					if (alias.equalsIgnoreCase(label)) {
 						foundCommand = true;
 					}
@@ -92,11 +93,11 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
+	public void onPlayerJoin(final PlayerJoinEvent event) {
+		final Player player = event.getPlayer();
 		final DutyManager dutyManager = plugin.getDutyManager();
 		if (player.getGameMode() == GameMode.CREATIVE) {
-			String playerName = player.getName();
+			final String playerName = player.getName();
 			final Debug debug = plugin.getDebug();
 			final boolean isPlayerOnDuty = dutyManager.isPlayerOnDuty(player);
 			if (isPlayerOnDuty) {
@@ -116,19 +117,20 @@ public class PlayerListener implements Listener {
 		// When a new player joins, hide all the on-duty players from them,
 		// unless they have the doody.seehidden permission
 		if (plugin.getConfigurationManager().hidePlayerOnDuty() && !player.hasPermission("doody.seehidden")) {
-			for (Player dutyPlayer : dutyManager.getDutyPlayerSet()) {
+			for (final Player dutyPlayer : dutyManager.getDutyPlayerSet()) {
 				player.hidePlayer(dutyPlayer);
 			}
 		}
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
-		Player player = event.getPlayer();
-		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+	public void onPlayerWorldChange(final PlayerChangedWorldEvent event) {
+		final Player player = event.getPlayer();
+		if (!plugin.getDutyManager().isPlayerOnDuty(player)) {
 			return;
+		}
 
-		String worldName = player.getWorld().getName();
+		final String worldName = player.getWorld().getName();
 		final boolean hasWorldPermission = player.hasPermission("doody.worlds." + worldName);
 		final boolean isWorldInWorldList = plugin.getConfigurationManager().getWorldList().contains(worldName);
 		final boolean hasWorldAccess = hasWorldPermission || plugin.getConfigurationManager().isIncludeMode() ? isWorldInWorldList : !isWorldInWorldList;
@@ -136,21 +138,21 @@ public class PlayerListener implements Listener {
 		if (!hasWorldAccess) {
 			try {
 				plugin.getDutyManager().disableDutyFor(player);
-			} catch (DutyException e) {
+			} catch (final DutyException e) {
 				plugin.getLog().severe("Could not stop " + player.getName() + " from going to world " + worldName + " while on duty!");
 				return;
 			}
 			MessageSender.send(player, "&6[OnDoOdy] &cCannot go to world &e" + worldName + " &cwhile on duty!");
 		} else {
-			String playerName = player.getName();
+			final String playerName = player.getName();
 			plugin.getDebug().check("<onPlayerWorldChange> " + playerName + " Player has the permission 'doody.worlds." + worldName + "'");
 		}
 
 	}
 
 	@EventHandler(ignoreCancelled = true)
-	public void onPlayerDeath(PlayerDeathEvent event) {
-		Player player = event.getEntity();
+	public void onPlayerDeath(final PlayerDeathEvent event) {
+		final Player player = event.getEntity();
 		final DutyManager dutyManager = plugin.getDutyManager();
 		if (dutyManager.isPlayerOnDuty(player)) {
 			dutyManager.saveLocation(player);
@@ -160,8 +162,8 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerRespawn(PlayerRespawnEvent event) {
-		Player player = event.getPlayer();
+	public void onPlayerRespawn(final PlayerRespawnEvent event) {
+		final Player player = event.getPlayer();
 		final DutyManager dutyManager = plugin.getDutyManager();
 		if (dutyManager.isPlayerOnDuty(player)) {
 			dutyManager.sendToDutyLocation(player);
@@ -169,10 +171,11 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onPlayerDropItem(PlayerDropItemEvent event) {
+	public void onPlayerDropItem(final PlayerDropItemEvent event) {
 		final Player player = event.getPlayer();
-		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+		if (!plugin.getDutyManager().isPlayerOnDuty(player)) {
 			return;
+		}
 
 		final String playerName = player.getName();
 		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
@@ -196,10 +199,11 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onPlayerPickupItem(PlayerPickupItemEvent event) {
+	public void onPlayerPickupItem(final PlayerPickupItemEvent event) {
 		final Player player = event.getPlayer();
-		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+		if (!plugin.getDutyManager().isPlayerOnDuty(player)) {
 			return;
+		}
 
 		final String playerName = player.getName();
 		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
@@ -217,19 +221,23 @@ public class PlayerListener implements Listener {
 		} else {
 			event.setCancelled(true);
 
-			// TODO: Find a way to tell the player this without sending them 20 messages per second...
-			// MessageSender.send(player, "&6[OnDoOdy] &cYou may not pick up &e" + itemName + "&c while on duty.");
-			// plugin.getDebug().check("<onPlayerPickupItem> " + playerName + " got denied item pickup. <Item(" + itemName + ")>");
+			// TODO: Find a way to tell the player this without sending them 20
+			// messages per second...
+			// MessageSender.send(player, "&6[OnDoOdy] &cYou may not pick up &e"
+			// + itemName + "&c while on duty.");
+			// plugin.getDebug().check("<onPlayerPickupItem> " + playerName +
+			// " got denied item pickup. <Item(" + itemName + ")>");
 		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onCreativeInventory(InventoryCreativeEvent event) {
+	public void onCreativeInventory(final InventoryCreativeEvent event) {
 		final HumanEntity whoClicked = event.getWhoClicked();
 		if (whoClicked instanceof Player) {
 			final Player player = (Player) whoClicked;
-			if (!plugin.getDutyManager().isPlayerOnDuty(player))
+			if (!plugin.getDutyManager().isPlayerOnDuty(player)) {
 				return;
+			}
 
 			final String playerName = player.getName();
 
@@ -247,17 +255,19 @@ public class PlayerListener implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onInventoryClick(InventoryClickEvent event) {
+	public void onInventoryClick(final InventoryClickEvent event) {
 		final HumanEntity whoClicked = event.getWhoClicked();
 		if (whoClicked instanceof Player) {
 			final Player player = (Player) whoClicked;
-			if (!plugin.getDutyManager().isPlayerOnDuty(player))
+			if (!plugin.getDutyManager().isPlayerOnDuty(player)) {
 				return;
+			}
 
 			// Should be allowed to modify own inventory (will be overridden by
 			// not allowing access to creative inventory, however.)
-			if (event.getView().getType() == InventoryType.PLAYER)
+			if (event.getView().getType() == InventoryType.PLAYER) {
 				return;
+			}
 
 			final String playerName = player.getName();
 
@@ -276,14 +286,16 @@ public class PlayerListener implements Listener {
 
 	@SuppressWarnings("deprecation")
 	@EventHandler(priority = EventPriority.HIGH)
-	public void onPlayerInteract(PlayerInteractEvent event) {
+	public void onPlayerInteract(final PlayerInteractEvent event) {
 		final Player player = event.getPlayer();
-		if (!plugin.getDutyManager().isPlayerOnDuty(player))
+		if (!plugin.getDutyManager().isPlayerOnDuty(player)) {
 			return;
+		}
 
 		final Block block = event.getClickedBlock();
-		if (block == null)
+		if (block == null) {
 			return;
+		}
 
 		final BlockFace blockFace = event.getBlockFace();
 		final Block relativeBlock = block.getRelative(blockFace);

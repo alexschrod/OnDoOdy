@@ -23,21 +23,21 @@ package net.alexanderschroeder.OnDoOdy;
 import java.util.logging.Level;
 
 public class Log {
-	private OnDoOdy plugin;
+	private final OnDoOdy plugin;
 
-	public Log(OnDoOdy plugin) {
+	public Log(final OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 
-	public void info(String message) {
+	public void info(final String message) {
 		plugin.getLogger().log(Level.INFO, message);
 	}
 
-	public void warning(String message) {
+	public void warning(final String message) {
 		plugin.getLogger().log(Level.WARNING, message);
 	}
 
-	public void severe(String message) {
+	public void severe(final String message) {
 		plugin.getLogger().log(Level.SEVERE, message);
 	}
 }
