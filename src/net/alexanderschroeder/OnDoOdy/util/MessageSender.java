@@ -18,7 +18,7 @@
  *   
  */
 
-package com.angelofdev.DoOdy.util;
+package net.alexanderschroeder.OnDoOdy.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

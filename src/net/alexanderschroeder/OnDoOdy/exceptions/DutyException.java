@@ -17,41 +17,25 @@
  *   
  */
 
-package com.angelofdev.DoOdy.util;
+package net.alexanderschroeder.OnDoOdy.exceptions;
 
-import java.io.Serializable;
+public class DutyException extends Exception {
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-
-public class LocationSaveInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	public String world;
-	public double x;
-	public double y;
-	public double z;
-	public float pitch;
-	public float yaw;
-
-	public LocationSaveInfo() {
+	public DutyException() {
+		super();
 	}
 
-	public LocationSaveInfo(Location location) {
-		world = location.getWorld().getName();
-
-		x = location.getX();
-		y = location.getY();
-		z = location.getZ();
-
-		pitch = location.getPitch();
-		yaw = location.getYaw();
+	public DutyException(String message) {
+		super(message);
 	}
 
-	public Location getLocation() {
-		World world = Bukkit.getServer().getWorld(this.world);
-		Location location = new Location(world, x, y, z, yaw, pitch);
-		return location;
+	public DutyException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
+	public DutyException(Throwable cause) {
+		super(cause);
 	}
 }

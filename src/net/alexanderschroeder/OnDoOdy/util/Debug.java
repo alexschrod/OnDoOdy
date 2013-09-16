@@ -18,19 +18,19 @@
  *   
  */
 
-package com.angelofdev.DoOdy.util;
+package net.alexanderschroeder.OnDoOdy.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
-import com.angelofdev.DoOdy.DoOdy;
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 
 public class Debug {
 	private static String pre = "[DEBUG]";
 
-	private DoOdy plugin;
+	private OnDoOdy plugin;
 
-	public Debug(DoOdy plugin) {
+	public Debug(OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 

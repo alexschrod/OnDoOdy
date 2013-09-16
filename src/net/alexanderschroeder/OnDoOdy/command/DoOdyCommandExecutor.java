@@ -18,7 +18,7 @@
  *   
  */
 
-package com.angelofdev.DoOdy.command;
+package net.alexanderschroeder.OnDoOdy.command;
 
 import java.util.Set;
 
@@ -26,18 +26,18 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import com.angelofdev.DoOdy.DoOdy;
-import com.angelofdev.DoOdy.Log;
-import com.angelofdev.DoOdy.exceptions.DutyException;
-import com.angelofdev.DoOdy.util.Debug;
-import com.angelofdev.DoOdy.util.DutyManager;
-import com.angelofdev.DoOdy.util.MessageSender;
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+import net.alexanderschroeder.OnDoOdy.Log;
+import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
+import net.alexanderschroeder.OnDoOdy.util.Debug;
+import net.alexanderschroeder.OnDoOdy.util.DutyManager;
+import net.alexanderschroeder.OnDoOdy.util.MessageSender;
 
 public class DoOdyCommandExecutor implements CommandExecutor {
 
-	private DoOdy plugin;
+	private OnDoOdy plugin;
 
-	public DoOdyCommandExecutor(DoOdy plugin) {
+	public DoOdyCommandExecutor(OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 

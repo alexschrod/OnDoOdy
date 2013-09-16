@@ -17,26 +17,34 @@
  *   
  */
 
-package com.angelofdev.DoOdy.events;
+package net.alexanderschroeder.OnDoOdy.util;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
+import java.io.Serializable;
+import java.util.Collection;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
-public class PlayerGoneOffDutyEvent extends PlayerEvent {
+public class PlayerSaveInfo implements Serializable {
+	private static final long serialVersionUID = 2L;
 
-	private static final HandlerList handlers = new HandlerList();
+	public int level;
+	public float exp;
 
-	public static HandlerList getHandlerList() {
-		return handlers;
-	}
+	public InventorySaveInfo inventory = new InventorySaveInfo();
 
-	public HandlerList getHandlers() {
-		return handlers;
-	}
+	public LocationSaveInfo location = new LocationSaveInfo();
 
-	public PlayerGoneOffDutyEvent(final Player player) {
-		super(player);
-	}
+	public double health;
+	public int foodLevel;
+	public float exhaustion;
+	public float saturation;
+	
+	public float fallDistance;
+	public int fireTicks;
+	public int remainingAir;
+
+	public Collection<PotionEffect> potionEffects;
+
+	public Vector velocity;
 
 }

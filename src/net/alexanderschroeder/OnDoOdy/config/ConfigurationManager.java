@@ -17,7 +17,7 @@
  *   
  */
 
-package com.angelofdev.DoOdy.config;
+package net.alexanderschroeder.OnDoOdy.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +27,7 @@ import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 
-import com.angelofdev.DoOdy.DoOdy;
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 
 public class ConfigurationManager {
 
@@ -76,9 +76,9 @@ public class ConfigurationManager {
 	private static final String HIDE_ON_DUTY_KEY = "hide-on-duty";
 	private static final boolean HIDE_ON_DUTY_DEFAULT = false;
 
-	private DoOdy plugin;
+	private OnDoOdy plugin;
 
-	public ConfigurationManager(DoOdy plugin) {
+	public ConfigurationManager(OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 

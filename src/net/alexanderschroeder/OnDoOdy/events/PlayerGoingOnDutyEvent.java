@@ -17,7 +17,7 @@
  *   
  */
 
-package com.angelofdev.DoOdy.events;
+package net.alexanderschroeder.OnDoOdy.events;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;

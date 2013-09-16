@@ -1,5 +1,6 @@
 /*
  *  OnDoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
+ *  Copyright (C) 2013  M.Y.Azad
  *  Copyright © 2013  Alexander Krivács Schrøder
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -17,39 +18,26 @@
  *   
  */
 
-package com.angelofdev.DoOdy.events;
+package net.alexanderschroeder.OnDoOdy;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.Cancellable;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
+import java.util.logging.Level;
 
-public class PlayerGoingOffDutyEvent extends PlayerEvent implements Cancellable {
+public class Log {
+	private OnDoOdy plugin;
 
-	private static final HandlerList handlers = new HandlerList();
-
-	public static HandlerList getHandlerList() {
-		return handlers;
+	public Log(OnDoOdy plugin) {
+		this.plugin = plugin;
 	}
 
-	public HandlerList getHandlers() {
-		return handlers;
+	public void info(String message) {
+		plugin.getLogger().log(Level.INFO, message);
 	}
 
-	public PlayerGoingOffDutyEvent(final Player player) {
-		super(player);
+	public void warning(String message) {
+		plugin.getLogger().log(Level.WARNING, message);
 	}
 
-	private boolean cancel;
-
-	@Override
-	public boolean isCancelled() {
-		return cancel;
+	public void severe(String message) {
+		plugin.getLogger().log(Level.SEVERE, message);
 	}
-
-	@Override
-	public void setCancelled(boolean cancel) {
-		this.cancel = cancel;
-	}
-
 }

@@ -17,26 +17,41 @@
  *   
  */
 
-package com.angelofdev.DoOdy.events;
+package net.alexanderschroeder.OnDoOdy.util;
 
-import org.bukkit.entity.Player;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.player.PlayerEvent;
+import java.io.Serializable;
 
-public class PlayerGoneOnDutyEvent extends PlayerEvent {
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 
-	private static final HandlerList handlers = new HandlerList();
+public class LocationSaveInfo implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-	public static HandlerList getHandlerList() {
-		return handlers;
+	public String world;
+	public double x;
+	public double y;
+	public double z;
+	public float pitch;
+	public float yaw;
+
+	public LocationSaveInfo() {
 	}
 
-	public HandlerList getHandlers() {
-		return handlers;
+	public LocationSaveInfo(Location location) {
+		world = location.getWorld().getName();
+
+		x = location.getX();
+		y = location.getY();
+		z = location.getZ();
+
+		pitch = location.getPitch();
+		yaw = location.getYaw();
 	}
 
-	public PlayerGoneOnDutyEvent(final Player player) {
-		super(player);
+	public Location getLocation() {
+		World world = Bukkit.getServer().getWorld(this.world);
+		Location location = new Location(world, x, y, z, yaw, pitch);
+		return location;
 	}
-
 }

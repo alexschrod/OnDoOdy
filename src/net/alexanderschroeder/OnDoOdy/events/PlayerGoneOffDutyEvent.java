@@ -1,6 +1,5 @@
 /*
  *  OnDoOdy v1: Separates Admin/Mod duties so everyone can enjoy the game.
- *  Copyright (C) 2013  M.Y.Azad
  *  Copyright © 2013  Alexander Krivács Schrøder
  *
  *   This program is free software: you can redistribute it and/or modify
@@ -18,26 +17,26 @@
  *   
  */
 
-package com.angelofdev.DoOdy;
+package net.alexanderschroeder.OnDoOdy.events;
 
-import java.util.logging.Level;
+import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.player.PlayerEvent;
 
-public class Log {
-	private DoOdy plugin;
+public class PlayerGoneOffDutyEvent extends PlayerEvent {
 
-	public Log(DoOdy plugin) {
-		this.plugin = plugin;
+	private static final HandlerList handlers = new HandlerList();
+
+	public static HandlerList getHandlerList() {
+		return handlers;
 	}
 
-	public void info(String message) {
-		plugin.getLogger().log(Level.INFO, message);
+	public HandlerList getHandlers() {
+		return handlers;
 	}
 
-	public void warning(String message) {
-		plugin.getLogger().log(Level.WARNING, message);
+	public PlayerGoneOffDutyEvent(final Player player) {
+		super(player);
 	}
 
-	public void severe(String message) {
-		plugin.getLogger().log(Level.SEVERE, message);
-	}
 }

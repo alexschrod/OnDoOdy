@@ -1,6 +1,6 @@
 name: OnDoOdy
 website: http://dev.bukkit.org/bukkit-plugins/ondoody/
-main: com.angelofdev.DoOdy.DoOdy
+main: net.alexanderschroeder.OnDoOdy.OnDoOdy
 version: 1.2.0
 description: >
              Separates a player's mod & admin duties so they too can enjoy the game.

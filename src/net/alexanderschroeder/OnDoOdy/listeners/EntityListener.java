@@ -18,7 +18,7 @@
  *   
  */
 
-package com.angelofdev.DoOdy.listeners;
+package net.alexanderschroeder.OnDoOdy.listeners;
 
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -31,13 +31,13 @@ import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 
-import com.angelofdev.DoOdy.DoOdy;
-import com.angelofdev.DoOdy.util.MessageSender;
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+import net.alexanderschroeder.OnDoOdy.util.MessageSender;
 
 public class EntityListener implements Listener {
-	private DoOdy plugin;
+	private OnDoOdy plugin;
 
-	public EntityListener(DoOdy plugin) {
+	public EntityListener(OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 

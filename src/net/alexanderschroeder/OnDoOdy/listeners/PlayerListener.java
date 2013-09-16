@@ -18,7 +18,7 @@
  *   
  */
 
-package com.angelofdev.DoOdy.listeners;
+package net.alexanderschroeder.OnDoOdy.listeners;
 
 import java.util.List;
 
@@ -45,18 +45,18 @@ import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 
-import com.angelofdev.DoOdy.DoOdy;
-import com.angelofdev.DoOdy.config.ConfigurationManager;
-import com.angelofdev.DoOdy.exceptions.DutyException;
-import com.angelofdev.DoOdy.util.Debug;
-import com.angelofdev.DoOdy.util.DutyManager;
-import com.angelofdev.DoOdy.util.MessageSender;
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
+import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
+import net.alexanderschroeder.OnDoOdy.util.Debug;
+import net.alexanderschroeder.OnDoOdy.util.DutyManager;
+import net.alexanderschroeder.OnDoOdy.util.MessageSender;
 
 public class PlayerListener implements Listener {
 
-	private DoOdy plugin;
+	private OnDoOdy plugin;
 
-	public PlayerListener(DoOdy plugin) {
+	public PlayerListener(OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 

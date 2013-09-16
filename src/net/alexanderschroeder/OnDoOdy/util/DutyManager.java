@@ -17,7 +17,7 @@
  *   
  */
 
-package com.angelofdev.DoOdy.util;
+package net.alexanderschroeder.OnDoOdy.util;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -41,23 +41,23 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffect;
 
-import com.angelofdev.DoOdy.DoOdy;
-import com.angelofdev.DoOdy.config.ConfigurationManager;
-import com.angelofdev.DoOdy.events.PlayerGoingOffDutyEvent;
-import com.angelofdev.DoOdy.events.PlayerGoingOnDutyEvent;
-import com.angelofdev.DoOdy.events.PlayerGoneOffDutyEvent;
-import com.angelofdev.DoOdy.events.PlayerGoneOnDutyEvent;
-import com.angelofdev.DoOdy.exceptions.DutyException;
+import net.alexanderschroeder.OnDoOdy.OnDoOdy;
+import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
+import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOffDutyEvent;
+import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOnDutyEvent;
+import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOffDutyEvent;
+import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOnDutyEvent;
+import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
 
 public class DutyManager {
 	private static final String ONDOODY_EXTENSION = ".ondoody";
 	private static final String LOCATION_EXTENSION = ".location";
 
-	private DoOdy plugin;
+	private OnDoOdy plugin;
 
 	private Set<String> dutyCache;
 
-	public DutyManager(DoOdy plugin) {
+	public DutyManager(OnDoOdy plugin) {
 		this.plugin = plugin;
 	}
 

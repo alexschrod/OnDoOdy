@@ -18,22 +18,22 @@
  *   
  */
 
-package com.angelofdev.DoOdy;
+package net.alexanderschroeder.OnDoOdy;
 
 import java.io.File;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.angelofdev.DoOdy.command.DoOdyCommandExecutor;
-import com.angelofdev.DoOdy.config.ConfigurationManager;
-import com.angelofdev.DoOdy.listeners.BlockListener;
-import com.angelofdev.DoOdy.listeners.EntityListener;
-import com.angelofdev.DoOdy.listeners.PlayerListener;
-import com.angelofdev.DoOdy.util.Debug;
-import com.angelofdev.DoOdy.util.DutyManager;
+import net.alexanderschroeder.OnDoOdy.command.DoOdyCommandExecutor;
+import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
+import net.alexanderschroeder.OnDoOdy.listeners.BlockListener;
+import net.alexanderschroeder.OnDoOdy.listeners.EntityListener;
+import net.alexanderschroeder.OnDoOdy.listeners.PlayerListener;
+import net.alexanderschroeder.OnDoOdy.util.Debug;
+import net.alexanderschroeder.OnDoOdy.util.DutyManager;
 
-public class DoOdy extends JavaPlugin {
+public class OnDoOdy extends JavaPlugin {
 	private static final String PLUGIN_NAME = "OnDoOdy";
 
 	private Log log;

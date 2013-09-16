@@ -1,4 +1,4 @@
-package com.angelofdev.DoOdy.util;
+package net.alexanderschroeder.OnDoOdy.util;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
