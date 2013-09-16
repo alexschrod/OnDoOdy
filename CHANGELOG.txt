@@ -1,11 +1,12 @@
 Prefix legend:
-	+ Added feature
-	= Fixed bug
-	! Changed/updated feature
-	- Removed feature
+	+ Added feature.
+	= Fixed bug.
+	! Changed/updated feature.
+	- Removed feature.
 
 Version 1.2.0:
 	+ Added events when for going on duty (which is Cancellable) and for when having gone on duty, so other plug-ins can react and interact with OnDoOdy.
+	+ Added configuration setting for giving players additional permissions when going on duty.
 	! Improved error messages when going on or off duty fails.
 
 Version 1.1.0:
@@ -15,4 +16,4 @@ Version 1.1.0:
 	! Save and restore more player variables when going on and off duty: exhaustion, saturation, fall distance, fire ticks, remaining air, velocity.
 
 Version 1.0.0:
-	+ First release
+	+ First release.

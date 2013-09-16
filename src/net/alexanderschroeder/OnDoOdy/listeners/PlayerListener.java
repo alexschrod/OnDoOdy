@@ -104,6 +104,7 @@ public class PlayerListener implements Listener {
 				MessageSender.send(player, "&6[OnDoOdy] &cNOTE: As you logged off while on duty, you are still on duty!");
 
 				dutyManager.hidePlayerOnDuty(player);
+				dutyManager.addExtraPermissions(player);
 			}
 			if (isPlayerOnDuty || player.hasPermission("doody.failsafe.bypass")) {
 				debug.checkBroadcast("&e" + playerName + " &a<was on duty&e|or|&ahas doody.failsafe.bypass>");

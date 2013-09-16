@@ -45,6 +45,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.potion.PotionEffect;
 
@@ -52,6 +54,8 @@ public class DutyManager {
 	private static final String ONDOODY_EXTENSION = ".ondoody";
 	private static final String LOCATION_EXTENSION = ".location";
 
+	private static final String DUTY_PERMISSIONS_METADATA_KEY = "duty-permissions";
+	
 	private final OnDoOdy plugin;
 
 	private Set<String> dutyCache;
@@ -167,6 +171,9 @@ public class DutyManager {
 		// Hide player
 		hidePlayerOnDuty(player);
 
+		// Give the player extra permissions
+		addExtraPermissions(player);
+
 		// Call the gone-on-duty event
 		pluginManager.callEvent(new PlayerGoneOnDutyEvent(player));
 
@@ -196,6 +203,9 @@ public class DutyManager {
 			plugin.getLogger().throwing("DutyManager", "disableDutyFor", dutyException);
 			throw dutyException;
 		}
+		
+		// Remove the extra permissions
+		removeExtraPermissions(player);
 
 		// Restore player's game mode
 		player.setGameMode(GameMode.SURVIVAL);
@@ -269,7 +279,24 @@ public class DutyManager {
 		}
 	}
 
-	// Duty Items as per Config
+	public void addExtraPermissions(final Player player) {
+		removeExtraPermissions(player);
+		
+		PermissionAttachment attachment = player.addAttachment(plugin);
+		for (String permission: plugin.getConfigurationManager().getExtraPermissionList()) {
+			attachment.setPermission(permission, true);
+		}
+		player.setMetadata(DUTY_PERMISSIONS_METADATA_KEY, new FixedMetadataValue(plugin, attachment));
+	}
+	
+	public void removeExtraPermissions(final Player player) {
+		PermissionAttachment attachment = (PermissionAttachment)plugin.getPlayerMetadataManager().getMetadata(player, DUTY_PERMISSIONS_METADATA_KEY);
+		if (attachment != null) {
+			attachment.remove();
+			plugin.getPlayerMetadataManager().removeMetadata(player, DUTY_PERMISSIONS_METADATA_KEY);
+		}
+	}
+
 	private void dutyItems(final Player player) {
 		final Inventory playerInv = player.getInventory();
 		final ConfigurationManager configurationManager = plugin.getConfigurationManager();

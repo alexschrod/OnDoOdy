@@ -27,6 +27,7 @@ import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ConfigurationManager {
@@ -73,8 +74,11 @@ public class ConfigurationManager {
 
 	private static final String ALLOW_BLOCK_BREAKING_KEY = "allow-block-breaking";
 	private static final boolean ALLOW_BLOCK_BREAKING_DEFAULT = false;
+	
 	private static final String HIDE_ON_DUTY_KEY = "hide-on-duty";
 	private static final boolean HIDE_ON_DUTY_DEFAULT = false;
+	
+	private static final String EXTRA_PERMISSIONS_KEY = "extra-permissions";
 
 	private final OnDoOdy plugin;
 
@@ -147,6 +151,7 @@ public class ConfigurationManager {
 		breakBlockListCache = null;
 		itemDropListCache = null;
 		itemPickupListCache = null;
+		disallowedCommandListCache = null;
 
 		final boolean previousHideSetting = hidePlayerOnDuty();
 		plugin.reloadConfig();
@@ -157,6 +162,10 @@ public class ConfigurationManager {
 			} else {
 				plugin.getDutyManager().hideAllDutyPlayers();
 			}
+		}
+		
+		for (final Player player : plugin.getDutyManager().getDutyPlayerSet()) {
+			plugin.getDutyManager().addExtraPermissions(player);
 		}
 	}
 
@@ -259,6 +268,10 @@ public class ConfigurationManager {
 
 	public boolean hidePlayerOnDuty() {
 		return getConfig().getBoolean(HIDE_ON_DUTY_KEY, HIDE_ON_DUTY_DEFAULT);
+	}
+	
+	public List<String> getExtraPermissionList() {
+		return getConfig().getStringList(EXTRA_PERMISSIONS_KEY);
 	}
 
 }

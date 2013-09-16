@@ -122,3 +122,9 @@ allow-block-breaking: false
 disallowed-commands:
 #  - command1
 #  - command2
+
+# If you want to grant extra permissions when your players go on duty, specify them
+# here. They will be removed again when the player goes off duty.
+extra-permissions:
+#  - permission.for.one.thing
+#  - permission.for.something.else

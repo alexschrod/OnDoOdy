@@ -29,6 +29,7 @@ import net.alexanderschroeder.OnDoOdy.listeners.EntityListener;
 import net.alexanderschroeder.OnDoOdy.listeners.PlayerListener;
 import net.alexanderschroeder.OnDoOdy.util.Debug;
 import net.alexanderschroeder.OnDoOdy.util.DutyManager;
+import net.alexanderschroeder.OnDoOdy.util.PlayerMetadataManager;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -40,6 +41,7 @@ public class OnDoOdy extends JavaPlugin {
 	private ConfigurationManager configurationManager;
 	private Debug debug;
 	private DutyManager dutyManager;
+	private PlayerMetadataManager playerMetadataManager;
 
 	@Override
 	public void onDisable() {
@@ -56,6 +58,7 @@ public class OnDoOdy extends JavaPlugin {
 
 		log.info("Loaded configs!");
 
+		playerMetadataManager = new PlayerMetadataManager(this);
 		dutyManager = new DutyManager(this);
 		debug = new Debug(this);
 
@@ -83,6 +86,10 @@ public class OnDoOdy extends JavaPlugin {
 
 	public DutyManager getDutyManager() {
 		return dutyManager;
+	}
+
+	public PlayerMetadataManager getPlayerMetadataManager() {
+		return playerMetadataManager;
 	}
 
 	public String getPluginDataFilePath(final String fileName) {
