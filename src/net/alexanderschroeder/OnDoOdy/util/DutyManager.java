@@ -55,7 +55,7 @@ public class DutyManager {
 	private static final String LOCATION_EXTENSION = ".location";
 
 	private static final String DUTY_PERMISSIONS_METADATA_KEY = "duty-permissions";
-	
+
 	private final OnDoOdy plugin;
 
 	private Set<String> dutyCache;
@@ -172,7 +172,7 @@ public class DutyManager {
 		hidePlayerOnDuty(player);
 
 		// Give the player extra permissions
-		addExtraPermissions(player);
+		giveExtraPermissions(player);
 
 		// Call the gone-on-duty event
 		pluginManager.callEvent(new PlayerGoneOnDutyEvent(player));
@@ -203,7 +203,7 @@ public class DutyManager {
 			plugin.getLogger().throwing("DutyManager", "disableDutyFor", dutyException);
 			throw dutyException;
 		}
-		
+
 		// Remove the extra permissions
 		removeExtraPermissions(player);
 
@@ -279,18 +279,23 @@ public class DutyManager {
 		}
 	}
 
-	public void addExtraPermissions(final Player player) {
+	public void giveExtraPermissions(final Player player) {
 		removeExtraPermissions(player);
-		
-		PermissionAttachment attachment = player.addAttachment(plugin);
-		for (String permission: plugin.getConfigurationManager().getExtraPermissionList()) {
+
+		final Set<String> extraPermissionSet = plugin.getConfigurationManager().getExtraPermissionSetFor(player);
+		if (extraPermissionSet.size() == 0) {
+			return;
+		}
+
+		final PermissionAttachment attachment = player.addAttachment(plugin);
+		for (final String permission : extraPermissionSet) {
 			attachment.setPermission(permission, true);
 		}
 		player.setMetadata(DUTY_PERMISSIONS_METADATA_KEY, new FixedMetadataValue(plugin, attachment));
 	}
-	
+
 	public void removeExtraPermissions(final Player player) {
-		PermissionAttachment attachment = (PermissionAttachment)plugin.getPlayerMetadataManager().getMetadata(player, DUTY_PERMISSIONS_METADATA_KEY);
+		final PermissionAttachment attachment = (PermissionAttachment) plugin.getPlayerMetadataManager().getMetadata(player, DUTY_PERMISSIONS_METADATA_KEY);
 		if (attachment != null) {
 			attachment.remove();
 			plugin.getPlayerMetadataManager().removeMetadata(player, DUTY_PERMISSIONS_METADATA_KEY);

@@ -20,17 +20,22 @@
 package net.alexanderschroeder.OnDoOdy.config;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 
 import org.bukkit.Material;
 import org.bukkit.command.Command;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class ConfigurationManager {
+
+	private static final String EXTRAPERMS_PREFIX = "doody.duty.extraperms.";
 
 	private static final String DEBUG_KEY = "debug";
 	private static final boolean DEBUG_DEFAULT = false;
@@ -74,10 +79,10 @@ public class ConfigurationManager {
 
 	private static final String ALLOW_BLOCK_BREAKING_KEY = "allow-block-breaking";
 	private static final boolean ALLOW_BLOCK_BREAKING_DEFAULT = false;
-	
+
 	private static final String HIDE_ON_DUTY_KEY = "hide-on-duty";
 	private static final boolean HIDE_ON_DUTY_DEFAULT = false;
-	
+
 	private static final String EXTRA_PERMISSIONS_KEY = "extra-permissions";
 
 	private final OnDoOdy plugin;
@@ -163,9 +168,9 @@ public class ConfigurationManager {
 				plugin.getDutyManager().hideAllDutyPlayers();
 			}
 		}
-		
+
 		for (final Player player : plugin.getDutyManager().getDutyPlayerSet()) {
-			plugin.getDutyManager().addExtraPermissions(player);
+			plugin.getDutyManager().giveExtraPermissions(player);
 		}
 	}
 
@@ -269,9 +274,20 @@ public class ConfigurationManager {
 	public boolean hidePlayerOnDuty() {
 		return getConfig().getBoolean(HIDE_ON_DUTY_KEY, HIDE_ON_DUTY_DEFAULT);
 	}
-	
-	public List<String> getExtraPermissionList() {
-		return getConfig().getStringList(EXTRA_PERMISSIONS_KEY);
+
+	public Set<String> getExtraPermissionSetFor(final Player player) {
+		final ConfigurationSection extraPermissionsSection = getConfig().getConfigurationSection(EXTRA_PERMISSIONS_KEY);
+
+		final Set<String> extraPermissions = new HashSet<String>();
+		for (final String key : extraPermissionsSection.getKeys(false)) {
+			final String permissionRequired = EXTRAPERMS_PREFIX + key;
+			if (!player.hasPermission(permissionRequired)) {
+				continue;
+			}
+
+			extraPermissions.addAll(extraPermissionsSection.getStringList(key));
+		}
+		return extraPermissions;
 	}
 
 }

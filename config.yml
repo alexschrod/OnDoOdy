@@ -124,7 +124,13 @@ disallowed-commands:
 #  - command2
 
 # If you want to grant extra permissions when your players go on duty, specify them
-# here. They will be removed again when the player goes off duty.
+# here. They will be removed again when the player goes off duty. These permissions
+# are granted to players who have the doody.duty.extraperms.<listname> permission.
+# A player can be given more than one set of extra permissions this way.
 extra-permissions:
-#  - permission.for.one.thing
-#  - permission.for.something.else
+  mods: # Requires permission doody.duty.extraperms.mod
+  #  - permission.for.one.thing
+  #  - permission.for.something.else
+  admin: # Requires permission doody.duty.extraperms.admin
+  #  - a.permission.mods.dont.get
+  #  - another.permission.mods.dont.get
