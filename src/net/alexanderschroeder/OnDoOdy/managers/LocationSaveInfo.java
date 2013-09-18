@@ -17,33 +17,41 @@
  *   
  */
 
-package net.alexanderschroeder.OnDoOdy.util;
+package net.alexanderschroeder.OnDoOdy.managers;
 
 import java.io.Serializable;
 
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
 
-public class InventorySaveInfo implements Serializable {
+public class LocationSaveInfo implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	public ItemStack[] inventory;
-	public ItemStack[] armor;
+	public String world;
+	public double x;
+	public double y;
+	public double z;
+	public float pitch;
+	public float yaw;
 
-	public InventorySaveInfo() {
+	public LocationSaveInfo() {
 	}
 
-	public InventorySaveInfo(final PlayerInventory inventory) {
-		// save inventory
-		this.inventory = inventory.getContents();
+	public LocationSaveInfo(final Location location) {
+		world = location.getWorld().getName();
 
-		// save armor
-		armor = inventory.getArmorContents();
+		x = location.getX();
+		y = location.getY();
+		z = location.getZ();
+
+		pitch = location.getPitch();
+		yaw = location.getYaw();
 	}
 
-	public void restore(final PlayerInventory inventory) {
-		inventory.setContents(this.inventory);
-
-		inventory.setArmorContents(armor);
+	public Location getLocation() {
+		final World world = Bukkit.getServer().getWorld(this.world);
+		final Location location = new Location(world, x, y, z, yaw, pitch);
+		return location;
 	}
 }

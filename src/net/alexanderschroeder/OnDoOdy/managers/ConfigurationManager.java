@@ -17,7 +17,7 @@
  *   
  */
 
-package net.alexanderschroeder.OnDoOdy.config;
+package net.alexanderschroeder.OnDoOdy.managers;
 
 import java.util.ArrayList;
 import java.util.HashSet;

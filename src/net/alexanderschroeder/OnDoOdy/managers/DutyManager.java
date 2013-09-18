@@ -17,7 +17,7 @@
  *   
  */
 
-package net.alexanderschroeder.OnDoOdy.util;
+package net.alexanderschroeder.OnDoOdy.managers;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -28,12 +28,13 @@ import java.util.List;
 import java.util.Set;
 
 import net.alexanderschroeder.OnDoOdy.OnDoOdy;
-import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
 import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOffDutyEvent;
 import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOnDutyEvent;
 import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOffDutyEvent;
 import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOnDutyEvent;
 import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
+import net.alexanderschroeder.OnDoOdy.util.MessageSender;
+import net.alexanderschroeder.OnDoOdy.util.SLAPI;
 import net.minecraft.server.v1_6_R2.EntityCreature;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityPlayer;

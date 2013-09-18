@@ -17,7 +17,7 @@
  *   
  */
 
-package net.alexanderschroeder.OnDoOdy.util;
+package net.alexanderschroeder.OnDoOdy.managers;
 
 import java.util.List;
 

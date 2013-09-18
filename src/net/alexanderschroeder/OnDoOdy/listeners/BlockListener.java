@@ -21,7 +21,7 @@
 package net.alexanderschroeder.OnDoOdy.listeners;
 
 import net.alexanderschroeder.OnDoOdy.OnDoOdy;
-import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
+import net.alexanderschroeder.OnDoOdy.managers.ConfigurationManager;
 import net.alexanderschroeder.OnDoOdy.util.MessageSender;
 
 import org.bukkit.Material;

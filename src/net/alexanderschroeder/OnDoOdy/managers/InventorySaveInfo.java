@@ -17,35 +17,33 @@
  *   
  */
 
-package net.alexanderschroeder.OnDoOdy.util;
+package net.alexanderschroeder.OnDoOdy.managers;
 
 import java.io.Serializable;
-import java.util.Collection;
 
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.util.Vector;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
-public class PlayerSaveInfo implements Serializable {
-	private static final long serialVersionUID = 2L;
+public class InventorySaveInfo implements Serializable {
+	private static final long serialVersionUID = 1L;
 
-	public int level;
-	public float exp;
+	public ItemStack[] inventory;
+	public ItemStack[] armor;
 
-	public InventorySaveInfo inventory = new InventorySaveInfo();
+	public InventorySaveInfo() {
+	}
 
-	public LocationSaveInfo location = new LocationSaveInfo();
+	public InventorySaveInfo(final PlayerInventory inventory) {
+		// save inventory
+		this.inventory = inventory.getContents();
 
-	public double health;
-	public int foodLevel;
-	public float exhaustion;
-	public float saturation;
+		// save armor
+		armor = inventory.getArmorContents();
+	}
 
-	public float fallDistance;
-	public int fireTicks;
-	public int remainingAir;
+	public void restore(final PlayerInventory inventory) {
+		inventory.setContents(this.inventory);
 
-	public Collection<PotionEffect> potionEffects;
-
-	public Vector velocity;
-
+		inventory.setArmorContents(armor);
+	}
 }

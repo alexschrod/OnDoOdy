@@ -23,13 +23,13 @@ package net.alexanderschroeder.OnDoOdy;
 import java.io.File;
 
 import net.alexanderschroeder.OnDoOdy.command.DoOdyCommandExecutor;
-import net.alexanderschroeder.OnDoOdy.config.ConfigurationManager;
 import net.alexanderschroeder.OnDoOdy.listeners.BlockListener;
 import net.alexanderschroeder.OnDoOdy.listeners.EntityListener;
 import net.alexanderschroeder.OnDoOdy.listeners.PlayerListener;
+import net.alexanderschroeder.OnDoOdy.managers.ConfigurationManager;
+import net.alexanderschroeder.OnDoOdy.managers.DutyManager;
+import net.alexanderschroeder.OnDoOdy.managers.PlayerMetadataManager;
 import net.alexanderschroeder.OnDoOdy.util.Debug;
-import net.alexanderschroeder.OnDoOdy.util.DutyManager;
-import net.alexanderschroeder.OnDoOdy.util.PlayerMetadataManager;
 
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;

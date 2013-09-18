@@ -25,8 +25,8 @@ import java.util.Set;
 import net.alexanderschroeder.OnDoOdy.Log;
 import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
+import net.alexanderschroeder.OnDoOdy.managers.DutyManager;
 import net.alexanderschroeder.OnDoOdy.util.Debug;
-import net.alexanderschroeder.OnDoOdy.util.DutyManager;
 import net.alexanderschroeder.OnDoOdy.util.MessageSender;
 
 import org.bukkit.command.Command;

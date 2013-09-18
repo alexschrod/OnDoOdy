@@ -17,41 +17,35 @@
  *   
  */
 
-package net.alexanderschroeder.OnDoOdy.util;
+package net.alexanderschroeder.OnDoOdy.managers;
 
 import java.io.Serializable;
+import java.util.Collection;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
-public class LocationSaveInfo implements Serializable {
-	private static final long serialVersionUID = 1L;
+public class PlayerSaveInfo implements Serializable {
+	private static final long serialVersionUID = 2L;
 
-	public String world;
-	public double x;
-	public double y;
-	public double z;
-	public float pitch;
-	public float yaw;
+	public int level;
+	public float exp;
 
-	public LocationSaveInfo() {
-	}
+	public InventorySaveInfo inventory = new InventorySaveInfo();
 
-	public LocationSaveInfo(final Location location) {
-		world = location.getWorld().getName();
+	public LocationSaveInfo location = new LocationSaveInfo();
 
-		x = location.getX();
-		y = location.getY();
-		z = location.getZ();
+	public double health;
+	public int foodLevel;
+	public float exhaustion;
+	public float saturation;
 
-		pitch = location.getPitch();
-		yaw = location.getYaw();
-	}
+	public float fallDistance;
+	public int fireTicks;
+	public int remainingAir;
 
-	public Location getLocation() {
-		final World world = Bukkit.getServer().getWorld(this.world);
-		final Location location = new Location(world, x, y, z, yaw, pitch);
-		return location;
-	}
+	public Collection<PotionEffect> potionEffects;
+
+	public Vector velocity;
+
 }
