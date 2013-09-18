@@ -156,7 +156,11 @@ public class PlayerListener implements Listener {
 		final Player player = event.getEntity();
 		final DutyManager dutyManager = plugin.getDutyManager();
 		if (dutyManager.isPlayerOnDuty(player)) {
-			dutyManager.saveLocation(player);
+			try {
+				dutyManager.saveLocation(player);
+			} catch (DutyException e) {
+				plugin.getLog().warning("Could not save the location of " + player.getName() + " on their death.");
+			}
 			event.getDrops().clear();
 			event.setDroppedExp(0);
 		}
@@ -167,7 +171,12 @@ public class PlayerListener implements Listener {
 		final Player player = event.getPlayer();
 		final DutyManager dutyManager = plugin.getDutyManager();
 		if (dutyManager.isPlayerOnDuty(player)) {
-			dutyManager.sendToDutyLocation(player);
+			try {
+				dutyManager.sendToDutyLocation(player);
+			} catch (DutyException e) {
+				plugin.getLog().warning("Failed restoring " + player.getName() + " to their death location upon respawn.");
+				MessageSender.send(player, "&6[OnDoOdy] &cFailed returning you to your death location.");
+			}
 		}
 	}
 

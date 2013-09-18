@@ -325,11 +325,16 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 		final Set<String> dutyList = plugin.getDutyManager().getDutySet();
 		if (sender instanceof Player) {
 			final Player player = (Player) sender;
-			MessageSender.send(player, "&a____________[ &6Players on duty &a]____________");
-			if (!dutyList.isEmpty()) {
-				MessageSender.send(player, "&6" + dutyList);
+			
+			if (player.hasPermission("doody.list")) {
+				MessageSender.send(player, "&a____________[ &6Players on duty &a]____________");
+				if (!dutyList.isEmpty()) {
+					MessageSender.send(player, "&6" + dutyList);
+				} else {
+					MessageSender.send(player, "&6No players are on duty.");
+				}
 			} else {
-				MessageSender.send(player, "&6No players are on duty.");
+				MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.list");
 			}
 		} else {
 			final Log log = plugin.getLog();
@@ -349,13 +354,22 @@ public class DoOdyCommandExecutor implements CommandExecutor {
 			final Debug debug = plugin.getDebug();
 			final DutyManager dutyManager = plugin.getDutyManager();
 			if (dutyManager.isPlayerOnDuty(player)) {
-				if (dutyManager.hasDutyLocation(player)) {
-					dutyManager.sendToDutyLocation(player);
-					MessageSender.send(player, "&6[OnDoOdy] &aBack to last known duty location.");
-					debug.check(playerName + " &ateleported back to last known duty location");
+				if (player.hasPermission("doody.back")) {
+					if (dutyManager.hasDutyLocation(player)) {
+						try {
+							dutyManager.sendToDutyLocation(player);
+							MessageSender.send(player, "&6[OnDoOdy] &aBack to last known duty location.");
+							debug.check(playerName + " &ateleported back to last known duty location");
+						} catch (DutyException e) {
+							plugin.getLog().warning("Could not restore " + playerName + " to their last duty location.");
+							MessageSender.send(player, "&6[OnDoOdy] &cFailed returning you to last duty location.");
+						}
+					} else {
+						MessageSender.send(player, "&6[OnDoOdy] &eYou have no last known duty location.");
+						debug.check("<on /dm back> Last known duty location unknown.");
+					}
 				} else {
-					MessageSender.send(player, "&6[OnDoOdy] &eYou have no last known duty location.");
-					debug.check("<on /dm back> Last known duty location unknown.");
+					MessageSender.send(player, "&6[OnDoOdy] &cNeed permission node doody.back");
 				}
 			} else {
 				MessageSender.send(player, "&6[OnDoOdy] &eYou are not on duty.");

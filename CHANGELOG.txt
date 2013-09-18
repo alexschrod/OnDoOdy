@@ -4,16 +4,19 @@ Prefix legend:
 	! Changed/updated feature.
 	- Removed feature.
 
-Version 1.2.0:
+Version 1.2:
 	+ Added events when for going on duty (which is Cancellable) and for when having gone on duty, so other plug-ins can react and interact with OnDoOdy.
 	+ Added configuration setting for giving players additional permissions when going on duty.
-	! Improved error messages when going on or off duty fails.
+	! Improved error messages when going on or off duty fails and when saving/storing last duty location fails.
+	! Using the /duty back command now requires the doody.back permission.
+	! Using the /duty list command now requires the doody.list permission.
+	! Using the /duty command at all now requires the doody permission. Previously, the permission for it was doody.duty, which also granted /duty on/off permission at the same time.
 
-Version 1.1.0:
+Version 1.1:
 	+ Mobs now won't attack players who are on duty. Previously, when trying to punch pigmen for instance, they would start behaving like usual and start targeting the player.
 	+ On-duty players cannot put out fires, unless the material 'FIRE' is in the list of blocks that it is allowed to break, or the player has block breaking permission.
 	= Restore food level when going off duty. Previously, it was stored when going on duty, but not restored when going off duty.
 	! Save and restore more player variables when going on and off duty: exhaustion, saturation, fall distance, fire ticks, remaining air, velocity.
 
-Version 1.0.0:
+Version 1.0:
 	+ First release.

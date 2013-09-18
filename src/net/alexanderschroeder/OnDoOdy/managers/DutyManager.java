@@ -33,7 +33,6 @@ import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOnDutyEvent;
 import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOffDutyEvent;
 import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOnDutyEvent;
 import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
-import net.alexanderschroeder.OnDoOdy.util.MessageSender;
 import net.alexanderschroeder.OnDoOdy.util.SLAPI;
 import net.minecraft.server.v1_6_R2.EntityCreature;
 import net.minecraft.server.v1_6_R2.EntityLiving;
@@ -346,25 +345,29 @@ public class DutyManager {
 		return dutyPlayerSet;
 	}
 
-	public void sendToDutyLocation(final Player player) {
-		final String playerName = player.getName();
+	public void sendToDutyLocation(final Player player) throws DutyException {
 		try {
 			final File locationFile = getLocationFileFor(player);
 			final LocationSaveInfo locationSaveInfo = (LocationSaveInfo) SLAPI.load(locationFile.getPath());
+			if (locationSaveInfo == null)
+				return;
+			
 			player.teleport(locationSaveInfo.getLocation());
 			locationFile.delete();
 		} catch (final IOException e) {
-			plugin.getLog().warning("Could not restore " + playerName + " to their last duty location.");
-			MessageSender.send(player, "&6[OnDoOdy] &cFailed returning you to last duty location.");
+			final DutyException dutyException = new DutyException("Failed retoring player's location from disk.", e);
+			plugin.getLogger().throwing("DutyManager", "sendToDutyLocation", dutyException);
+			throw dutyException;
 		}
 	}
 
-	public void saveLocation(final Player player) {
+	public void saveLocation(final Player player) throws DutyException {
 		final LocationSaveInfo locationSaveInfo = new LocationSaveInfo(player.getLocation());
 		try {
 			SLAPI.save(locationSaveInfo, getLocationFileFor(player).getPath());
 		} catch (final IOException e) {
-			plugin.getLog().warning("Could not save the location of " + player.getName());
+			final DutyException dutyException = new DutyException("Failed saving player's location on disk.", e);
+			plugin.getLogger().throwing("DutyManager", "saveLocation", dutyException);
 		}
 	}
 
