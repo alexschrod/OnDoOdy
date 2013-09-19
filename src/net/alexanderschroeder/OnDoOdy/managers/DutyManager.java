@@ -349,9 +349,10 @@ public class DutyManager {
 		try {
 			final File locationFile = getLocationFileFor(player);
 			final LocationSaveInfo locationSaveInfo = (LocationSaveInfo) SLAPI.load(locationFile.getPath());
-			if (locationSaveInfo == null)
+			if (locationSaveInfo == null) {
 				return;
-			
+			}
+
 			player.teleport(locationSaveInfo.getLocation());
 			locationFile.delete();
 		} catch (final IOException e) {

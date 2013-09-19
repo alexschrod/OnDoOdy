@@ -35,7 +35,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class OnDoOdy extends JavaPlugin {
-	private static final String PLUGIN_NAME = "OnDoOdy";
+	public static final String PLUGIN_NAME = "OnDoOdy";
 
 	private Log log;
 	private ConfigurationManager configurationManager;

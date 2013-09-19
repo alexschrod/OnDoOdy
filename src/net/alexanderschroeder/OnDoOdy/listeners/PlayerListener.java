@@ -85,7 +85,7 @@ public class PlayerListener implements Listener {
 
 			if (foundCommand) {
 				event.setCancelled(true);
-				MessageSender.send(player, "&6[OnDoOdy] &cYou're not allowed to use this command on duty!");
+				MessageSender.sendWithPrefix(player, "&cYou're not allowed to use this command on duty!");
 				plugin.getDebug().check("<onPlayerCommandPreprocess> " + playerName + " tried executing command in disallowed commands.");
 				return;
 			}
@@ -101,7 +101,7 @@ public class PlayerListener implements Listener {
 			final Debug debug = plugin.getDebug();
 			final boolean isPlayerOnDuty = dutyManager.isPlayerOnDuty(player);
 			if (isPlayerOnDuty) {
-				MessageSender.send(player, "&6[OnDoOdy] &cNOTE: As you logged off while on duty, you are still on duty!");
+				MessageSender.sendWithPrefix(player, "&cNOTE: As you logged off while on duty, you are still on duty!");
 
 				dutyManager.hidePlayerOnDuty(player);
 				dutyManager.giveExtraPermissions(player);
@@ -143,7 +143,7 @@ public class PlayerListener implements Listener {
 				plugin.getLog().severe("Could not stop " + player.getName() + " from going to world " + worldName + " while on duty!");
 				return;
 			}
-			MessageSender.send(player, "&6[OnDoOdy] &cCannot go to world &e" + worldName + " &cwhile on duty!");
+			MessageSender.sendWithPrefix(player, "&cCannot go to world &e" + worldName + " &cwhile on duty!");
 		} else {
 			final String playerName = player.getName();
 			plugin.getDebug().check("<onPlayerWorldChange> " + playerName + " Player has the permission 'doody.worlds." + worldName + "'");
@@ -158,7 +158,7 @@ public class PlayerListener implements Listener {
 		if (dutyManager.isPlayerOnDuty(player)) {
 			try {
 				dutyManager.saveLocation(player);
-			} catch (DutyException e) {
+			} catch (final DutyException e) {
 				plugin.getLog().warning("Could not save the location of " + player.getName() + " on their death.");
 			}
 			event.getDrops().clear();
@@ -173,9 +173,9 @@ public class PlayerListener implements Listener {
 		if (dutyManager.isPlayerOnDuty(player)) {
 			try {
 				dutyManager.sendToDutyLocation(player);
-			} catch (DutyException e) {
+			} catch (final DutyException e) {
 				plugin.getLog().warning("Failed restoring " + player.getName() + " to their death location upon respawn.");
-				MessageSender.send(player, "&6[OnDoOdy] &cFailed returning you to your death location.");
+				MessageSender.sendWithPrefix(player, "&cFailed returning you to your death location.");
 			}
 		}
 	}
@@ -203,7 +203,7 @@ public class PlayerListener implements Listener {
 		} else {
 			event.setCancelled(true);
 
-			MessageSender.send(player, "&6[OnDoOdy] &cYou may not drop &e" + itemName + "&c while on duty.");
+			MessageSender.sendWithPrefix(player, "&cYou may not drop &e" + itemName + "&c while on duty.");
 			plugin.getDebug().check("<onPlayerDropItem> " + playerName + " got denied item drop. <Item(" + itemName + ")>");
 		}
 	}
@@ -233,7 +233,7 @@ public class PlayerListener implements Listener {
 
 			// TODO: Find a way to tell the player this without sending them 20
 			// messages per second...
-			// MessageSender.send(player, "&6[OnDoOdy] &cYou may not pick up &e"
+			// MessageSender.sendWithPrefix(player, "&cYou may not pick up &e"
 			// + itemName + "&c while on duty.");
 			// plugin.getDebug().check("<onPlayerPickupItem> " + playerName +
 			// " got denied item pickup. <Item(" + itemName + ")>");
@@ -258,7 +258,7 @@ public class PlayerListener implements Listener {
 			if (hasCreativeInventoryAccess) {
 				plugin.getDebug().normal("<onCreativeInventory> Warning! " + "Allowing " + playerName + " to access creative inventory");
 			} else {
-				MessageSender.send(player, "&6[OnDoOdy] &cYou may not do anything with your inventory while on duty.");
+				MessageSender.sendWithPrefix(player, "&cYou may not do anything with your inventory while on duty.");
 				event.setCancelled(true);
 			}
 		}
@@ -288,7 +288,7 @@ public class PlayerListener implements Listener {
 			if (hasInventoryAccess) {
 				plugin.getDebug().normal("<onInventoryClick> Warning! " + "Allowing " + playerName + " to access inventory");
 			} else {
-				MessageSender.send(player, "&6[OnDoOdy] &cYou may not interact with inventories while on duty.");
+				MessageSender.sendWithPrefix(player, "&cYou may not interact with inventories while on duty.");
 				event.setCancelled(true);
 			}
 		}
@@ -321,7 +321,7 @@ public class PlayerListener implements Listener {
 			if (!hasBreakAccess) {
 				event.setCancelled(true);
 				player.sendBlockChange(relativeBlock.getLocation(), fireMaterial, (byte) 0);
-				MessageSender.send(player, "&6[OnDoOdy] &cYou may not put out &e" + MessageSender.getNiceNameOf(fireMaterial) + " &cwhile on Duty.");
+				MessageSender.sendWithPrefix(player, "&cYou may not put out &e" + MessageSender.getNiceNameOf(fireMaterial) + " &cwhile on Duty.");
 			}
 		}
 	}

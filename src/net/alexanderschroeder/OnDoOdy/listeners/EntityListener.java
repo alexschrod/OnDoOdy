@@ -61,9 +61,9 @@ public class EntityListener implements Listener {
 			} else if (isPlayer && allowPvP) {
 				return;
 			} else if (!isPlayer) {
-				MessageSender.send(attacker, "&6[OnDoOdy] &cYou may not attack mobs while on duty.");
+				MessageSender.sendWithPrefix(attacker, "&cYou may not attack mobs while on duty.");
 			} else if (isPlayer) {
-				MessageSender.send(attacker, "&6[OnDoOdy] &cYou may not attack players while on duty.");
+				MessageSender.sendWithPrefix(attacker, "&cYou may not attack players while on duty.");
 			}
 
 			event.setCancelled(true);
@@ -76,7 +76,7 @@ public class EntityListener implements Listener {
 		if (entity instanceof Player) {
 			final Player player = (Player) entity;
 			if (plugin.getDutyManager().isPlayerOnDuty(player)) {
-				MessageSender.send(player, "&6[OnDoOdy] &cYou may not shoot bows while on duty.");
+				MessageSender.sendWithPrefix(player, "&cYou may not shoot bows while on duty.");
 				event.setCancelled(true);
 			}
 		}
@@ -87,7 +87,7 @@ public class EntityListener implements Listener {
 		if (event.getEntity().getShooter() instanceof Player) {
 			final Player shooter = (Player) event.getEntity().getShooter();
 			if (plugin.getDutyManager().isPlayerOnDuty(shooter)) {
-				MessageSender.send(shooter, "&6[OnDoOdy] &cYou may not throw potions while on duty.");
+				MessageSender.sendWithPrefix(shooter, "&cYou may not throw potions while on duty.");
 				event.setCancelled(true);
 			}
 		}
