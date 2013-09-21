@@ -5,8 +5,9 @@ Prefix legend:
 	- Removed feature.
 
 Version 1.2:
-	+ Added events when for going on duty (which is Cancellable) and for when having gone on duty, so other plug-ins can react and interact with OnDoOdy.
+	+ Added events when for going on duty (which are Cancellable) and events for when having gone on duty, so other plug-ins can react and interact with OnDoOdy.
 	+ Added configuration setting for giving players additional permissions when going on duty.
+	+ Added configuration setting for running commands for players when going on duty.
 	= Include usage instructions for /ondoody back when the player has the doody.back permission.
 	! Improved error messages when going on or off duty fails and when saving/storing last duty location fails.
 	! Using the /ondoody back command now requires the doody.back permission.

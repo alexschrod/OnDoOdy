@@ -36,6 +36,7 @@ import org.bukkit.inventory.ItemStack;
 public class ConfigurationManager {
 
 	private static final String EXTRAPERMS_PREFIX = "doody.duty.extraperms.";
+	private static final String DUTY_COMMANDS_PREFIX = "doody.duty.dutycommands.";
 
 	private static final String DEBUG_KEY = "debug";
 	private static final boolean DEBUG_DEFAULT = false;
@@ -82,6 +83,9 @@ public class ConfigurationManager {
 
 	private static final String HIDE_ON_DUTY_KEY = "hide-on-duty";
 	private static final boolean HIDE_ON_DUTY_DEFAULT = false;
+
+	private static final String ONDUTY_COMMANDS_KEY = "onduty-commands";
+	private static final String OFFDUTY_COMMANDS_KEY = "offduty-commands";
 
 	private static final String EXTRA_PERMISSIONS_KEY = "extra-permissions";
 
@@ -288,6 +292,65 @@ public class ConfigurationManager {
 			extraPermissions.addAll(extraPermissionsSection.getStringList(key));
 		}
 		return extraPermissions;
+	}
+
+	public class DutyCommand {
+
+		private final String command;
+		private final List<String> permissions;
+
+		public DutyCommand(final String command, final List<String> permissions) {
+			this.command = command;
+			this.permissions = permissions;
+		}
+
+		public String getCommand() {
+			return command;
+		}
+
+		public List<String> getPermissions() {
+			return permissions;
+		}
+	}
+
+	public List<DutyCommand> getOnDutyCommandsFor(final Player player) {
+		final ConfigurationSection onDutyCommandsSection = getConfig().getConfigurationSection(ONDUTY_COMMANDS_KEY);
+		return onDutyCommandsSection != null ? getDutyCommands(player, onDutyCommandsSection) : new ArrayList<DutyCommand>();
+	}
+
+	public List<DutyCommand> getOffDutyCommandsFor(final Player player) {
+		final ConfigurationSection offDutyCommandsSection = getConfig().getConfigurationSection(OFFDUTY_COMMANDS_KEY);
+		return offDutyCommandsSection != null ? getDutyCommands(player, offDutyCommandsSection) : new ArrayList<DutyCommand>();
+	}
+
+	private List<DutyCommand> getDutyCommands(final Player player, final ConfigurationSection commandsSection) {
+		final List<DutyCommand> dutyCommands = new ArrayList<DutyCommand>();
+		for (final String permissionName : commandsSection.getKeys(false)) {
+			final String permissionRequired = DUTY_COMMANDS_PREFIX + permissionName;
+			if (!player.hasPermission(permissionRequired)) {
+				continue;
+			}
+
+			final ConfigurationSection permissionSection = commandsSection.getConfigurationSection(permissionName);
+			for (final String commandName : permissionSection.getKeys(false)) {
+				final ConfigurationSection commandSection = permissionSection.getConfigurationSection(commandName);
+
+				final String command = commandSection.getString("command");
+				if (command == null) {
+					continue;
+				}
+
+				List<String> permissionList = commandSection.getStringList("permissions");
+				if (permissionList == null) {
+					permissionList = new ArrayList<String>();
+				}
+
+				player.sendMessage(permissionList.toArray(new String[permissionList.size()]));
+				dutyCommands.add(new DutyCommand(command, permissionList));
+			}
+		}
+
+		return dutyCommands;
 	}
 
 }

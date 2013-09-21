@@ -128,9 +128,48 @@ disallowed-commands:
 # are granted to players who have the doody.duty.extraperms.<listname> permission.
 # A player can be given more than one set of extra permissions this way.
 extra-permissions:
-  mods: # Requires permission doody.duty.extraperms.mod
+  mod: # Requires permission doody.duty.extraperms.mod
   #  - permission.for.one.thing
   #  - permission.for.something.else
   admin: # Requires permission doody.duty.extraperms.admin
   #  - a.permission.mods.dont.get
   #  - another.permission.mods.dont.get
+  
+# If you want your players to run commands when they go on duty, specify those here.
+# If the command requires a certain permission to run, you can include it here, so
+# that your players will have that command just for the purpose of running the command,
+# and then it will be taken away from them again. Leave out the first character
+# (typically '/'). These commands will be run for players who have the
+# doody.duty.dutycommands.<listname> permission when they go on duty.
+onduty-commands:
+  mod:
+  #  ignoreclaims:
+  #    command: 'ignoreclaims'
+  #    permissions: [griefprevention, griefprevention.ignoreclaims]
+  #  dynmaphide:
+  #    command: 'dynmap hide'
+  #    permissions: [dynmap, dynmap.hide.self]
+  admin:
+  #  inspect:
+  #    command: 'coreprotect inspect'
+  #    permissions: [coreprotect, coreprotect.inspect]
+  
+# If you want your players to run commands when they go off duty, specify those here.
+# If the command requires a certain permission to run, you can include it here, so
+# that your players will have that command just for the purpose of running the command,
+# and then it will be taken away from them again. If a permission is not needed, just
+# leave out the permission altogether. In the command, you should leave out the first
+# character (typically '/'). These commands will be run for players who have the
+# doody.duty.dutycommands.<listname> permission when they go off duty.
+offduty-commands:
+  mod:
+  #  ignoreclaims:
+  #    command: 'ignoreclaims'
+  #    permissions: [griefprevention, griefprevention.ignoreclaims]
+  #  dynmapshow:
+  #    command: 'dynmap show'
+  #    permissions: [dynmap, dynmap.show.self]
+  admin:
+  #  inspect:
+  #    command: 'coreprotect inspect'
+  #    permissions: [coreprotect, coreprotect.inspect]

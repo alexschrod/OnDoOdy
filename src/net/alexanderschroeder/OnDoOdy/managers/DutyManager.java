@@ -33,12 +33,14 @@ import net.alexanderschroeder.OnDoOdy.events.PlayerGoingOnDutyEvent;
 import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOffDutyEvent;
 import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOnDutyEvent;
 import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
+import net.alexanderschroeder.OnDoOdy.managers.ConfigurationManager.DutyCommand;
 import net.alexanderschroeder.OnDoOdy.util.SLAPI;
 import net.minecraft.server.v1_6_R2.EntityCreature;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
 
 import org.bukkit.GameMode;
+import org.bukkit.command.CommandException;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftCreature;
 import org.bukkit.craftbukkit.v1_6_R2.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
@@ -174,6 +176,9 @@ public class DutyManager {
 		// Give the player extra permissions
 		giveExtraPermissions(player);
 
+		// Run going-on-duty commands
+		runOnDutyCommands(player);
+
 		// Call the gone-on-duty event
 		pluginManager.callEvent(new PlayerGoneOnDutyEvent(player));
 
@@ -203,6 +208,9 @@ public class DutyManager {
 			plugin.getLogger().throwing("DutyManager", "disableDutyFor", dutyException);
 			throw dutyException;
 		}
+
+		// Run going-off-duty commands
+		runOffDutyCommands(player);
 
 		// Remove the extra permissions
 		removeExtraPermissions(player);
@@ -300,6 +308,35 @@ public class DutyManager {
 			attachment.remove();
 			plugin.getPlayerMetadataManager().removeMetadata(player, DUTY_PERMISSIONS_METADATA_KEY);
 		}
+	}
+
+	private void runOnDutyCommands(final Player player) {
+		final List<DutyCommand> onDutyCommands = plugin.getConfigurationManager().getOnDutyCommandsFor(player);
+		runDutyCommands(player, onDutyCommands);
+	}
+
+	private void runOffDutyCommands(final Player player) {
+		final List<DutyCommand> offDutyCommands = plugin.getConfigurationManager().getOffDutyCommandsFor(player);
+		runDutyCommands(player, offDutyCommands);
+	}
+
+	private void runDutyCommands(final Player player, final List<DutyCommand> dutyCommands) {
+		final PermissionAttachment temporaryAttachment = player.addAttachment(plugin);
+		for (final DutyCommand command : dutyCommands) {
+			final List<String> permissions = command.getPermissions();
+			for (final String permission : permissions) {
+				temporaryAttachment.setPermission(permission, true);
+			}
+		}
+		for (final DutyCommand command : dutyCommands) {
+			try {
+				player.sendMessage("Running command: '" + command.getCommand() + "'");
+				plugin.getServer().dispatchCommand(player, command.getCommand());
+			} catch (final CommandException e) {
+				plugin.getDebug().check("Failed running duty command '" + command.getCommand() + "' for player '" + player.getName() + "'");
+			}
+		}
+		temporaryAttachment.remove();
 	}
 
 	private void dutyItems(final Player player) {
