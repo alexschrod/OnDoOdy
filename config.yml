@@ -84,6 +84,26 @@ blocks:
   break:
   #  - 'BEDROCK'
 
+  # Which block(s) cannot be interacted with while on duty. Can be either material
+  # name (see http://jd.bukkit.org/rb/apidocs/org/bukkit/Material.html for list) or
+  # material item ID number.
+  #
+  # NOTE: This list behaves differently than the others. This list is always an
+  # exclude list, regardless of what include-mode has been set to. Anything
+  # listed here, the player cannot do ANYTHING with. So if you want your
+  # on-duty players to be able to look into chests or furnaces for instance, do not
+  # list those here.
+  interactions:
+    - 'LEVER'
+    - 'WOOD_PLATE'
+    - 'STONE_PLATE'
+    - 'WOOD_BUTTON'
+    - 'STONE_BUTTON'
+    - 'TRIPWIRE'
+    - 'WOODEN_DOOR'
+    - 'FENCE_GATE'
+    - 'TRAP_DOOR'
+
 # Allow PvP while on duty?
 allow-pvp: false
 

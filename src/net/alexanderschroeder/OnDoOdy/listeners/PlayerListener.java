@@ -229,14 +229,12 @@ public class PlayerListener implements Listener {
 		if (hasPickupAccess) {
 			plugin.getDebug().normal("<onPlayerPickupItem> Warning! " + "Allowing " + playerName + " to pick up " + itemName);
 		} else {
+			final Material lastMaterial = (Material) plugin.getPlayerMetadataManager().getMetadata(player, "last-pickup-material");
+			if (lastMaterial == null || lastMaterial != pickupMaterial) {
+				MessageSender.sendWithPrefix(player, "&cYou may not pick up &e" + itemName + "&c while on duty.");
+				plugin.getPlayerMetadataManager().setMetadata(player, "last-pickup-material", pickupMaterial);
+			}
 			event.setCancelled(true);
-
-			// TODO: Find a way to tell the player this without sending them 20
-			// messages per second...
-			// MessageSender.sendWithPrefix(player, "&cYou may not pick up &e"
-			// + itemName + "&c while on duty.");
-			// plugin.getDebug().check("<onPlayerPickupItem> " + playerName +
-			// " got denied item pickup. <Item(" + itemName + ")>");
 		}
 	}
 
@@ -307,16 +305,33 @@ public class PlayerListener implements Listener {
 			return;
 		}
 
+		final ConfigurationManager configurationManager = plugin.getConfigurationManager();
+		final Material blockMaterial = block.getType();
+
+		final boolean hasInteractPermission = player.hasPermission("doody.allowinteract");
+		final boolean isMaterialInMaterialList = configurationManager.getInteractionBlockList().contains(blockMaterial);
+		final boolean hasInteractionAccess = hasInteractPermission || !isMaterialInMaterialList;
+
+		if (!hasInteractionAccess) {
+			final Material lastMaterial = (Material) plugin.getPlayerMetadataManager().getMetadata(player, "last-interact-material");
+			if (lastMaterial == null || lastMaterial != blockMaterial) {
+				final String blockName = MessageSender.getNiceNameOf(blockMaterial);
+				MessageSender.sendWithPrefix(player, "&cYou may not interact with &e" + blockName + "&c while on duty.");
+				plugin.getPlayerMetadataManager().setMetadata(player, "last-interact-material", blockMaterial);
+			}
+			event.setCancelled(true);
+			return;
+		}
+
 		final BlockFace blockFace = event.getBlockFace();
 		final Block relativeBlock = block.getRelative(blockFace);
 		final Material fireMaterial = Material.FIRE;
 		if (relativeBlock.getType() == fireMaterial) {
-			final ConfigurationManager configurationManager = plugin.getConfigurationManager();
 
 			final boolean hasBreakPermission = player.hasPermission("doody.allowbreak");
 			final boolean allowBreak = configurationManager.isBlockBreakingAllowed();
-			final boolean isMaterialInMaterialList = configurationManager.getBreakBlockList().contains(fireMaterial);
-			final boolean hasBreakAccess = hasBreakPermission || (allowBreak && (configurationManager.isIncludeMode() ? isMaterialInMaterialList : !isMaterialInMaterialList));
+			final boolean isFireInMaterialList = configurationManager.getBreakBlockList().contains(fireMaterial);
+			final boolean hasBreakAccess = hasBreakPermission || (allowBreak && (configurationManager.isIncludeMode() ? isFireInMaterialList : !isFireInMaterialList));
 
 			if (!hasBreakAccess) {
 				event.setCancelled(true);

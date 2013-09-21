@@ -8,12 +8,14 @@ Version 1.2:
 	+ Added events when for going on duty (which are Cancellable) and events for when having gone on duty, so other plug-ins can react and interact with OnDoOdy.
 	+ Added configuration setting for giving players additional permissions when going on duty.
 	+ Added configuration setting for running commands for players when going on duty.
+	+ Added configuration setting for preventing players from interacting with certain blocks when they are on duty, such as buttons, doors and pressure plates, among others. Fully configurable.
 	= Include usage instructions for /ondoody back when the player has the doody.back permission.
 	! Improved error messages when going on or off duty fails and when saving/storing last duty location fails.
 	! Using the /ondoody back command now requires the doody.back permission.
 	! Using the /ondoody list command now requires the doody.list permission.
 	! Only print usage instructions for /ondoody list when the player has the doody.list permission.
 	! Using the /ondoody command at all now requires the doody permission. Previously, the permission for it was doody.duty, which also granted /ondoody on/off permission at the same time.
+	! Added a message to the not being able to pick up items event.
 
 Version 1.1:
 	+ Mobs now won't attack players who are on duty. Previously, when trying to punch pigmen for instance, they would start behaving like usual and start targeting the player.

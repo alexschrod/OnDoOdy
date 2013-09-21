@@ -24,6 +24,7 @@ permissions:
          doody.allowcreativeinventory: true
          doody.allowplace: true
          doody.allowbreak: true
+         doody.allowinteract: true
          doody.dropitems: true
          doody.pickupitems: true
          doody.inventory: true
@@ -53,6 +54,9 @@ permissions:
       default: op
    doody.allowbreak:
       description: Allows breaking of blocks that are disallowed in configuration when on duty
+      default: op
+   doody.allowinteract:
+      description: Allows interacting with blocks that are disallowed in configuration when on duty
       default: op
    doody.dropitems:
       description: Allows dropping of items from inventory when on duty

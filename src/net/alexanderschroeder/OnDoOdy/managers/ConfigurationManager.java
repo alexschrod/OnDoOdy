@@ -89,6 +89,8 @@ public class ConfigurationManager {
 
 	private static final String EXTRA_PERMISSIONS_KEY = "extra-permissions";
 
+	private static final String INTERACTION_BLOCK_KEY = "blocks.interactions";
+
 	private final OnDoOdy plugin;
 
 	public ConfigurationManager(final OnDoOdy plugin) {
@@ -161,6 +163,7 @@ public class ConfigurationManager {
 		itemDropListCache = null;
 		itemPickupListCache = null;
 		disallowedCommandListCache = null;
+		interactionBlockListCache = null;
 
 		final boolean previousHideSetting = hidePlayerOnDuty();
 		plugin.reloadConfig();
@@ -182,9 +185,9 @@ public class ConfigurationManager {
 
 	public List<Material> getBreakBlockList() {
 		if (breakBlockListCache == null) {
-			final List<String> placeBlockList = getConfig().getStringList(BREAK_BLOCK_KEY);
+			final List<String> breakBlockList = getConfig().getStringList(BREAK_BLOCK_KEY);
 			breakBlockListCache = new ArrayList<Material>();
-			for (final String block : placeBlockList) {
+			for (final String block : breakBlockList) {
 				final Material material = getMaterial(block);
 				if (material == Material.AIR) {
 					continue;
@@ -193,6 +196,23 @@ public class ConfigurationManager {
 			}
 		}
 		return breakBlockListCache;
+	}
+
+	private List<Material> interactionBlockListCache;
+
+	public List<Material> getInteractionBlockList() {
+		if (interactionBlockListCache == null) {
+			final List<String> interactionBlockList = getConfig().getStringList(INTERACTION_BLOCK_KEY);
+			interactionBlockListCache = new ArrayList<Material>();
+			for (final String block : interactionBlockList) {
+				final Material material = getMaterial(block);
+				if (material == Material.AIR) {
+					continue;
+				}
+				interactionBlockListCache.add(material);
+			}
+		}
+		return interactionBlockListCache;
 	}
 
 	public boolean isPvPAllowed() {
