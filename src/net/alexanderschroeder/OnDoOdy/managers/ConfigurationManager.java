@@ -365,7 +365,6 @@ public class ConfigurationManager {
 					permissionList = new ArrayList<String>();
 				}
 
-				player.sendMessage(permissionList.toArray(new String[permissionList.size()]));
 				dutyCommands.add(new DutyCommand(command, permissionList));
 			}
 		}

@@ -330,7 +330,6 @@ public class DutyManager {
 		}
 		for (final DutyCommand command : dutyCommands) {
 			try {
-				player.sendMessage("Running command: '" + command.getCommand() + "'");
 				plugin.getServer().dispatchCommand(player, command.getCommand());
 			} catch (final CommandException e) {
 				plugin.getDebug().check("Failed running duty command '" + command.getCommand() + "' for player '" + player.getName() + "'");
