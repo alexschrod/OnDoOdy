@@ -1,7 +1,7 @@
 name: OnDoOdy
 website: http://dev.bukkit.org/bukkit-plugins/ondoody/
 main: net.alexanderschroeder.OnDoOdy.OnDoOdy
-version: 1.2.0
+version: 1.2.1
 description: \
              Separates a player's moderator and administrator duties from their \
              regular gaming, so they too can enjoy the game.
