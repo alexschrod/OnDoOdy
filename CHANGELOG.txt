@@ -4,6 +4,9 @@ Prefix legend:
 	! Changed/updated feature.
 	- Removed feature.
 
+Version 1.3:
+	! Moved OnDoOdy to the Maven software management system for better dealing with dependencies, building, testing, and so on.
+
 Version 1.2:
 	+ Added events when for going on duty (which are Cancellable) and events for when having gone on duty, so other plug-ins can react and interact with OnDoOdy.
 	+ Added configuration setting for giving players additional permissions when going on duty.

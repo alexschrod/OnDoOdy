@@ -1,12 +1,10 @@
-name: OnDoOdy
-website: http://dev.bukkit.org/bukkit-plugins/ondoody/
-main: net.alexanderschroeder.OnDoOdy.OnDoOdy
-version: 1.3.0
-description: \
-             Separates a player's moderator and administrator duties from their \
-             regular gaming, so they too can enjoy the game.
-author: alexschrod
-authors: [angelofdev]
+name: ${project.name}
+website: ${project.url}
+main: ${project.groupId}.${project.artifactId}
+version: ${project.version}
+description: ${project.description}
+author: ${project.author}
+authors: [${project.authors}]
 commands:
    ondoody:
       description: Puts players on duty mode.
