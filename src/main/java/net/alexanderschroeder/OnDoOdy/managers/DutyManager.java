@@ -34,7 +34,7 @@ import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOffDutyEvent;
 import net.alexanderschroeder.OnDoOdy.events.PlayerGoneOnDutyEvent;
 import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
 import net.alexanderschroeder.OnDoOdy.managers.ConfigurationManager.DutyCommand;
-import net.alexanderschroeder.OnDoOdy.util.SLAPI;
+import net.alexanderschroeder.bukkitutil.SLAPI;
 import net.minecraft.server.v1_6_R2.EntityCreature;
 import net.minecraft.server.v1_6_R2.EntityLiving;
 import net.minecraft.server.v1_6_R2.EntityPlayer;
@@ -129,9 +129,9 @@ public class DutyManager {
 
 		try {
 			// Save to file
-			SLAPI.save(playerSaveInfo, getOnDoodyFileFor(player).getPath());
+			SLAPI.saveToFile(playerSaveInfo, getOnDoodyFileFor(player).getPath());
 		} catch (final Exception e) {
-			plugin.getLog().severe("Failed storing data on /ondoody on");
+			plugin.getLogger().severe("Failed storing data on /ondoody on");
 			final DutyException dutyException = new DutyException("Failed saving player's data to disk.", e);
 			plugin.getLogger().throwing("DutyManager", "enableDutyFor", dutyException);
 			throw dutyException;
@@ -139,7 +139,7 @@ public class DutyManager {
 
 		loadDutyCache();
 		dutyCache.add(playerName);
-		plugin.getDebug().check("<enableDutyFor> " + playerName + "'s data has been saved.");
+		plugin.getDebug().info(playerName + "'s data has been saved.");
 
 		// Now we're certain the player's data is safely stored on disk, we can
 		// take it all away from them.
@@ -201,9 +201,9 @@ public class DutyManager {
 		final File onDoodyFile = getOnDoodyFileFor(player);
 		PlayerSaveInfo playerSaveInfo;
 		try {
-			playerSaveInfo = (PlayerSaveInfo) SLAPI.load(onDoodyFile.getPath());
+			playerSaveInfo = (PlayerSaveInfo) SLAPI.loadFromFile(onDoodyFile.getPath());
 		} catch (final Exception e) {
-			plugin.getLog().severe("Failed restoring data on /ondoody off");
+			plugin.getLogger().severe("Failed restoring data on /ondoody off");
 			final DutyException dutyException = new DutyException("Failed restoring player's data from disk.", e);
 			plugin.getLogger().throwing("DutyManager", "disableDutyFor", dutyException);
 			throw dutyException;
@@ -258,7 +258,7 @@ public class DutyManager {
 		onDoodyFile.delete();
 		loadDutyCache();
 		dutyCache.remove(playerName);
-		plugin.getDebug().check("<disableDutyFor> " + playerName + "'s data restored & saved data deleted.");
+		plugin.getDebug().info(playerName + "'s data restored & saved data deleted.");
 
 		// Call the gone-off-duty event
 		pluginManager.callEvent(new PlayerGoneOffDutyEvent(player));
@@ -332,7 +332,7 @@ public class DutyManager {
 			try {
 				plugin.getServer().dispatchCommand(player, command.getCommand());
 			} catch (final CommandException e) {
-				plugin.getDebug().check("Failed running duty command '" + command.getCommand() + "' for player '" + player.getName() + "'");
+				plugin.getDebug().severe("Failed running duty command '" + command.getCommand() + "' for player '" + player.getName() + "'");
 			}
 		}
 		temporaryAttachment.remove();
@@ -384,7 +384,7 @@ public class DutyManager {
 	public void sendToDutyLocation(final Player player) throws DutyException {
 		try {
 			final File locationFile = getLocationFileFor(player);
-			final LocationSaveInfo locationSaveInfo = (LocationSaveInfo) SLAPI.load(locationFile.getPath());
+			final LocationSaveInfo locationSaveInfo = (LocationSaveInfo) SLAPI.loadFromFile(locationFile.getPath());
 			if (locationSaveInfo == null) {
 				return;
 			}
@@ -401,7 +401,7 @@ public class DutyManager {
 	public void saveLocation(final Player player) throws DutyException {
 		final LocationSaveInfo locationSaveInfo = new LocationSaveInfo(player.getLocation());
 		try {
-			SLAPI.save(locationSaveInfo, getLocationFileFor(player).getPath());
+			SLAPI.saveToFile(locationSaveInfo, getLocationFileFor(player).getPath());
 		} catch (final IOException e) {
 			final DutyException dutyException = new DutyException("Failed saving player's location on disk.", e);
 			plugin.getLogger().throwing("DutyManager", "saveLocation", dutyException);

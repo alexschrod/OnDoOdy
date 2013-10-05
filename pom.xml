@@ -54,6 +54,10 @@
 							<pattern>org.mcstats</pattern>
 							<shadedPattern>net.alexanderschroeder.OnDoOdy.mcstats</shadedPattern>
 						</relocation>
+						<relocation>
+							<pattern>net.alexanderschroeder.bukkitutil</pattern>
+							<shadedPattern>net.alexanderschroeder.OnDoOdy.util</shadedPattern>
+						</relocation>
 					</relocations>
 				</configuration>
 				<executions>
@@ -81,6 +85,10 @@
 			<id>Plugin Metrics</id>
 			<url>http://repo.mcstats.org/content/repositories/public/</url>
 		</repository>
+		<repository>
+			<id>maven-alexanderschroeder-net</id>
+			<url>http://maven.alexanderschroeder.net/releases/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -105,6 +113,11 @@
 			<artifactId>metrics</artifactId>
 			<version>R6</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.alexanderschroeder.bukkitutil</groupId>
+			<artifactId>BukkitUtil</artifactId>
+			<version>1.0.0</version>
 		</dependency>
 	</dependencies>
 </project>

@@ -21,13 +21,13 @@
 package net.alexanderschroeder.OnDoOdy.listeners;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 import net.alexanderschroeder.OnDoOdy.exceptions.DutyException;
 import net.alexanderschroeder.OnDoOdy.managers.ConfigurationManager;
 import net.alexanderschroeder.OnDoOdy.managers.DutyManager;
-import net.alexanderschroeder.OnDoOdy.util.Debug;
-import net.alexanderschroeder.OnDoOdy.util.MessageSender;
+import net.alexanderschroeder.bukkitutil.MessageSender;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -85,8 +85,8 @@ public class PlayerListener implements Listener {
 
 			if (foundCommand) {
 				event.setCancelled(true);
-				MessageSender.sendWithPrefix(player, "&cYou're not allowed to use this command on duty!");
-				plugin.getDebug().check("<onPlayerCommandPreprocess> " + playerName + " tried executing command in disallowed commands.");
+				plugin.getMessageSender().sendWithPrefix(player, "&cYou're not allowed to use this command on duty!");
+				plugin.getDebug().info(playerName + " tried executing command in disallowed commands.");
 				return;
 			}
 		}
@@ -98,20 +98,20 @@ public class PlayerListener implements Listener {
 		final DutyManager dutyManager = plugin.getDutyManager();
 		if (player.getGameMode() == GameMode.CREATIVE) {
 			final String playerName = player.getName();
-			final Debug debug = plugin.getDebug();
+			final Logger debug = plugin.getDebug();
 			final boolean isPlayerOnDuty = dutyManager.isPlayerOnDuty(player);
 			if (isPlayerOnDuty) {
-				MessageSender.sendWithPrefix(player, "&cNOTE: As you logged off while on duty, you are still on duty!");
+				plugin.getMessageSender().sendWithPrefix(player, "&cNOTE: As you logged off while on duty, you are still on duty!");
 
 				dutyManager.hidePlayerOnDuty(player);
 				dutyManager.giveExtraPermissions(player);
 			}
 			if (isPlayerOnDuty || player.hasPermission("doody.failsafe.bypass")) {
-				debug.checkBroadcast("&e" + playerName + " &a<was on duty&e|or|&ahas doody.failsafe.bypass>");
+				// TODO: Report creative mode bypass in debug mode
 			} else {
 				player.setGameMode(GameMode.SURVIVAL);
 				player.getInventory().clear();
-				debug.checkBroadcast("&e" + playerName + " &c<was illegally in creative mode>");
+				// TODO: Report creative mode removal in debug mode
 			}
 		}
 
@@ -140,13 +140,13 @@ public class PlayerListener implements Listener {
 			try {
 				plugin.getDutyManager().disableDutyFor(player);
 			} catch (final DutyException e) {
-				plugin.getLog().severe("Could not stop " + player.getName() + " from going to world " + worldName + " while on duty!");
+				plugin.getLogger().severe("Could not stop " + player.getName() + " from going to world " + worldName + " while on duty!");
 				return;
 			}
-			MessageSender.sendWithPrefix(player, "&cCannot go to world &e" + worldName + " &cwhile on duty!");
+			plugin.getMessageSender().sendWithPrefix(player, "&cCannot go to world &e" + worldName + " &cwhile on duty!");
 		} else {
 			final String playerName = player.getName();
-			plugin.getDebug().check("<onPlayerWorldChange> " + playerName + " Player has the permission 'doody.worlds." + worldName + "'");
+			plugin.getDebug().info(playerName + " Player has the permission 'doody.worlds." + worldName + "'");
 		}
 
 	}
@@ -159,7 +159,7 @@ public class PlayerListener implements Listener {
 			try {
 				dutyManager.saveLocation(player);
 			} catch (final DutyException e) {
-				plugin.getLog().warning("Could not save the location of " + player.getName() + " on their death.");
+				plugin.getLogger().warning("Could not save the location of " + player.getName() + " on their death.");
 			}
 			event.getDrops().clear();
 			event.setDroppedExp(0);
@@ -174,8 +174,8 @@ public class PlayerListener implements Listener {
 			try {
 				dutyManager.sendToDutyLocation(player);
 			} catch (final DutyException e) {
-				plugin.getLog().warning("Failed restoring " + player.getName() + " to their death location upon respawn.");
-				MessageSender.sendWithPrefix(player, "&cFailed returning you to your death location.");
+				plugin.getLogger().warning("Failed restoring " + player.getName() + " to their death location upon respawn.");
+				plugin.getMessageSender().sendWithPrefix(player, "&cFailed returning you to your death location.");
 			}
 		}
 	}
@@ -199,12 +199,12 @@ public class PlayerListener implements Listener {
 
 		final String itemName = MessageSender.getNiceNameOf(dropMaterial);
 		if (hasDropAccess) {
-			plugin.getDebug().normal("<onPlayerDropItem> Warning! " + "Allowing " + playerName + " to drop " + itemName);
+			plugin.getDebug().warning("Allowing " + playerName + " to drop " + itemName);
 		} else {
 			event.setCancelled(true);
 
-			MessageSender.sendWithPrefix(player, "&cYou may not drop &e" + itemName + "&c while on duty.");
-			plugin.getDebug().check("<onPlayerDropItem> " + playerName + " got denied item drop. <Item(" + itemName + ")>");
+			plugin.getMessageSender().sendWithPrefix(player, "&cYou may not drop &e" + itemName + "&c while on duty.");
+			plugin.getDebug().info(playerName + " got denied item drop. <Item(" + itemName + ")>");
 		}
 	}
 
@@ -227,11 +227,11 @@ public class PlayerListener implements Listener {
 
 		final String itemName = MessageSender.getNiceNameOf(pickupMaterial);
 		if (hasPickupAccess) {
-			plugin.getDebug().normal("<onPlayerPickupItem> Warning! " + "Allowing " + playerName + " to pick up " + itemName);
+			plugin.getDebug().warning("Allowing " + playerName + " to pick up " + itemName);
 		} else {
 			final Material lastMaterial = (Material) plugin.getPlayerMetadataManager().getMetadata(player, "last-pickup-material");
 			if (lastMaterial == null || lastMaterial != pickupMaterial) {
-				MessageSender.sendWithPrefix(player, "&cYou may not pick up &e" + itemName + "&c while on duty.");
+				plugin.getMessageSender().sendWithPrefix(player, "&cYou may not pick up &e" + itemName + "&c while on duty.");
 				plugin.getPlayerMetadataManager().setMetadata(player, "last-pickup-material", pickupMaterial);
 			}
 			event.setCancelled(true);
@@ -254,9 +254,9 @@ public class PlayerListener implements Listener {
 			final boolean hasCreativeInventoryAccess = hasCreativeInventoryPermission || allowCreativeInventory;
 
 			if (hasCreativeInventoryAccess) {
-				plugin.getDebug().normal("<onCreativeInventory> Warning! " + "Allowing " + playerName + " to access creative inventory");
+				plugin.getDebug().warning("Allowing " + playerName + " to access creative inventory");
 			} else {
-				MessageSender.sendWithPrefix(player, "&cYou may not do anything with your inventory while on duty.");
+				plugin.getMessageSender().sendWithPrefix(player, "&cYou may not do anything with your inventory while on duty.");
 				event.setCancelled(true);
 			}
 		}
@@ -284,9 +284,9 @@ public class PlayerListener implements Listener {
 			final boolean hasInventoryAccess = hasInventoryPermission || allowInventoryInteraction;
 
 			if (hasInventoryAccess) {
-				plugin.getDebug().normal("<onInventoryClick> Warning! " + "Allowing " + playerName + " to access inventory");
+				plugin.getDebug().info("Allowing " + playerName + " to access inventory");
 			} else {
-				MessageSender.sendWithPrefix(player, "&cYou may not interact with inventories while on duty.");
+				plugin.getMessageSender().sendWithPrefix(player, "&cYou may not interact with inventories while on duty.");
 				event.setCancelled(true);
 			}
 		}
@@ -316,7 +316,7 @@ public class PlayerListener implements Listener {
 			final Material lastMaterial = (Material) plugin.getPlayerMetadataManager().getMetadata(player, "last-interact-material");
 			if (lastMaterial == null || lastMaterial != blockMaterial) {
 				final String blockName = MessageSender.getNiceNameOf(blockMaterial);
-				MessageSender.sendWithPrefix(player, "&cYou may not interact with &e" + blockName + "&c while on duty.");
+				plugin.getMessageSender().sendWithPrefix(player, "&cYou may not interact with &e" + blockName + "&c while on duty.");
 				plugin.getPlayerMetadataManager().setMetadata(player, "last-interact-material", blockMaterial);
 			}
 			event.setCancelled(true);
@@ -336,7 +336,7 @@ public class PlayerListener implements Listener {
 			if (!hasBreakAccess) {
 				event.setCancelled(true);
 				player.sendBlockChange(relativeBlock.getLocation(), fireMaterial, (byte) 0);
-				MessageSender.sendWithPrefix(player, "&cYou may not put out &e" + MessageSender.getNiceNameOf(fireMaterial) + " &cwhile on Duty.");
+				plugin.getMessageSender().sendWithPrefix(player, "&cYou may not put out &e" + MessageSender.getNiceNameOf(fireMaterial) + " &cwhile on Duty.");
 			}
 		}
 	}

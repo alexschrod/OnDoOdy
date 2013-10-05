@@ -21,6 +21,7 @@
 package net.alexanderschroeder.OnDoOdy;
 
 import java.io.File;
+import java.util.logging.Logger;
 
 import net.alexanderschroeder.OnDoOdy.command.DoOdyCommandExecutor;
 import net.alexanderschroeder.OnDoOdy.listeners.BlockListener;
@@ -29,38 +30,44 @@ import net.alexanderschroeder.OnDoOdy.listeners.PlayerListener;
 import net.alexanderschroeder.OnDoOdy.managers.ConfigurationManager;
 import net.alexanderschroeder.OnDoOdy.managers.DutyManager;
 import net.alexanderschroeder.OnDoOdy.managers.PlayerMetadataManager;
-import net.alexanderschroeder.OnDoOdy.util.Debug;
+import net.alexanderschroeder.bukkitutil.DebugLogger;
+import net.alexanderschroeder.bukkitutil.MessageSender;
 
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class OnDoOdy extends JavaPlugin {
-	public static final String PLUGIN_NAME = "OnDoOdy";
+	private static final String PLUGIN_NAME = "OnDoOdy";
 
-	private Log log;
 	private ConfigurationManager configurationManager;
-	private Debug debug;
+	private DebugLogger debug;
 	private DutyManager dutyManager;
 	private PlayerMetadataManager playerMetadataManager;
+	private MessageSender messageSender;
 
 	@Override
 	public void onDisable() {
-		log.info(PLUGIN_NAME + " disabled!");
+		getLogger().info(PLUGIN_NAME + " disabled!");
 	}
 
 	@Override
 	public void onEnable() {
-		log = new Log(this);
-		log.info("Loading configs...");
+		final Logger logger = getLogger();
+		
+		logger.info("Loading configs...");
 
 		saveDefaultConfig();
 		configurationManager = new ConfigurationManager(this);
 
-		log.info("Loaded configs!");
+		logger.info("Loaded configs!");
+		
+		messageSender = new MessageSender();
+		messageSender.setPrefix(ChatColor.GOLD + "[" + PLUGIN_NAME + "] ");
 
 		playerMetadataManager = new PlayerMetadataManager(this);
 		dutyManager = new DutyManager(this);
-		debug = new Debug(this);
+		debug = new DebugLogger(this, configurationManager.isDebugModeEnabled());
 
 		final PluginManager pm = getServer().getPluginManager();
 		pm.registerEvents(new PlayerListener(this), this);
@@ -69,18 +76,14 @@ public class OnDoOdy extends JavaPlugin {
 
 		getCommand("ondoody").setExecutor(new DoOdyCommandExecutor(this));
 
-		log.info(PLUGIN_NAME + " v" + getDescription().getVersion() + " enabled");
-	}
-
-	public Log getLog() {
-		return log;
+		logger.info(PLUGIN_NAME + " v" + getDescription().getVersion() + " enabled");
 	}
 
 	public ConfigurationManager getConfigurationManager() {
 		return configurationManager;
 	}
 
-	public Debug getDebug() {
+	public DebugLogger getDebug() {
 		return debug;
 	}
 
@@ -90,6 +93,10 @@ public class OnDoOdy extends JavaPlugin {
 
 	public PlayerMetadataManager getPlayerMetadataManager() {
 		return playerMetadataManager;
+	}
+	
+	public MessageSender getMessageSender() {
+		return messageSender;
 	}
 
 	public String getPluginDataFilePath(final String fileName) {

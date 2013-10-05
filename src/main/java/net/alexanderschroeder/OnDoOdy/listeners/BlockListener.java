@@ -22,7 +22,7 @@ package net.alexanderschroeder.OnDoOdy.listeners;
 
 import net.alexanderschroeder.OnDoOdy.OnDoOdy;
 import net.alexanderschroeder.OnDoOdy.managers.ConfigurationManager;
-import net.alexanderschroeder.OnDoOdy.util.MessageSender;
+import net.alexanderschroeder.bukkitutil.MessageSender;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -58,7 +58,7 @@ public class BlockListener implements Listener {
 
 		if (!hasPlaceAccess) {
 			event.setCancelled(true);
-			MessageSender.sendWithPrefix(player, "&cYou may not place &e" + MessageSender.getNiceNameOf(material) + " &cwhile on duty.");
+			plugin.getMessageSender().sendWithPrefix(player, "&cYou may not place &e" + MessageSender.getNiceNameOf(material) + " &cwhile on duty.");
 		}
 	}
 
@@ -80,7 +80,7 @@ public class BlockListener implements Listener {
 
 		if (!hasBreakAccess) {
 			event.setCancelled(true);
-			MessageSender.sendWithPrefix(player, "&cYou may not break &e" + MessageSender.getNiceNameOf(material) + " &cwhile on Duty.");
+			plugin.getMessageSender().sendWithPrefix(player, "&cYou may not break &e" + MessageSender.getNiceNameOf(material) + " &cwhile on Duty.");
 		}
 	}
 }
