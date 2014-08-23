@@ -107,11 +107,12 @@ public class PlayerListener implements Listener {
 				dutyManager.giveExtraPermissions(player);
 			}
 			if (isPlayerOnDuty || player.hasPermission("doody.failsafe.bypass")) {
-				// TODO: Report creative mode bypass in debug mode
+				debug.info(playerName + " &aleft in creative mode, due to being on duty or having doody.failsafe.bypass permission.");
 			} else {
 				player.setGameMode(GameMode.SURVIVAL);
 				player.getInventory().clear();
-				// TODO: Report creative mode removal in debug mode
+
+				debug.info(playerName + " &ahas been taken out of creative mode, and all their items have been removed.");
 			}
 		}
 

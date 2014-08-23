@@ -19,21 +19,33 @@
 
 package net.alexanderschroeder.OnDoOdy.managers;
 
-import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.configuration.serialization.SerializableAs;
 
-public class LocationSaveInfo implements Serializable {
-	private static final long serialVersionUID = 1L;
+@SerializableAs(value = "OnDoOdyLocation")
+public class LocationSaveInfo implements ConfigurationSerializable {
+
+	public static void register() {
+		ConfigurationSerialization.registerClass(LocationSaveInfo.class);
+	}
+
+	public static void unregister() {
+		ConfigurationSerialization.unregisterClass(LocationSaveInfo.class);
+	}
 
 	public String world;
 	public double x;
 	public double y;
 	public double z;
-	public float pitch;
-	public float yaw;
+	public double pitch;
+	public double yaw;
 
 	public LocationSaveInfo() {
 	}
@@ -51,7 +63,38 @@ public class LocationSaveInfo implements Serializable {
 
 	public Location getLocation() {
 		final World world = Bukkit.getServer().getWorld(this.world);
-		final Location location = new Location(world, x, y, z, yaw, pitch);
+		final Location location = new Location(world, x, y, z, (float)yaw, (float)pitch);
 		return location;
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("world", world);
+
+		map.put("x", x);
+		map.put("y", y);
+		map.put("z", z);
+
+		map.put("pitch", pitch);
+		map.put("yaw", yaw);
+
+		return map;
+	}
+
+	public static LocationSaveInfo deserialize(final Map<String, Object> map) {
+		LocationSaveInfo instance = new LocationSaveInfo();
+
+		instance.world = (String) map.get("world");
+
+		instance.x = (Double) map.get("x");
+		instance.y = (Double) map.get("y");
+		instance.z = (Double) map.get("z");
+
+		instance.pitch = (Double) map.get("pitch");
+		instance.yaw = (Double) map.get("yaw");
+
+		return instance;
 	}
 }

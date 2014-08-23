@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Set;
 
 import net.alexanderschroeder.OnDoOdy.OnDoOdy;
-
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.configuration.ConfigurationSection;
@@ -102,7 +101,7 @@ public class ConfigurationManager {
 	}
 
 	@SuppressWarnings("deprecation")
-	private Material getMaterial(final String itemValue) {
+	private static Material getMaterial(final String itemValue) {
 		int intValue;
 		Material material;
 		try {
@@ -117,7 +116,7 @@ public class ConfigurationManager {
 		return material;
 	}
 
-	private ItemStack getItem(final String itemValue) {
+	private static ItemStack getItem(final String itemValue) {
 		return new ItemStack(getMaterial(itemValue), 1, (short) 0);
 	}
 

@@ -19,31 +19,64 @@
 
 package net.alexanderschroeder.OnDoOdy.managers;
 
-import java.io.Serializable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-public class InventorySaveInfo implements Serializable {
-	private static final long serialVersionUID = 1L;
+@SerializableAs(value = "OnDoOdyInventory")
+public class InventorySaveInfo implements ConfigurationSerializable {
 
-	public ItemStack[] inventory;
-	public ItemStack[] armor;
+	public static void register() {
+		ConfigurationSerialization.registerClass(InventorySaveInfo.class);
+	}
+
+	public static void unregister() {
+		ConfigurationSerialization.unregisterClass(InventorySaveInfo.class);
+	}
+
+	public List<ItemStack> inventory;
+	public List<ItemStack> armor;
 
 	public InventorySaveInfo() {
 	}
 
 	public InventorySaveInfo(final PlayerInventory inventory) {
 		// save inventory
-		this.inventory = inventory.getContents();
+		this.inventory = Arrays.asList(inventory.getContents());
 
 		// save armor
-		armor = inventory.getArmorContents();
+		armor = Arrays.asList(inventory.getArmorContents());
 	}
 
 	public void restore(final PlayerInventory inventory) {
-		inventory.setContents(this.inventory);
+		inventory.setContents(this.inventory.toArray(new ItemStack[this.inventory.size()]));
 
-		inventory.setArmorContents(armor);
+		inventory.setArmorContents(armor.toArray(new ItemStack[armor.size()]));
+	}
+
+	@Override
+	public Map<String, Object> serialize() {
+		Map<String, Object> map = new HashMap<String, Object>();
+
+		map.put("inventory", inventory);
+		map.put("armor", armor);
+
+		return map;
+	}
+
+	public static InventorySaveInfo deserialize(final Map<String, Object> map) {
+		InventorySaveInfo instance = new InventorySaveInfo();
+
+		instance.inventory = (List<ItemStack>) map.get("inventory");
+		instance.armor = (List<ItemStack>) map.get("armor");
+
+		return instance;
 	}
 }

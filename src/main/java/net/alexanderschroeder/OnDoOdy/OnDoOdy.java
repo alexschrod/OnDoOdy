@@ -29,10 +29,14 @@ import net.alexanderschroeder.OnDoOdy.listeners.EntityListener;
 import net.alexanderschroeder.OnDoOdy.listeners.PlayerListener;
 import net.alexanderschroeder.OnDoOdy.managers.ConfigurationManager;
 import net.alexanderschroeder.OnDoOdy.managers.DutyManager;
+import net.alexanderschroeder.OnDoOdy.managers.InventorySaveInfo;
+import net.alexanderschroeder.OnDoOdy.managers.LocationSaveInfo;
 import net.alexanderschroeder.OnDoOdy.managers.PlayerMetadataManager;
+import net.alexanderschroeder.OnDoOdy.managers.PlayerSaveInfo;
 import net.alexanderschroeder.bukkitutil.DebugLogger;
 import net.alexanderschroeder.bukkitutil.MessageSender;
-
+import net.alexanderschroeder.bukkitutil.storage.FileConfigurationStorage;
+import net.alexanderschroeder.bukkitutil.storage.Storage;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -45,23 +49,37 @@ public class OnDoOdy extends JavaPlugin {
 	private DutyManager dutyManager;
 	private PlayerMetadataManager playerMetadataManager;
 	private MessageSender messageSender;
+	private Storage storage;
 
 	@Override
 	public void onDisable() {
+		PlayerSaveInfo.unregister();
+		InventorySaveInfo.unregister();
+		LocationSaveInfo.unregister();
+
 		getLogger().info(PLUGIN_NAME + " disabled!");
 	}
 
 	@Override
 	public void onEnable() {
+		PlayerSaveInfo.register();
+		InventorySaveInfo.register();
+		LocationSaveInfo.register();
+
 		final Logger logger = getLogger();
-		
+
 		logger.info("Loading configs...");
 
 		saveDefaultConfig();
 		configurationManager = new ConfigurationManager(this);
 
 		logger.info("Loaded configs!");
-		
+
+		final FileConfigurationStorage fileConfigurationStorage = new FileConfigurationStorage();
+		fileConfigurationStorage.setStorageDirectoryName("data");
+		storage = fileConfigurationStorage;
+		storage.initialize(this);
+
 		messageSender = new MessageSender();
 		messageSender.setPrefix(ChatColor.GOLD + "[" + PLUGIN_NAME + "] ");
 
@@ -94,9 +112,13 @@ public class OnDoOdy extends JavaPlugin {
 	public PlayerMetadataManager getPlayerMetadataManager() {
 		return playerMetadataManager;
 	}
-	
+
 	public MessageSender getMessageSender() {
 		return messageSender;
+	}
+
+	public Storage getStorage() {
+		return storage;
 	}
 
 	public String getPluginDataFilePath(final String fileName) {

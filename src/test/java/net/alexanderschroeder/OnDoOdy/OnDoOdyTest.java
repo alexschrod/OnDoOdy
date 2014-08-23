@@ -45,7 +45,8 @@ public class OnDoOdyTest extends TestCase {
         return new TestSuite( OnDoOdyTest.class );
     }
     
-    public void testOnDoOdy()
+    @SuppressWarnings("static-method")
+	public void testOnDoOdy()
     {
         assertTrue( true );
     }
